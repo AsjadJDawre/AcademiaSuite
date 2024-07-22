@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../SubjectMaster.css';
 
 const SubjectMaster = () => {
-  // Define state for the form
   const [year, setYear] = useState('01/June 2011-31/May/2012');
   const [pattern, setPattern] = useState('CBGS');
   const [semester, setSemester] = useState('Semester 1');
@@ -10,28 +9,47 @@ const SubjectMaster = () => {
   const [branch, setBranch] = useState('MECHANICAL ENGINEERING');
   const [courseCredit, setCourseCredit] = useState('3');
   const [showGrid, setShowGrid] = useState(false);
+  const [data, setData] = useState([]);
 
-  // Options for dropdowns
   const years = ['01/June 2011-31/May/2012', '01/June 2012-31/May/2013', '01/June 2013-31/May/2014'];
   const patterns = ['CBGS', 'Old Pattern'];
   const semesters = ['Semester 1', 'Semester 2', 'Semester 3', 'Semester 4'];
   const subjects = ['Applied Mathematics-I', 'Physics', 'Chemistry', 'Engineering Drawing'];
   const branches = ['MECHANICAL ENGINEERING', 'CIVIL ENGINEERING', 'ELECTRICAL ENGINEERING'];
 
-  // Handle key press event
+  useEffect(() => {
+    const loadData = async () => {
+      const fetchedData = await window.api.invoke('fetch-data');
+      setData(fetchedData);
+    };
+
+    loadData();
+  }, []);
+
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
       setShowGrid(true);
     }
   };
 
-  // Event listener to detect Enter key press
-  React.useEffect(() => {
+  useEffect(() => {
     window.addEventListener('keydown', handleKeyPress);
     return () => {
       window.removeEventListener('keydown', handleKeyPress);
     };
   }, []);
+
+  const handleSave = () => {
+    const formData = {
+      year,
+      pattern,
+      semester,
+      subject,
+      branch,
+      courseCredit,
+    };
+    window.api.invoke('save-data', formData);
+  };
 
   return (
     <div className="form-container">
@@ -95,7 +113,7 @@ const SubjectMaster = () => {
         </div>
 
         <div className="form-buttons">
-          <button type="button" className="btn-save">Save</button>
+          <button type="button" className="btn-save" onClick={handleSave}>Save</button>
           <button type="button" className="btn-edit">Edit</button>
           <button type="button" className="btn-refresh">Refresh</button>
           <button type="button" className="btn-exit">Exit</button>
@@ -108,39 +126,23 @@ const SubjectMaster = () => {
           <table>
             <thead>
               <tr>
-                <th>Assessment</th>
-                <th>Out Of Marks</th>
-                <th>Passing Marks</th>
-                <th>Resolution</th>
+                <th>pattern</th>
+                <th>subject</th>
+                <th>branch </th>
+                <th>course-credit</th>
                 <th>Overall Passing Criteria</th>
-                <th>Credits</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>ESE</td>
-                <td>80</td>
-                <td>32</td>
-                <td>40%</td>
-                <td>H1</td>
-                <td>4</td>
-              </tr>
-              <tr>
-                <td>IA</td>
-                <td>20</td>
-                <td>0</td>
-                <td>0%</td>
-                <td>H2</td>
-                <td>1</td>
-              </tr>
-              <tr>
-                <td>TW</td>
-                <td>10</td>
-                <td>0</td>
-                <td>0%</td>
-                <td>H2</td>
-                <td>1</td>
-              </tr>
+              {data.map((item, index) => (
+                <tr key={index}>
+                  <td>{item.pattern}</td>
+                  <td>{item.subject}</td>
+                  <td>{item.branch}</td>
+                  <td>{item.course_credit}</td>
+                  <td>{item.ese_overall_criteria}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

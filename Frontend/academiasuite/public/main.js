@@ -1,44 +1,53 @@
-// main.js
+const { app, BrowserWindow, ipcMain } = require('electron');
+const path = require('path');
+const sqlite3 = require('sqlite3').verbose();
 
-// Modules to control application life and create native browser window
-const { app, BrowserWindow } = require('electron')
+let db = new sqlite3.Database('../../Backend/db/database.sqlite', (err) => {
+  if (err) {
+    console.error('Error opening database:', err);
+  } else {
+    console.log('Database opened successfully');
+  }
+});
 
-const createWindow = () => {
-  // Create the browser window.
-  const mainWindow = new BrowserWindow({
+function createWindow() {
+  const win = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
-        enableRemoteModule:true
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true, // This is required for contextBridge to work
+      enableRemoteModule: false, // Disable remote module
     }
-  })
+  });
 
-  // and load the index.html of the app.
-  mainWindow.loadURL('http://localhost:3000')
-
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  win.loadURL('http://localhost:3000'); // Or your file URL if using a local file
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.whenReady().then(() => {
-  createWindow()
+app.whenReady().then(createWindow);
 
-  app.on('activate', () => {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
-  })
-})
-
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit()
-})
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
+app.on('activate', () => {
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow();
+  }
+});
+
+ipcMain.handle('fetch-data', async (event) => {
+  return new Promise((resolve, reject) => {
+    db.all('SELECT * FROM subject_master', (err, rows) => {
+      if (err) {
+        console.error('Error fetching data:', err);
+        reject(err);
+      } else {
+        console.log('Fetched data:', rows);
+        resolve(rows);
+      }
+    });
+  });
+});
