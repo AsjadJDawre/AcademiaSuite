@@ -1,0 +1,32 @@
+.dashboard-container {
+    height: 100vh;
+    display: grid;
+    grid-template-rows: 1fr 5fr;
+    grid-template-columns: 1fr 3fr;
+    gap: 10px;
+}
+
+.top-bar {
+    grid-column: 1 / span 2;
+    height: fit-content;
+    margin-top: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 4rem;
+    color: #262739;
+    font-family: 'Roboto', sans-serif;
+}
+
+/* .main-container {
+    background-color: aqua;
+} */
+.logo {
+    color: #1659D7;
+}
+.username {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+ 
