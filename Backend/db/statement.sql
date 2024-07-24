@@ -51,3 +51,13 @@
 
 
 SELECT * FROM subject_master
+
+CREATE TABLE user (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL,
+    password TEXT NOT NULL
+)
+
+INSERT INTO user (username, password) VALUES ("admin", "12345")
+
+UPDATE user SET password = "$2b$10$N2gD2H1MdUbP53AIOm8mYu1zm.fuUg0V5ca5q0OjhthbYHJY.4hb2" WHERE id = 1;

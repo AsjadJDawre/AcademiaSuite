@@ -6,9 +6,10 @@
     background-image: url('../images/login.png');
     background-size: cover; 
     background-repeat: no-repeat; 
-    background-position: center center; 
+    background-position: center; 
 }
 .login-div {
+    /* background-color: black; */
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -26,7 +27,6 @@
     border-radius: 0.2rem;
     background-color: rgb(255, 255, 255);
     border: none;
-    width: 90%;
     display: block;
     border-bottom: 0.3rem solid transparent;
     transition: all 0.3s;
@@ -43,6 +43,7 @@
     background-color: rgb(37, 123, 235);
     border: none;
     width: 100%;
+    font-weight: bold;
     display: block;
     margin-top: 2rem;
     color: #E6E6E6;
@@ -62,4 +63,14 @@
 }
 .btn-login-div {
     width: 100%;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.error-msg {
+    font-size: .8rem;
+    color: red;
 }
