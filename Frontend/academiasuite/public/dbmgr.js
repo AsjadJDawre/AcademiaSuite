@@ -38,7 +38,7 @@ ipcMain.handle('login-user', async (event, {username, password}) => {
         bcrypt.compare(password, row.password, (err, result) => {
           if(result) {
             console.log("Login successful");
-            resolve("LS");
+            resolve(row);
           } else {
             console.log("Invalid password");
             resolve("IP");

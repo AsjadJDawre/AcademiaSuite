@@ -21,11 +21,13 @@ const Login = (props) => {
             case 'UNF':
                 setMessage("*User not found!")
                 break;
-            case 'LS':
-                props.setActiveComponent('dashboard')
+            case 'DE':
+                setMessage("*Database Error!")
                 break;
             default:
-                setMessage("*Database Error!")
+                props.setUser(user.username);
+                console.log(user.username);
+                props.setActiveComponent('dashboard')
                 break;
         }
       };
