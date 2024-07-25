@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import '../SubjectMaster.css';
+import '../../assets/styles/subjectmaster.css';
 
 const SubjectMaster = () => {
   const [year, setYear] = useState('01/June 2011-31/May/2012');
