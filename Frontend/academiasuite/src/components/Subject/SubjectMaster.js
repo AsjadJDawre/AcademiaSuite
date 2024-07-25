@@ -22,7 +22,7 @@ const SubjectMaster = () => {
       const fetchedData = await window.api.invoke('fetch-data');
       setData(fetchedData);
     };
-
+ 
     loadData();
   }, []);
 
