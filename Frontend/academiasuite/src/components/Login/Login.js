@@ -39,8 +39,8 @@ const Login = (props) => {
                     <h3>LOGIN</h3>
                 </div>
                 <form onSubmit={handleSubmit}>
-                        <input className="input-field" type="text" placeholder="Username" onChange={(e) => setUsername(e.target.value)} required/>
-                        <input className="input-field" type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} required />
+                        <input className="input-field if-username" type="text" placeholder="Username" onChange={(e) => setUsername(e.target.value)} required/>
+                        <input className="input-field if-password" type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} required />
                         <p className="error-msg">{message}</p>
                         <button type="submit" className="btn-login" >LOGIN</button>
                 </form>
