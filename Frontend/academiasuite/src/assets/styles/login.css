@@ -21,19 +21,21 @@
 .input-field {
     font-family: 'Roboto', sans-serif;
     color: #333;
-    font-size: 0.9rem;
+    font-size: 0.9rem; 
 	margin: 0 auto;
     padding: 1rem 2rem;
     border-radius: 0.2rem;
     background-color: rgb(255, 255, 255);
-    border: none;
+    border: white;
     display: block;
     border-bottom: 0.3rem solid transparent;
     transition: all 0.3s;
+    cursor: pointer;
     background-color: #E6E6E6;
 }
 .login-div h3 {
     color: #433E5D;
+    font-weight:bolder ;
 }
 .btn-login {
     font-size: 0.9rem;
@@ -73,4 +75,12 @@ form {
 .error-msg {
     font-size: .8rem;
     color: red;
+}
+/* .if-username:hover, .if-password:hover {
+    /* border: 2px solid #E9F3FD; */
+    /* border: 2px solid #2B5ED6; */
+/* } */ 
+input:hover {
+    /* border: 2px solid #E9F3FD; */
+    border: 2px solid #2B5ED6;
 }
