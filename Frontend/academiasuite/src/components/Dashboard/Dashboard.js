@@ -17,7 +17,7 @@ const Dashboard = (props) => {
     }
 
   }
-
+  
   return ( 
     <div className="dashboard-container ">
       <div className="top-bar">
@@ -27,7 +27,7 @@ const Dashboard = (props) => {
       <div className="side-bar two-div">
         <Navbar setActiveMainComponent={setActiveMainComponent} />
       </div>
-      <div className="main-container two-div bg-slate-800 rounded">
+      <div className="main-container two-div bg-slate-200 rounded">
         {renderMainComponent()}
       </div>
     </div>

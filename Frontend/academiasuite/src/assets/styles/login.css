@@ -7,6 +7,7 @@
     background-size: cover; 
     background-repeat: no-repeat; 
     background-position: center; 
+    transition: filter 0.3s ease;
 }
 .login-div {
     /* background-color: black; */
@@ -76,11 +77,20 @@ form {
     font-size: .8rem;
     color: red;
 }
-/* .if-username:hover, .if-password:hover {
-    /* border: 2px solid #E9F3FD; */
-    /* border: 2px solid #2B5ED6; */
-/* } */ 
 input:hover {
-    /* border: 2px solid #E9F3FD; */
     border: 2px solid #2B5ED6;
 }
+.blur {
+    filter: blur(5px)
+}
+ 
+.loading {
+    position: absolute;
+    display: inline;
+    z-index: 1;
+}
+.not-loading {
+    position: absolute;
+    display: none;
+}
+ 
