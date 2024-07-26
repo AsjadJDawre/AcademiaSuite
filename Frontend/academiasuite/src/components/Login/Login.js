@@ -1,10 +1,14 @@
 import React, { useState } from "react";
-import '../../assets/styles/login.css'
+import '../../assets/styles/login.css';
+import LinearProgress from '@mui/material/LinearProgress';
+import Box from '@mui/material/Box';
+
 
 const Login = (props) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
+    const [isblur, setIsblur] = useState(false);
 
     const handleSubmit = (e) => {
         e.preventDefault();   
@@ -26,15 +30,21 @@ const Login = (props) => {
                 break;
             default:
                 props.setUser(user.username);
-                console.log(user.username);
-                props.setActiveComponent('dashboard')
+                loading()
                 break;
         }
       };
 
+      const loading = () => {
+        setIsblur(true);
+        setTimeout(() => {
+            props.setActiveComponent('dashboard')
+        }, 2000);
+      }
+
     return (
-        <div className="login-container">
-            <div className="login-div">
+        <div className={`login-container`}>
+            <div className={`login-div ${isblur ? 'blur' : '' }`}>
                 <div>
                     <h3>LOGIN</h3>
                 </div>
@@ -45,6 +55,9 @@ const Login = (props) => {
                         <button type="submit" className="btn-login" >LOGIN</button>
                 </form>
             </div>
+            <Box sx={{ width: '50%' }} className={`no-blur ${isblur ? 'loading' : 'not-loading'}`}>
+                <LinearProgress />
+            </Box>
         </div>
     );
 }
