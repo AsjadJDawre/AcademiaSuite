@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import '../../assets/styles/subjectmaster.css';
+// import '../../assets/styles/subjectmaster.css';
+import '../../assets/styles/form.css';
 
 const SubjectMaster = () => {
   const [year, setYear] = useState('01/June 2011-31/May/2012');
@@ -53,8 +54,8 @@ const SubjectMaster = () => {
 
   return (
     <div className="form-container">
-      <h1>Subject Master</h1>
-      <form>
+      <h1 className='form-title'>Subject Master</h1>
+      <form className='form-main'>
         <div className="form-group">
           <label htmlFor="year">Year:</label>
           <select id="year" value={year} onChange={(e) => setYear(e.target.value)}>
