@@ -1,4 +1,19 @@
 /* App.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+.box-2 {
+  margin-top: 24px;
+}
+
+.box-4 {
+  margin-top: 44px;
+}
+.scrollable-container {
+  max-height: 600px;
+  overflow-y: auto;
+  border: 10px solid hsl(222deg 68% 50%);}
+
 .form-container {
     width: 80%;
     max-width: 600px;
