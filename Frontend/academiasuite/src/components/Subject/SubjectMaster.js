@@ -1,329 +1,412 @@
-import React, { useState } from 'react';
-import FormInputs from '../FormInputs/FormInput';
+import React, { useState, useEffect } from 'react';
+import '../../assets/styles/form.css';
 import '../../assets/styles/subjectmaster.css';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 
 const SubjectMaster = () => {
-  const [showGrid, setShowGrid] = useState(false);
-  const [EditPopUp, setEditPopUp] = useState(false);
-  const [data, setData] = useState({});
-  const [EditData, setEditData] = useState({});
+  const [year, setYear] = useState('');
+  const [pattern, setPattern] = useState('');
+  const [semester, setSemester] = useState('');
+  const [subject, setSubject] = useState('');
+  const [branch, setBranch] = useState('');
+  const [courseCredit, setCourseCredit] = useState('0');
+  
+  const [subjectName, setSubjectName] = useState('');
+  const [subjectCode, setSubjectCode] = useState('');
+  
+  const [eseOom, setEseOom] = useState(0);
+  const [esePm, setEsePm] = useState(0);
+  const [eseRes, setEseRes] = useState(0);
+  const [iaOom, setIaOom] = useState(0);
+  const [iaPm, setIaPm] = useState(0);
+  const [iaRes, setIaRes] = useState(0);
+  const [twOom, setTwOom] = useState(0);
+  const [twPm, setTwPm] = useState(0);
+  const [twRes, setTwRes] = useState(0);
+  const [prOom, setPrOom] = useState(0);
+  const [prPm, setPrPm] = useState(0);
+  const [prRes, setPrRes] = useState(0);
+  const [orOom, setOrOom] = useState(0);
+  const [orPm, setOrPm] = useState(0);
+  const [orRes, setOrRes] = useState(0);
+  
+  const [h1Credit, setH1Credit] = useState(0);
+  const [h2Credit, setH2Credit] = useState(0);
+  const [opc, setOpc] = useState(0);
 
-  // State for Sub-box 1
-  const [eseChecked1, setEseChecked1] = useState(false);
-  const [prChecked1, setPrChecked1] = useState(false);
-  const [orChecked1, setOrChecked1] = useState(false);
 
-  const [eseOutOfMarks1, setEseOutOfMarks1] = useState('');
-  const [esePassingMarks1, setEsePassingMarks1] = useState('');
-  const [eseResolution1, setEseResolution1] = useState('');
-  const [h1Input1, setH1Input1] = useState('');
 
-  // State for Sub-box 2
-  const [iaChecked1, setIaChecked1] = useState(false);
-  const [twChecked1, setTwChecked1] = useState(false);
-  const [iaOutOfMarks1, setIaOutOfMarks1] = useState('');
-  const [iaPassingMarks1, setIaPassingMarks1] = useState('');
-  const [iaResolution1, setIaResolution1] = useState('');
-  const [h2Input1, setH2Input1] = useState('');
-  const [overallPassingCriteria1, setOverallPassingCriteria1] = useState('');
+  const years = ['Select year','01/June 2011-31/May/2012', '01/June 2012-31/May/2013', '01/June 2013-31/May/2014'];
+  const patterns = ['Select pattern','CBGS', 'Old Pattern'];
+  const semesters = ['Select semester','Semester 1', 'Semester 2', 'Semester 3', 'Semester 4'];
+  const subjects = ['Select subject','Applied Mathematics-I', 'Physics', 'Chemistry', 'Engineering Drawing'];
+  const branches = ['Select branch','MECHANICAL ENGINEERING', 'CIVIL ENGINEERING', 'ELECTRICAL ENGINEERING'];
 
-  const handleData = (data) => {
-    console.log('Received data from Child Input Component', data.subjectName);
-    setData(data);
-  };
+  const [addCreditDivVisible, setAddCreditDivVisible] = useState(false);
 
-  const handleEdit = (data) => {
-    console.log('Received data from Child Input Component', data.subjectName);
-    setEditData(EditData);
-  };
+  const handleAddCredit = () => {
+    setAddCreditDivVisible(true);
+  }
+  const handleExitBtn = () => {
+    setAddCreditDivVisible(false);
+  }
 
-  const validateBoxes = () => {
-    const box1Filled = eseChecked1 || prChecked1 || orChecked1 || eseOutOfMarks1 || esePassingMarks1 || eseResolution1;
-    const box2Filled = iaChecked1 || twChecked1 || iaOutOfMarks1 || iaPassingMarks1 || iaResolution1;
-
-    return box1Filled || box2Filled;
-  };
-
-  const handleSave = async () => {
-    if (!validateBoxes()) {
-      toast.error('Please fill in the required fields!', {
-        position: 'top-right',
-        autoClose: 2500,
-        theme: 'colored',
-        newestOnTop: true,
-      });
+  const handleRefreshBtn = (e) => {
+    var id = e.target.id;
+    if (id === "btn-ref-sub-mas") {
+      setYear('');
+      setPattern('');
+      setSemester('');
+      setSubject('');
+      setBranch('');
+      setCourseCredit('0');
+      return;
+    } else if (id === "btn-ref-add-sub") {
+      setSubjectName('');
+      setSubjectCode('');
+      return;
+    } else {
+      setEseOom(0);
+      setEsePm(0);
+      setEseRes(0);
+      setIaOom(0);
+      setIaPm(0);
+      setIaRes(0);
+      setTwOom(0);
+      setTwPm(0);
+      setTwRes(0);
+      setPrOom(0);
+      setPrPm(0);
+      setPrRes(0);
+      setOrOom(0);
+      setOrPm(0);
+      setOrRes(0);
+      setH1Credit(0);
+      setH2Credit(0);
+      setOpc(0);
       return;
     }
-
-    const subjectData = {
-      h1Input1,
-      h2Input1,
-      eseOutOfMarks1,
-      esePassingMarks1,
-      eseResolution1,
-      iaChecked1,
-      orChecked1,
-      eseChecked1,
-      prChecked1,
-      twChecked1,
-      iaOutOfMarks1,
-      iaPassingMarks1,
-      iaResolution1,
-      overallPassingCriteria1,
-      subjectName: data.subjectName,
-    };
-
-    try {
-      const response = await window.api.invoke('save-subject', subjectData);
-
-      if (response === "Success") {
-        toast.success('Subject updated successfully!', {
-          position: 'top-right',
-          autoClose: 2500,
-          theme: 'colored',
-          newestOnTop: true,
-        });
-        setShowGrid(false);
-      } else if (response === "SNF") {
-        toast.error('Subject not found! Try adding a subject first.', {
-          position: 'top-right',
-          autoClose: 2500,
-          theme: 'colored',
-          newestOnTop: true,
-        });
-      } else if (response === "DE") {
-        toast.error('Database error occurred.', {
-          position: 'top-right',
-          autoClose: 2500,
-          theme: 'colored',
-          newestOnTop: true,
-        });
-      } else if (response === "UE") {
-        toast.error('Update error occurred.', {
-          position: 'top-right',
-          autoClose: 2500,
-          theme: 'colored',
-          newestOnTop: true,
-        });
-      } else if (response === "NoUpdate") {
-        toast.info('No columns to update.', {
-          position: 'top-right',
-          autoClose: 2500,
-          theme: 'colored',
-          newestOnTop: true,
-        });
-      }
-    } catch (error) {
-      toast.error('An unexpected error occurred.', {
-        position: 'top-right',
-        autoClose: 2500,
-        theme: 'colored',
-        newestOnTop: true,
-      });
-      console.error('Save error:', error);
-    }
-
-    setShowGrid(false);
-  };
-
-  // Handlers for single checkbox selection in sub-box 1
-  const handleEseChange = () => {
-    setEseChecked1(true);
-    setPrChecked1(false);
-    setOrChecked1(false);
-  };
-
-  const handlePrChange = () => {
-    setEseChecked1(false);
-    setPrChecked1(true);
-    setOrChecked1(false);
-  };
-
-  const handleOrChange = () => {
-    setEseChecked1(false);
-    setPrChecked1(false);
-    setOrChecked1(true);
-  };
-
-  // Handlers for single checkbox selection in sub-box 2
-  const handleIaChange = () => {
-    setIaChecked1(true);
-    setTwChecked1(false);
-  };
-
-  const handleTwChange = () => {
-    setIaChecked1(false);
-    setTwChecked1(true);
-  };
+  }
+  
+  const addCreditStyle = {
+    display: 'inline',
+  }
+  const disableAddCreditStyle = {
+    display: 'none',
+  }
 
   return (
-    <>
-      <ToastContainer position="top-right" autoClose={2500} newestOnTop pauseOnHover={false} />
-      <FormInputs setShowGrid={setShowGrid} handleData={handleData} handleEdit={handleEdit} setEditPopUp={setEditPopUp} />
-      {showGrid && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-4xl w-full h-[80vh] overflow-y-auto">
-            <div className="mb-4">
-              <div className="flex mb-4">
-                <div className="flex items-center mr-4">
-                  <label className="mr-2">H1</label>
+    <div className="subject-master-container">
+      <div className='first-div'>
+      <div className="form-container form-sub-mas">
+        <h1 className='form-title'>Subject Master</h1>
+        <form className='form-main'>
+          <div className="form-group">
+            <label htmlFor="year">Year</label>
+            <select id="year" value={year} onChange={(e) => setYear(e.target.value)}>
+              {years.map((option, index) => (
+                <option key={index} value={option}>{option}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="pattern">Pattern</label>
+            <select id="pattern" value={pattern} onChange={(e) => setPattern(e.target.value)}>
+              {patterns.map((option, index) => (
+                <option key={index} value={option}>{option}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="semester">Semester</label>
+            <select id="semester" value={semester} onChange={(e) => setSemester(e.target.value)}>
+              {semesters.map((option, index) => (
+                <option key={index} value={option}>{option}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="subject">Subject</label>
+            <select id="subject" value={subject} onChange={(e) => setSubject(e.target.value)}>
+              {subjects.map((option, index) => (
+                <option key={index} value={option}>{option}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="branch">Branch</label>
+            <select id="branch" value={branch} onChange={(e) => setBranch(e.target.value)}>
+              {branches.map((option, index) => (
+                <option key={index} value={option}>{option}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="courseCredit">No. of Course Credit:</label>
+            <input
+              type="number"
+              id="courseCredit"
+              value={courseCredit}
+              onChange={(e) => setCourseCredit(e.target.value)}
+              min="1"
+              max="10"
+            />
+          </div>
+
+          <div className="form-buttons">
+            <button type="button" className="btn-save" onClick={handleAddCredit}>Add credit</button>
+            <button type="button" className="btn-edit">Edit</button>
+            <button type="button" className="btn-refresh" id='btn-ref-sub-mas' onClick={handleRefreshBtn}>Refresh</button>
+            <button type="button" className="btn-exit">Delete</button>
+          </div>
+        </form>
+      </div>
+      </div>
+
+      <div className='sec-div'>
+      <div className="form-container form-add-sub">
+          <h1 className='form-title'>Add Subject</h1>
+          <form className='form-main form-as'>
+            <div className='sub-div'>
+              <div className='first-sub-div'>
+                <div className="form-group ">
+                  <label htmlFor="subjectName">Subject name</label>
                   <input
                     type="text"
-                    value={h1Input1}
-                    onChange={(e) => setH1Input1(e.target.value)}
-                    className="border border-gray-300 p-1 rounded"
+                    id="subjectName"
+                    placeholder='Enter Subject Name'
+                    value={subjectName}
+                    onChange={(e) => setSubjectName(e.target.value)}
                   />
                 </div>
-                <div className="flex items-center">
-                  <label className="mr-2">H2</label>
+                <div className="form-group">
+                  <label htmlFor="subjectCode">subject code</label>
                   <input
                     type="text"
-                    value={h2Input1}
-                    onChange={(e) => setH2Input1(e.target.value)}
-                    className="border border-gray-300 p-1 rounded"
-                  />
-                </div>
-              </div>
-
-              <div className="flex">
-                <div className="w-1/2 pr-2">
-                  <div className="border border-gray-300 p-4 rounded-lg mb-4">
-                    <div className="flex mb-4">
-                      <div className="flex-1 pr-2">
-                        <div className="flex items-center mb-2">
-                          <input
-                            type="checkbox"
-                            checked={eseChecked1}
-                            onChange={handleEseChange}
-                            className="mr-2"
-                          />
-                          <label>ESE</label>
-                        </div>
-                        <div className="flex items-center mb-2">
-                          <input
-                            type="checkbox"
-                            checked={prChecked1}
-                            onChange={handlePrChange}
-                            className="mr-2"
-                          />
-                          <label>PR</label>
-                        </div>
-                        <div className="flex items-center mb-2">
-                          <input
-                            type="checkbox"
-                            checked={orChecked1}
-                            onChange={handleOrChange}
-                            className="mr-2"
-                          />
-                          <label>OR</label>
-                        </div>
-                      </div>
-                      <div className="flex-1 pl-2">
-                        <label className="block mb-1">Out of Marks</label>
-                        <input
-                          type="text"
-                          value={eseOutOfMarks1}
-                          onChange={(e) => setEseOutOfMarks1(e.target.value)}
-                          className="w-full border border-gray-300 p-1 rounded"
-                        />
-                        <label className="block mb-1 mt-2">Passing Marks</label>
-                        <input
-                          type="text"
-                          value={esePassingMarks1}
-                          onChange={(e) => setEsePassingMarks1(e.target.value)}
-                          className="w-full border border-gray-300 p-1 rounded"
-                        />
-                        <label className="block mb-1 mt-2">Resolution</label>
-                        <input
-                          type="text"
-                          value={eseResolution1}
-                          onChange={(e) => setEseResolution1(e.target.value)}
-                          className="w-full border border-gray-300 p-1 rounded"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="border border-gray-300 p-4 rounded-lg">
-                    <div className="flex mb-4">
-                      <div className="flex-1 pr-2">
-                        <div className="flex items-center mb-2">
-                          <input
-                            type="checkbox"
-                            checked={iaChecked1}
-                            onChange={handleIaChange}
-                            className="mr-2"
-                          />
-                          <label>IA</label>
-                        </div>
-                        <div className="flex items-center mb-2">
-                          <input
-                            type="checkbox"
-                            checked={twChecked1}
-                            onChange={handleTwChange}
-                            className="mr-2"
-                          />
-                          <label>TW</label>
-                        </div>
-                      </div>
-                      <div className="flex-1 pl-2">
-                        <label className="block mb-1">Out of Marks</label>
-                        <input
-                          type="text"
-                          value={iaOutOfMarks1}
-                          onChange={(e) => setIaOutOfMarks1(e.target.value)}
-                          className="w-full border border-gray-300 p-1 rounded"
-                        />
-                        <label className="block mb-1 mt-2">Passing Marks</label>
-                        <input
-                          type="text"
-                          value={iaPassingMarks1}
-                          onChange={(e) => setIaPassingMarks1(e.target.value)}
-                          className="w-full border border-gray-300 p-1 rounded"
-                        />
-                        <label className="block mb-1 mt-2">Resolution</label>
-                        <input
-                          type="text"
-                          value={iaResolution1}
-                          onChange={(e) => setIaResolution1(e.target.value)}
-                          className="w-full border border-gray-300 p-1 rounded"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="w-1/2 pl-2">
-                  <label className="block mb-1">Overall Passing Criteria</label>
-                  <input
-                    type="text"
-                    value={overallPassingCriteria1}
-                    onChange={(e) => setOverallPassingCriteria1(e.target.value)}
-                    className="w-full border border-gray-300 p-1 rounded"
+                    id="subjectCode"
+                    placeholder='Enter Subject Code'
+                    value={subjectCode}
+                    onChange={(e) => setSubjectCode(e.target.value)}
                   />
                 </div>
               </div>
-
-              <div className="mt-4 flex justify-end">
-                <button
-                  onClick={handleSave}
-                  className="bg-green-500 text-white px-4 py-2 rounded mr-2"
-                >
-                  Save
-                </button>
-                <button
-                  onClick={() => setShowGrid(false)}
-                  className="bg-red-500 text-white px-4 py-2 rounded"
-                >
-                  Close
-                </button>
+              <div className="form-buttons">
+                <button type="button" className="btn-refresh" id='btn-ref-add-sub' onClick={handleRefreshBtn}>Refresh</button>
+                <button type="button" className="btn-save">Save</button>
               </div>
             </div>
-          </div>
-        </div>
-      )}
-    </>
+          </form>
+      </div>
+
+      <div className="form-container form-add-credit" style={addCreditDivVisible ? addCreditStyle : disableAddCreditStyle}>
+          <h1 className='form-title'>Add Credits</h1>
+          <form className='form-main'>
+
+            <div className='credit-row'>
+              <div>
+                <h3>ESE</h3>
+              </div>
+              <div className="form-group">
+                <label htmlFor="subjectName">out of marks</label>
+                <input
+                  type="number"
+                  id="subjectName"
+                  value={eseOom}
+                  onChange={(e) => setEseOom(e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="subjectCode">passing marks</label>
+                <input
+                  type="number"
+                  id="subjectCode"
+                  value={esePm}
+                  onChange={(e) => setEsePm(e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="subjectCode">resolution</label>
+                <input
+                  type="number"
+                  id="subjectCode"
+                  value={eseRes}
+                  onChange={(e) => setEseRes(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className='credit-row'>
+              <div>
+                <h3>IA</h3>
+              </div>
+              <div className="form-group">
+                <label htmlFor="subjectName">out of marks</label>
+                <input
+                  type="number"
+                  id="subjectName"
+                  value={iaOom}
+                  onChange={(e) => setIaOom(e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="subjectCode">passing marks</label>
+                <input
+                  type="number"
+                  id="subjectCode"
+                  value={iaPm}
+                  onChange={(e) => setIaPm(e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="subjectCode">resolution</label>
+                <input
+                  type="number"
+                  id="subjectCode"
+                  value={iaRes}
+                  onChange={(e) => setIaRes(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className='credit-row'>
+              <div>
+                <h3>TW</h3>
+              </div>
+              <div className="form-group">
+                <label htmlFor="subjectName">out of marks</label>
+                <input
+                  type="number"
+                  id="subjectName"
+                  value={twOom}
+                  onChange={(e) => setTwOom(e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="subjectCode">passing marks</label>
+                <input
+                  type="number"
+                  id="subjectCode"
+                  value={twPm}
+                  onChange={(e) => setTwPm(e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="subjectCode">resolution</label>
+                <input
+                  type="number"
+                  id="subjectCode"
+                  value={twRes}
+                  onChange={(e) => setTwRes(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className='credit-row'>
+              <div>
+                <h3>PR</h3>
+              </div>
+              <div className="form-group">
+                <label htmlFor="subjectName">out of marks</label>
+                <input
+                  type="number"
+                  id="subjectName"
+                  value={prOom}
+                  onChange={(e) => setPrOom(e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="subjectCode">passing marks</label>
+                <input
+                  type="number"
+                  id="subjectCode"
+                  value={prPm}
+                  onChange={(e) => setPrPm(e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="subjectCode">resolution</label>
+                <input
+                  type="number"
+                  id="subjectCode"
+                  value={prRes}
+                  onChange={(e) => setPrRes(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className='credit-row'>
+              <div>
+                <h3>OR</h3>
+              </div>
+              <div className="form-group">
+                <label htmlFor="subjectName">out of marks</label>
+                <input
+                  type="number"
+                  id="subjectName"
+                  value={orOom}
+                  onChange={(e) => setOrOom(e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="subjectCode">passing marks</label>
+                <input
+                  type="number"
+                  id="subjectCode"
+                  value={orPm}
+                  onChange={(e) => setOrPm(e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="subjectCode">resolution</label>
+                <input
+                  type="number"
+                  id="subjectCode"
+                  value={orRes}
+                  onChange={(e) => setOrRes(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className='credit-row last-row'>
+              <div className="form-group">
+                <label htmlFor="subjectName">h1 credits</label>
+                <input
+                  type="number"
+                  id="subjectName"
+                  value={h1Credit}
+                  onChange={(e) => setH1Credit(e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="subjectCode">h2 credits</label>
+                <input
+                  type="number"
+                  id="subjectCode"
+                  value={h2Credit}
+                  onChange={(e) => setH2Credit(e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="subjectCode">Overall passing criteria</label>
+                  <input
+                    type="number"
+                    id="subjectCode"
+                    value={opc}
+                    onChange={(e) => setOpc(e.target.value)}
+                  />
+              </div>
+            </div>
+
+            <div className="form-buttons">
+              <button type="button" className="btn-save">Save</button>
+              <button type="button" className="btn-refresh" id='btn-ref-add-credit' onClick={handleRefreshBtn}>Refresh</button>
+              <button type="button" className="btn-exit" onClick={handleExitBtn}>Exit</button>
+            </div>
+          </form>
+      </div>
+      </div>
+    </div>
   );
 };
 
