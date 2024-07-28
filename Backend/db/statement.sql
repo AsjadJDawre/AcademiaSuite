@@ -135,7 +135,20 @@
 
 
 
-ALTER TABLE subject_master ADD COLUMN overall_passing_mark2 INTEGER;
+
+INSERT INTO subject_master (year, pattern, semester, subject_name, branch, no_of_credit) VALUES
+('7/22/224', 'Pattern CBGS', 'Semester-3', 'PL ','Computer Engineering ', 6);
+
+
+
+
+
+
+-- ALTER TABLE subject_master ADD COLUMN overall_passing_mark2 INTEGER;
+
+
+-- PRAGMA table_info(subject_master);
+
 
 
 -- ALTER TABLE subject_master ADD COLUMN subject_code TEXT;
