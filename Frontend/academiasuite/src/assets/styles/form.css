@@ -5,10 +5,9 @@
 .form-container {
     background-color: white;
     padding: 2rem;
-    margin: 2rem auto;
-    width: 40%;
     font-family: 'Roboto', sans-serif;
     border-radius: 3px;
+    height: fit-content;
 }
 .form-title {
     display: flex;
@@ -46,7 +45,7 @@ label {
     color: #334155;
 }
 button {
-    width: 6rem;
+    width: 7rem;
     padding: .5rem 1rem;
     border-radius: 3px;
     color: white;
