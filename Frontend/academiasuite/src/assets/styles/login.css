@@ -7,6 +7,7 @@
     background-size: cover; 
     background-repeat: no-repeat; 
     background-position: center; 
+    transition: filter 0.3s ease;
 }
 .login-div {
     /* background-color: black; */
@@ -21,19 +22,21 @@
 .input-field {
     font-family: 'Roboto', sans-serif;
     color: #333;
-    font-size: 0.9rem;
+    font-size: 0.9rem; 
 	margin: 0 auto;
     padding: 1rem 2rem;
     border-radius: 0.2rem;
     background-color: rgb(255, 255, 255);
-    border: none;
+    border: white;
     display: block;
     border-bottom: 0.3rem solid transparent;
     transition: all 0.3s;
+    cursor: pointer;
     background-color: #E6E6E6;
 }
 .login-div h3 {
     color: #433E5D;
+    font-weight:bolder ;
 }
 .btn-login {
     font-size: 0.9rem;
@@ -74,3 +77,20 @@ form {
     font-size: .8rem;
     color: red;
 }
+input:hover {
+    border: 2px solid #2B5ED6;
+}
+.blur {
+    filter: blur(5px)
+}
+ 
+.loading {
+    position: absolute;
+    display: inline;
+    z-index: 1;
+}
+.not-loading {
+    position: absolute;
+    display: none;
+}
+ 

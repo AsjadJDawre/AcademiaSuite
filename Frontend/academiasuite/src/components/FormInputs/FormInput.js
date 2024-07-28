@@ -4,7 +4,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import AddBoxTwoToneIcon from '@mui/icons-material/AddBoxTwoTone';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 
-const FormInput = ({handleData,setShowGrid}) => {
+const FormInput = ({handleData,setShowGrid,handleEdit,setEditPopUp}) => {
   const [data, setData] = useState([]);
   const [showCard, setShowCard] = useState(false);
   const [subject, setSubject] = useState({ subject: '', subjectCode: '' });
@@ -54,7 +54,30 @@ const handleKeyPress=(e)=>{
 
 }
 
+const handleEdit1=()=>{
+  if (!year || !branch || !semester || !subjectName || !pattern || !course_credit) {
+    toast.error('Please fill in all required fields!', {
+      position: 'top-right',
+      autoClose: 2500,
+      theme: 'colored',
+      newestOnTop: true,
+    });
+    return; 
+  }
+  
+    const data={
+      year,
+      branch,
+      semester,
+      subjectName,
+      pattern,
+      course_credit
+      
+    }
+     handleEdit(data)
+     setEditPopUp(true)
 
+}
 
 
   const handleSave = async () => {
@@ -167,7 +190,7 @@ const handleKeyPress=(e)=>{
           {/* <button type="button" className="btn-save bg-blue-500 text-white p-2 rounded" onClick={handleSave}>Save</button> */}
           <button type="button" className="btn-edit bg-yellow-500 text-white p-2 rounded"  onClick={(e)=>handleKeyPress(e)}>Add Credits </button>
           <button type="button" className="btn-refresh bg-green-500 text-white p-2 rounded" onClick={handleRefresh}>Refresh</button>
-          <button type="button" className="btn-exit bg-red-500 text-white p-2 rounded">Exit</button>
+          <button type="button" className="btn-exit bg-red-500 text-white p-2 rounded" onClick={(e)=>handleEdit1(e)}>Edit</button>
         </div>
       </form>
 

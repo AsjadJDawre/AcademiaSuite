@@ -64,36 +64,130 @@ ipcMain.handle('save-subject', async (event, subjectData) => {
 
     db.get('SELECT * FROM subject_master WHERE subject_name = ?', [subjectData.subjectName], (err, row) => {
       if (err) {
-        console.log("Database error");
+        console.log("Database error:", err);
         reject("DE"); // Database Error
       } else if (!row) {
         console.log("Subject Not found! Try adding a subject first");
         resolve("SNF"); // Subject Not Found
       } else {
-        const sql = `UPDATE subject_master
-        SET ese_oom = ?,
-            ese_pm = ?,
-            ese_res = ?,
-            ia_oom = ?,
-            ia_pm = ?,
-            ia_res = ?
-        WHERE subject_name = ?;`;
+        console.log('Database row:', row); // Log the database row to check column names
 
-db.run(sql, [subjectData.eseOutOfMarks1, subjectData.esePassingMarks1, subjectData.eseResolution1, subjectData.iaOutOfMarks1,subjectData.iaPassingMarks1,subjectData.iaResolution1,subjectData.subjectName], function(err) {
-if (err) {
-   reject("NoUpdate")
-}
-resolve('Success')
-console.log("succesfully Updated");}
-);
+        // Set default values for all fields
+        const defaults = {
+          h1_credit: 0,
+          h2_credit: 0,
+          ese_oom: 0,
+          ese_pm: 0,
+          ese_res: 0,
+          ia_oom: 0,
+          ia_pm: 0,
+          ia_res: 0,
+          or_oom: 0,
+          or_pm: 0,
+          or_res: 0,
+          pr_oom: 0,
+          pr_pm: 0,
+          pr_res: 0,
+          tw_oom: 0,
+          tw_pm: 0,
+          tw_res: 0,
+          overall_passing_mark: 0
+        };
+
+        // Update the defaults with incoming data only if the respective checkbox is checked
+        const updatedData = {
+          h1_credit: parseInt(subjectData.h1Input1 || defaults.h1_credit, 10),
+          h2_credit: parseInt(subjectData.h2Input1 || defaults.h2_credit, 10),
+          ese_oom: subjectData.eseChecked1 ? parseInt(subjectData.eseOutOfMarks1 || defaults.ese_oom, 10) : defaults.ese_oom,
+          ese_pm: subjectData.eseChecked1 ? parseInt(subjectData.esePassingMarks1 || defaults.ese_pm, 10) : defaults.ese_pm,
+          ese_res: subjectData.eseChecked1 ? parseInt(subjectData.eseResolution1 || defaults.ese_res, 10) : defaults.ese_res,
+          ia_oom: subjectData.iaChecked1 ? parseInt(subjectData.iaOutOfMarks1 || defaults.ia_oom, 10) : defaults.ia_oom,
+          ia_pm: subjectData.iaChecked1 ? parseInt(subjectData.iaPassingMarks1 || defaults.ia_pm, 10) : defaults.ia_pm,
+          ia_res: subjectData.iaChecked1 ? parseInt(subjectData.iaResolution1 || defaults.ia_res, 10) : defaults.ia_res,
+          or_oom: subjectData.orChecked1 ? parseInt(subjectData.orOutOfMarks1 || defaults.or_oom, 10) : defaults.or_oom,
+          or_pm: subjectData.orChecked1 ? parseInt(subjectData.orPassingMarks1 || defaults.or_pm, 10) : defaults.or_pm,
+          or_res: subjectData.orChecked1 ? parseInt(subjectData.orResolution1 || defaults.or_res, 10) : defaults.or_res,
+          pr_oom: subjectData.prChecked1 ? parseInt(subjectData.prOutOfMarks1 || defaults.pr_oom, 10) : defaults.pr_oom,
+          pr_pm: subjectData.prChecked1 ? parseInt(subjectData.prPassingMarks1 || defaults.pr_pm, 10) : defaults.pr_pm,
+          pr_res: subjectData.prChecked1 ? parseInt(subjectData.prResolution1 || defaults.pr_res, 10) : defaults.pr_res,
+          tw_oom: subjectData.twChecked1 ? parseInt(subjectData.twOutOfMarks1 || defaults.tw_oom, 10) : defaults.tw_oom,
+          tw_pm: subjectData.twChecked1 ? parseInt(subjectData.twPassingMarks1 || defaults.tw_pm, 10) : defaults.tw_pm,
+          tw_res: subjectData.twChecked1 ? parseInt(subjectData.twResolution1 || defaults.tw_res, 10) : defaults.tw_res,
+          overall_passing_mark: parseInt(subjectData.overallPassingCriteria1 || defaults.overall_passing_mark, 10)
+        };
+
+        // Construct the SQL update statement
+        const sql = `
+          UPDATE subject_master SET 
+            h1_credit = ?, 
+            h2_credit = ?, 
+            ese_oom = ?, 
+            ese_pm = ?, 
+            ese_res = ?, 
+            ia_oom = ?, 
+            ia_pm = ?, 
+            ia_res = ?, 
+            or_oom = ?, 
+            or_pm = ?, 
+            or_res = ?, 
+            pr_oom = ?, 
+            pr_pm = ?, 
+            pr_res = ?, 
+            tw_oom = ?, 
+            tw_pm = ?, 
+            tw_res = ?, 
+            overall_passing_mark = ?
+          WHERE subject_name = ?;
+        `;
         
+        const params = [
+          updatedData.h1_credit,
+          updatedData.h2_credit,
+          updatedData.ese_oom,
+          updatedData.ese_pm,
+          updatedData.ese_res,
+          updatedData.ia_oom,
+          updatedData.ia_pm,
+          updatedData.ia_res,
+          updatedData.or_oom,
+          updatedData.or_pm,
+          updatedData.or_res,
+          updatedData.pr_oom,
+          updatedData.pr_pm,
+          updatedData.pr_res,
+          updatedData.tw_oom,
+          updatedData.tw_pm,
+          updatedData.tw_res,
+          updatedData.overall_passing_mark,
+          subjectData.subjectName
+        ];
 
-       
-      
+        // Log the final SQL query and parameters
+        console.log('Final SQL:', sql);
+        console.log('Parameters:', params);
+
+        db.run(sql, params, function (err) {
+          if (err) {
+            console.log("Update error:", err); // Log update error
+            reject("NoUpdate");
+          } else {
+            console.log("Successfully Updated");
+            resolve('Success');
+          }
+        });
       }
     });
   });
 });
+
+
+
+
+
+
+
+
+
 
 
 ipcMain.handle('login-user', async (event, { username, password }) => {

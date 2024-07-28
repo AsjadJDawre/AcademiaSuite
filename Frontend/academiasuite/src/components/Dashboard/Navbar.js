@@ -7,14 +7,21 @@ const Navbar = (props) => {
   const [activeMenu, setActiveMenu] = useState("home");
   const [activeSubMenu, setActiveSubMenu] = useState("");
   const [activeSubSubMenu, setActiveSubSubMenu] = useState("");
+  const [forwordArrow, setForwordArrow] = useState("►");
+  const [downArrow, setDownArrow] = useState("▼");
 
   const dropdownActive = {
     display: "flex",
     flexDirection: "column",
     alignItem: "center",
+    height: 'auto',
+    opacity: '1'
   };
   const dropdownDisable = {
-    display: "none",
+    maxHeight: '0',
+    opacity: '0',
+    overflow: 'hidden',
+    transition: 'max-height 0.9s ease, opacity 0.9s ease',
   };
   const activeMenustyle = {
     backgroundColor: "#E9F3FD",
@@ -22,7 +29,7 @@ const Navbar = (props) => {
   };
 
   const disableMenustyle = {
-    backgroundColor: "white",
+    backgroundColor: "transparent",
     color: "#8B8A8E",
   };
   const activeSubSubMenustyle = {
@@ -34,9 +41,10 @@ const Navbar = (props) => {
 
   return (
     <div className="nav-container">
+      {/* // home nav element */}
       <div
-        className="nav-item"
         style={activeMenu === "home" ? activeMenustyle : disableMenustyle}
+        className="nav-item hover:text-yellow-200"
         onClick={() => {
           setActiveMenu("home");
           setActiveSubMenu("");
@@ -49,18 +57,19 @@ const Navbar = (props) => {
         </p>
       </div>
 
+      {/* // subject nav element */}
       <div
-        style={activeMenu === "subject" ? activeMenustyle : disableMenustyle}
         className="nav-item"
+        style={activeMenu === "subject" ? activeMenustyle : disableMenustyle}
         onClick={() => {
           setActiveSubMenu("subject");
           setActiveMenu("subject");
         }}
       >
         <p>
-          <SubjectIcon /> Subject{" "}
+          <SubjectIcon /> Subject
         </p>
-        <p></p>
+        <p>{activeMenu === "subject" ? downArrow : forwordArrow}</p>
       </div>
       <div
         className="dropdown-subject dropdown"
@@ -72,7 +81,7 @@ const Navbar = (props) => {
               ? activeSubSubMenustyle
               : disableSubsubMenustyle
           }
-          className="submenu-item1"
+          className="submenu-item1 submenu-item"
           onClick={ () => {
             setActiveSubSubMenu("subject_master");
             props.setActiveMainComponent("subject_master");
@@ -86,7 +95,7 @@ const Navbar = (props) => {
               ? activeSubSubMenustyle
               : disableSubsubMenustyle
           }
-          className="submenu-item2"
+          className="submenu-item2 submenu-item"
           onClick={() => {
             setActiveSubSubMenu("subject_group")
           }}
@@ -95,6 +104,7 @@ const Navbar = (props) => {
         </p>
       </div>
 
+      {/* // Exam nav element */}
       <div
         style={activeMenu === "exam" ? activeMenustyle : disableMenustyle}
         className="nav-item"
@@ -104,9 +114,9 @@ const Navbar = (props) => {
         }}
       >
         <p>
-          <SubjectIcon /> Exam{" "}
+          <SubjectIcon /> Exam
         </p>
-        <p></p>
+        <p>{activeMenu === "exam" ? downArrow : forwordArrow}</p>
       </div>
       <div
         className="dropdown-subject dropdown"
