@@ -97,74 +97,74 @@ const SubjectMaster = () => {
   return (
     <div className="subject-master-container">
       <div className='first-div'>
-      <div className="form-container form-sub-mas">
-        <h1 className='form-title'>Subject Master</h1>
-        <form className='form-main'>
-          <div className="form-group">
-            <label htmlFor="year">Year</label>
-            <select id="year" value={year} onChange={(e) => setYear(e.target.value)}>
-              {years.map((option, index) => (
-                <option key={index} value={option}>{option}</option>
-              ))}
-            </select>
-          </div>
+        <div className="form-container form-sub-mas">
+          <h1 className='form-title'>Subject Master</h1>
+          <form className='form-main'>
+            <div className="form-group">
+              <label htmlFor="year">Year</label>
+              <select id="year" value={year} onChange={(e) => setYear(e.target.value)}>
+                {years.map((option, index) => (
+                  <option key={index} value={option}>{option}</option>
+                ))}
+              </select>
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="pattern">Pattern</label>
-            <select id="pattern" value={pattern} onChange={(e) => setPattern(e.target.value)}>
-              {patterns.map((option, index) => (
-                <option key={index} value={option}>{option}</option>
-              ))}
-            </select>
-          </div>
+            <div className="form-group">
+              <label htmlFor="pattern">Pattern</label>
+              <select id="pattern" value={pattern} onChange={(e) => setPattern(e.target.value)}>
+                {patterns.map((option, index) => (
+                  <option key={index} value={option}>{option}</option>
+                ))}
+              </select>
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="semester">Semester</label>
-            <select id="semester" value={semester} onChange={(e) => setSemester(e.target.value)}>
-              {semesters.map((option, index) => (
-                <option key={index} value={option}>{option}</option>
-              ))}
-            </select>
-          </div>
+            <div className="form-group">
+              <label htmlFor="semester">Semester</label>
+              <select id="semester" value={semester} onChange={(e) => setSemester(e.target.value)}>
+                {semesters.map((option, index) => (
+                  <option key={index} value={option}>{option}</option>
+                ))}
+              </select>
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="subject">Subject</label>
-            <select id="subject" value={subject} onChange={(e) => setSubject(e.target.value)}>
-              {subjects.map((option, index) => (
-                <option key={index} value={option}>{option}</option>
-              ))}
-            </select>
-          </div>
+            <div className="form-group">
+              <label htmlFor="subject">Subject</label>
+              <select id="subject" value={subject} onChange={(e) => setSubject(e.target.value)}>
+                {subjects.map((option, index) => (
+                  <option key={index} value={option}>{option}</option>
+                ))}
+              </select>
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="branch">Branch</label>
-            <select id="branch" value={branch} onChange={(e) => setBranch(e.target.value)}>
-              {branches.map((option, index) => (
-                <option key={index} value={option}>{option}</option>
-              ))}
-            </select>
-          </div>
+            <div className="form-group">
+              <label htmlFor="branch">Branch</label>
+              <select id="branch" value={branch} onChange={(e) => setBranch(e.target.value)}>
+                {branches.map((option, index) => (
+                  <option key={index} value={option}>{option}</option>
+                ))}
+              </select>
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="courseCredit">No. of Course Credit:</label>
-            <input
-              type="number"
-              id="courseCredit"
-              value={courseCredit}
-              onChange={(e) => setCourseCredit(e.target.value)}
-              min="1"
-              max="10"
-            />
-          </div>
+            <div className="form-group">
+              <label htmlFor="courseCredit">No. of Course Credit:</label>
+              <input
+                type="number"
+                id="courseCredit"
+                value={courseCredit}
+                onChange={(e) => setCourseCredit(e.target.value)}
+                min="1"
+                max="10"
+              />
+            </div>
 
-          <div className="form-buttons">
-            <button type="button" className="btn-save" onClick={handleAddCredit}>Add credit</button>
-            <button type="button" className="btn-edit">Edit</button>
-            <button type="button" className="btn-refresh" id='btn-ref-sub-mas' onClick={handleRefreshBtn}>Refresh</button>
-            <button type="button" className="btn-exit">Delete</button>
-          </div>
-        </form>
-      </div>
+            <div className="form-buttons">
+              <button type="button" className="btn-save" onClick={handleAddCredit}>Add credit</button>
+              <button type="button" className="btn-edit">Edit</button>
+              <button type="button" className="btn-refresh" id='btn-ref-sub-mas' onClick={handleRefreshBtn}>Refresh</button>
+              <button type="button" className="btn-exit">Delete</button>
+            </div>
+          </form>
+        </div>
       </div>
 
       <div className='sec-div'>
