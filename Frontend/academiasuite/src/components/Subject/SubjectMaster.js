@@ -213,7 +213,7 @@ const SubjectMaster = () => {
               <div className="form-group">
                 <label htmlFor="subjectName">out of marks</label>
                 <input
-                  type="text"
+                  type="number"
                   id="subjectName"
                   value={eseOom}
                   onChange={(e) => setEseOom(e.target.value)}
@@ -222,7 +222,7 @@ const SubjectMaster = () => {
               <div className="form-group">
                 <label htmlFor="subjectCode">passing marks</label>
                 <input
-                  type="text"
+                  type="number"
                   id="subjectCode"
                   value={esePm}
                   onChange={(e) => setEsePm(e.target.value)}
@@ -231,7 +231,7 @@ const SubjectMaster = () => {
               <div className="form-group">
                 <label htmlFor="subjectCode">resolution</label>
                 <input
-                  type="text"
+                  type="number"
                   id="subjectCode"
                   value={eseRes}
                   onChange={(e) => setEseRes(e.target.value)}
@@ -245,7 +245,7 @@ const SubjectMaster = () => {
               <div className="form-group">
                 <label htmlFor="subjectName">out of marks</label>
                 <input
-                  type="text"
+                  type="number"
                   id="subjectName"
                   value={iaOom}
                   onChange={(e) => setIaOom(e.target.value)}
@@ -254,7 +254,7 @@ const SubjectMaster = () => {
               <div className="form-group">
                 <label htmlFor="subjectCode">passing marks</label>
                 <input
-                  type="text"
+                  type="number"
                   id="subjectCode"
                   value={iaPm}
                   onChange={(e) => setIaPm(e.target.value)}
@@ -263,7 +263,7 @@ const SubjectMaster = () => {
               <div className="form-group">
                 <label htmlFor="subjectCode">resolution</label>
                 <input
-                  type="text"
+                  type="number"
                   id="subjectCode"
                   value={iaRes}
                   onChange={(e) => setIaRes(e.target.value)}
@@ -277,7 +277,7 @@ const SubjectMaster = () => {
               <div className="form-group">
                 <label htmlFor="subjectName">out of marks</label>
                 <input
-                  type="text"
+                  type="number"
                   id="subjectName"
                   value={twOom}
                   onChange={(e) => setTwOom(e.target.value)}
@@ -286,7 +286,7 @@ const SubjectMaster = () => {
               <div className="form-group">
                 <label htmlFor="subjectCode">passing marks</label>
                 <input
-                  type="text"
+                  type="number"
                   id="subjectCode"
                   value={twPm}
                   onChange={(e) => setTwPm(e.target.value)}
@@ -295,7 +295,7 @@ const SubjectMaster = () => {
               <div className="form-group">
                 <label htmlFor="subjectCode">resolution</label>
                 <input
-                  type="text"
+                  type="number"
                   id="subjectCode"
                   value={twRes}
                   onChange={(e) => setTwRes(e.target.value)}
@@ -309,7 +309,7 @@ const SubjectMaster = () => {
               <div className="form-group">
                 <label htmlFor="subjectName">out of marks</label>
                 <input
-                  type="text"
+                  type="number"
                   id="subjectName"
                   value={prOom}
                   onChange={(e) => setPrOom(e.target.value)}
@@ -318,7 +318,7 @@ const SubjectMaster = () => {
               <div className="form-group">
                 <label htmlFor="subjectCode">passing marks</label>
                 <input
-                  type="text"
+                  type="number"
                   id="subjectCode"
                   value={prPm}
                   onChange={(e) => setPrPm(e.target.value)}
@@ -327,7 +327,7 @@ const SubjectMaster = () => {
               <div className="form-group">
                 <label htmlFor="subjectCode">resolution</label>
                 <input
-                  type="text"
+                  type="number"
                   id="subjectCode"
                   value={prRes}
                   onChange={(e) => setPrRes(e.target.value)}
@@ -341,7 +341,7 @@ const SubjectMaster = () => {
               <div className="form-group">
                 <label htmlFor="subjectName">out of marks</label>
                 <input
-                  type="text"
+                  type="number"
                   id="subjectName"
                   value={orOom}
                   onChange={(e) => setOrOom(e.target.value)}
@@ -350,7 +350,7 @@ const SubjectMaster = () => {
               <div className="form-group">
                 <label htmlFor="subjectCode">passing marks</label>
                 <input
-                  type="text"
+                  type="number"
                   id="subjectCode"
                   value={orPm}
                   onChange={(e) => setOrPm(e.target.value)}
@@ -359,7 +359,7 @@ const SubjectMaster = () => {
               <div className="form-group">
                 <label htmlFor="subjectCode">resolution</label>
                 <input
-                  type="text"
+                  type="number"
                   id="subjectCode"
                   value={orRes}
                   onChange={(e) => setOrRes(e.target.value)}
@@ -370,7 +370,7 @@ const SubjectMaster = () => {
               <div className="form-group">
                 <label htmlFor="subjectName">h1 credits</label>
                 <input
-                  type="text"
+                  type="number"
                   id="subjectName"
                   value={h1Credit}
                   onChange={(e) => setH1Credit(e.target.value)}
@@ -379,7 +379,7 @@ const SubjectMaster = () => {
               <div className="form-group">
                 <label htmlFor="subjectCode">h2 credits</label>
                 <input
-                  type="text"
+                  type="number"
                   id="subjectCode"
                   value={h2Credit}
                   onChange={(e) => setH2Credit(e.target.value)}
@@ -388,7 +388,7 @@ const SubjectMaster = () => {
               <div className="form-group">
                 <label htmlFor="subjectCode">Overall passing criteria</label>
                   <input
-                    type="text"
+                    type="number"
                     id="subjectCode"
                     value={opc}
                     onChange={(e) => setOpc(e.target.value)}
