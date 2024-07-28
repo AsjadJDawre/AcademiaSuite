@@ -17,7 +17,8 @@ function App() {
 
   return (
     <div className="App">
-      {renderComponent()}
+      {/* {renderComponent()} */}
+      <Dashboard />
     </div>
   );
 }
