@@ -466,28 +466,6 @@ const handleSubDelete=async ()=>{
               </select>
             </div>
 
-<<<<<<< HEAD
-            <div className="form-group">
-              <label htmlFor="courseCredit">No. of Course Credit:</label>
-              <input
-                type="number"
-                id="courseCredit"
-                value={courseCredit}
-                onChange={(e) => setCourseCredit(e.target.value)}
-                min="1"
-                max="10"
-              />
-            </div>
-
-            <div className="form-buttons">
-              <button type="button" className="btn-save" onClick={handleAddCredit}>Add credit</button>
-              <button type="button" className="btn-edit">Edit</button>
-              <button type="button" className="btn-refresh" id='btn-ref-sub-mas' onClick={handleRefreshBtn}>Refresh</button>
-              <button type="button" className="btn-exit">Delete</button>
-            </div>
-          </form>
-        </div>
-=======
           <div className="form-group">
             <label htmlFor="courseCredit">No. of Course Credit:</label>
             <input
@@ -509,7 +487,6 @@ const handleSubDelete=async ()=>{
           </div>
         </form>
       </div>
->>>>>>> main
       </div>
 
       <div className='sec-div'>
