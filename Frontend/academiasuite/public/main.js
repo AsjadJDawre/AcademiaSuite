@@ -14,7 +14,7 @@ function createWindow() {
     }
   });
 
-  win.loadURL('http://localhost:3000'); // or the path to your login page
+  win.loadURL('http://localhost:3000'); 
 }
 
 app.whenReady().then(() => {

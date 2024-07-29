@@ -1,6 +1,14 @@
 const { ipcMain } = require('electron');
 const bcrypt = require('bcrypt');
 const sqlite3 = require('sqlite3').verbose();
+const { v4: uuidv4 } = require('uuid');
+
+// Generate a UUID
+const id = uuidv4();
+console.log('Generated UUID:', id);
+
+
+
 
 let db = new sqlite3.Database('../../Backend/db/database.sqlite', (err) => {
   if (err) {
@@ -17,24 +25,27 @@ ipcMain.handle('fetch-data', async (event) => {
         console.error('Error fetching data:', err);
         reject(err);
       } else {
-        console.log('Fetched data:', rows);
+        console.log('Fetched data:', rows[3]);
         resolve(rows);
       }
     });
   });
 });
 
-ipcMain.handle('save-data', async (event, formData) => {
-  const { subject, subjectCode } = formData;
+ipcMain.handle('subject-save', async (event, data) => {
+  const { subjectName, subjectCode } = data;
+  const subject_id = id.replace(/-/g, '').substring(0, 5);
+  console.log('Truncated ID:', subject_id);
+
 
   return new Promise((resolve, reject) => {
-    const query = 'INSERT INTO subject_master(subject_name, subject_code) VALUES (?, ?)';
-    db.run(query, [subject, subjectCode], function (err) {
+    const query = 'INSERT INTO subject_master(subject_name, subject_code,subject_id) VALUES (?, ?,?)';
+    db.run(query, [subjectName, subjectCode,subject_id], function (err) {
       if (err) {
         console.log('Error: Cannot save data in DB ::', err);
         resolve({ success: false, error: err.message });
       } else {
-        console.log(`${subject} and ${subjectCode} inserted into table`);
+        console.log(`${subjectName} and ${subjectCode} inserted into table`);
         resolve({ success: true });
       }
     });
@@ -58,129 +69,64 @@ ipcMain.handle('delete-subject', async (event, subject_name) => {
     });
   });
 });
-ipcMain.handle('save-subject', async (event, subjectData) => {
+
+
+ipcMain.handle('save-credits', async (e, data) => {
   return new Promise((resolve, reject) => {
-    console.log('Received subjectData:', subjectData); // Log incoming data
+    const sql = `
+      UPDATE subject_master 
+      SET 
+        year = ?, pattern = ?, semester = ?,branch=?, subject_name = ?, 
+        course_credits = ?, h1_credit = ?, h2_credit = ?, ese_oom = ?, ese_pm = ?, ese_res = ?, 
+        ia_oom = ?, ia_pm = ?, ia_res = ?, pr_oom = ?, pr_pm = ?, pr_res = ?, 
+        tw_com = ?, tw_pm = ?, tw_res = ?, or_oom = ?, or_pm = ?, or_res = ?, opc = ?
+      WHERE subject_name = ? 
+    `;
 
-    db.get('SELECT * FROM subject_master WHERE subject_name = ?', [subjectData.subjectName], (err, row) => {
+    console.log("Data received in backend:", data);
+
+    const params = [
+      data.year,
+      data.pattern,
+      data.semester,
+      data.branch,
+      data.subject,
+      data.courseCredit,
+      data.h1Credit,
+      data.h2Credit,
+      data.eseOom,
+      data.esePm,
+      data.eseRes,
+      data.iaOom,
+      data.iaPm,
+      data.iaRes,
+      data.prOom,
+      data.prPm,
+      data.prRes,
+      data.twOom,
+      data.twPm,
+      data.twRes,
+      data.orOom,
+      data.orPm,
+      data.orRes,
+      data.opc,
+      data.subject,
+      
+    ];
+
+    console.log("Params array:", params);
+
+    db.run(sql, params, (err) => {
       if (err) {
-        console.log("Database error:", err);
-        reject("DE"); // Database Error
-      } else if (!row) {
-        console.log("Subject Not found! Try adding a subject first");
-        resolve("SNF"); // Subject Not Found
+        console.log("No Update: ", err);
+        reject(false);
       } else {
-        console.log('Database row:', row); // Log the database row to check column names
-
-        // Set default values for all fields
-        const defaults = {
-          h1_credit: 0,
-          h2_credit: 0,
-          ese_oom: 0,
-          ese_pm: 0,
-          ese_res: 0,
-          ia_oom: 0,
-          ia_pm: 0,
-          ia_res: 0,
-          or_oom: 0,
-          or_pm: 0,
-          or_res: 0,
-          pr_oom: 0,
-          pr_pm: 0,
-          pr_res: 0,
-          tw_oom: 0,
-          tw_pm: 0,
-          tw_res: 0,
-          overall_passing_mark: 0
-        };
-
-        // Update the defaults with incoming data only if the respective checkbox is checked
-        const updatedData = {
-          h1_credit: parseInt(subjectData.h1Input1 || defaults.h1_credit, 10),
-          h2_credit: parseInt(subjectData.h2Input1 || defaults.h2_credit, 10),
-          ese_oom: subjectData.eseChecked1 ? parseInt(subjectData.eseOutOfMarks1 || defaults.ese_oom, 10) : defaults.ese_oom,
-          ese_pm: subjectData.eseChecked1 ? parseInt(subjectData.esePassingMarks1 || defaults.ese_pm, 10) : defaults.ese_pm,
-          ese_res: subjectData.eseChecked1 ? parseInt(subjectData.eseResolution1 || defaults.ese_res, 10) : defaults.ese_res,
-          ia_oom: subjectData.iaChecked1 ? parseInt(subjectData.iaOutOfMarks1 || defaults.ia_oom, 10) : defaults.ia_oom,
-          ia_pm: subjectData.iaChecked1 ? parseInt(subjectData.iaPassingMarks1 || defaults.ia_pm, 10) : defaults.ia_pm,
-          ia_res: subjectData.iaChecked1 ? parseInt(subjectData.iaResolution1 || defaults.ia_res, 10) : defaults.ia_res,
-          or_oom: subjectData.orChecked1 ? parseInt(subjectData.orOutOfMarks1 || defaults.or_oom, 10) : defaults.or_oom,
-          or_pm: subjectData.orChecked1 ? parseInt(subjectData.orPassingMarks1 || defaults.or_pm, 10) : defaults.or_pm,
-          or_res: subjectData.orChecked1 ? parseInt(subjectData.orResolution1 || defaults.or_res, 10) : defaults.or_res,
-          pr_oom: subjectData.prChecked1 ? parseInt(subjectData.prOutOfMarks1 || defaults.pr_oom, 10) : defaults.pr_oom,
-          pr_pm: subjectData.prChecked1 ? parseInt(subjectData.prPassingMarks1 || defaults.pr_pm, 10) : defaults.pr_pm,
-          pr_res: subjectData.prChecked1 ? parseInt(subjectData.prResolution1 || defaults.pr_res, 10) : defaults.pr_res,
-          tw_oom: subjectData.twChecked1 ? parseInt(subjectData.twOutOfMarks1 || defaults.tw_oom, 10) : defaults.tw_oom,
-          tw_pm: subjectData.twChecked1 ? parseInt(subjectData.twPassingMarks1 || defaults.tw_pm, 10) : defaults.tw_pm,
-          tw_res: subjectData.twChecked1 ? parseInt(subjectData.twResolution1 || defaults.tw_res, 10) : defaults.tw_res,
-          overall_passing_mark: parseInt(subjectData.overallPassingCriteria1 || defaults.overall_passing_mark, 10)
-        };
-
-        // Construct the SQL update statement
-        const sql = `
-          UPDATE subject_master SET 
-            h1_credit = ?, 
-            h2_credit = ?, 
-            ese_oom = ?, 
-            ese_pm = ?, 
-            ese_res = ?, 
-            ia_oom = ?, 
-            ia_pm = ?, 
-            ia_res = ?, 
-            or_oom = ?, 
-            or_pm = ?, 
-            or_res = ?, 
-            pr_oom = ?, 
-            pr_pm = ?, 
-            pr_res = ?, 
-            tw_oom = ?, 
-            tw_pm = ?, 
-            tw_res = ?, 
-            overall_passing_mark = ?
-          WHERE subject_name = ?;
-        `;
-        
-        const params = [
-          updatedData.h1_credit,
-          updatedData.h2_credit,
-          updatedData.ese_oom,
-          updatedData.ese_pm,
-          updatedData.ese_res,
-          updatedData.ia_oom,
-          updatedData.ia_pm,
-          updatedData.ia_res,
-          updatedData.or_oom,
-          updatedData.or_pm,
-          updatedData.or_res,
-          updatedData.pr_oom,
-          updatedData.pr_pm,
-          updatedData.pr_res,
-          updatedData.tw_oom,
-          updatedData.tw_pm,
-          updatedData.tw_res,
-          updatedData.overall_passing_mark,
-          subjectData.subjectName
-        ];
-
-        // Log the final SQL query and parameters
-        console.log('Final SQL:', sql);
-        console.log('Parameters:', params);
-
-        db.run(sql, params, function (err) {
-          if (err) {
-            console.log("Update error:", err); // Log update error
-            reject("NoUpdate");
-          } else {
-            console.log("Successfully Updated");
-            resolve('Success');
-          }
-        });
+        console.log("Successfully Updated");
+        resolve(true);
       }
     });
   });
 });
-
-
 
 
 
