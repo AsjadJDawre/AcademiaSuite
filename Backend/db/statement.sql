@@ -51,6 +51,6 @@
 
 SELECT * FROM subject_master WHERE year = '01/June 2011-31/May/2012' AND pattern = 'CBGS' AND branch = 'COMPUTER ENGINEERING' AND semester = 'Semester 1';
 
-UPDATE subject_master SET subject_group = NULL WHERE subject_id = "564e3"
+UPDATE subject_master SET subject_group = NULL WHERE subject_id = "12345"
 
-UPDATE subject_master SET subject_id = "54242" WHERE subject_name = "third"
+UPDATE subject_master SET subject_id = "12342" WHERE subject_name = "Machanics"
