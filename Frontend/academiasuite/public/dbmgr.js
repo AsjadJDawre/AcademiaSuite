@@ -128,9 +128,115 @@ ipcMain.handle('save-credits', async (e, data) => {
   });
 });
 
+// group master fetch data
+ipcMain.handle('fetch-subject-name-id', async(event, data) => {
+  const { year, pattern, branch, semester } = data;
+  
+  return new Promise((resolve, reject) => {
+    const query = 'SELECT subject_name, subject_id FROM subject_master WHERE year = ? AND pattern = ? AND branch = ? AND semester = ?';
 
+    db.all(query,[year, pattern, branch, semester], (err, rows) => {
+      if (err) {
+        console.error('Error while subjectname and subjectcode fetching data:', err);
+        reject(err);
+      } else {
+        console.log('Fetched data:', rows);
+        resolve(rows);
+      }
+    });
+  });
+})
 
+ 
+// group master update subject group name
+ipcMain.handle('update-subject-group-name', async (e, data) => {
+  const { groupName, subjectIds } = data;
 
+  if (!Array.isArray(subjectIds) || subjectIds.length === 0) {
+    return Promise.reject('No subject IDs provided.');
+  }
+
+  return new Promise((resolve, reject) => {
+    let updatedCount = 0;
+    let totalToUpdate = subjectIds.length;
+    let completedCount = 0;
+    let hasError = false;
+
+    // Step 1: Check if the groupName is already present in any other row
+    const checkGroupNameSql = `SELECT COUNT(*) AS count FROM subject_master WHERE subject_group = ?`;
+
+    db.get(checkGroupNameSql, [groupName], (err, result) => {
+      if (err) {
+        hasError = true;
+        console.log("Error checking group name: ", err);
+        return reject(false);
+      }
+
+      if (result.count > 0) {
+        // If groupName is already present in other rows, resolve early
+        console.log("Group name already exists in other rows. No updates performed.");
+        return resolve("GNAE");
+      }
+
+      // Step 2: Check each subjectId and update if applicable
+      subjectIds.forEach(subjectId => {
+        const checkSql = `SELECT subject_group FROM subject_master WHERE subject_id = ?`;
+
+        db.get(checkSql, [subjectId], (err, row) => {
+          if (err) {
+            hasError = true;
+            console.log(`Error checking subject group for ID ${subjectId}: `, err);
+          } else if (row) {
+            if (row.subject_group === null || row.subject_group === groupName) {
+              // Proceed with the update if the value is NULL or already matches the groupName
+              const updateSql = `UPDATE subject_master SET subject_group = ? WHERE subject_id = ?`;
+
+              db.run(updateSql, [groupName, subjectId], (err) => {
+                if (err) {
+                  hasError = true;
+                  console.log(`No Update for ID ${subjectId}: `, err);
+                } else {
+                  updatedCount++;
+                }
+
+                // Check if all operations are complete
+                completedCount++;
+                if (completedCount === totalToUpdate) {
+                  if (hasError) {
+                    reject(false);
+                  } else {
+                    console.log(`Successfully Updated ${updatedCount} rows.`);
+                    resolve(true);
+                  }
+                }
+              });
+            } else {
+              // If subject_group is not NULL and does not match groupName, do not update
+              completedCount++;
+              if (completedCount === totalToUpdate) {
+                if (hasError) {
+                  reject(false);
+                } else {
+                  resolve("ISNNMG");
+                }
+              }
+            }
+          } else {
+            // No row found for the given subjectId
+            completedCount++;
+            if (completedCount === totalToUpdate) {
+              if (hasError) {
+                reject(false);
+              } else {
+                resolve(true);
+              }
+            }
+          }
+        });
+      });
+    });
+  });
+});
 
 
 

@@ -48,3 +48,9 @@
 -- INSERT INTO user (username, password) VALUES ("admin", "12345")
 
 -- UPDATE user SET password = "$2b$10$N2gD2H1MdUbP53AIOm8mYu1zm.fuUg0V5ca5q0OjhthbYHJY.4hb2" WHERE id = 1;
+
+SELECT * FROM subject_master WHERE year = '01/June 2011-31/May/2012' AND pattern = 'CBGS' AND branch = 'COMPUTER ENGINEERING' AND semester = 'Semester 1';
+
+UPDATE subject_master SET subject_group = NULL WHERE subject_id = "564e3"
+
+UPDATE subject_master SET subject_id = "54242" WHERE subject_name = "third"
