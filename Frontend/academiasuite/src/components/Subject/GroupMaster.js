@@ -20,6 +20,7 @@ const GroupMaster = () => {
   const [editSubjects, setEditSubjects] = useState([]);
   const [editable, setEditable] = useState(false);
   const [editSubjectAllIds, setEditSubjectsAllIds] = useState([]);
+  
 
   const [groupAlreadyDefined, setGroupAlreadyDefine] = useState(false);
 
@@ -31,7 +32,12 @@ const GroupMaster = () => {
       setGroupAlreadyDefine(false);
     }
   }, [subject]);
-
+ 
+  useEffect(() => {
+    if(!isChecked) {
+      handleRefreshBtn()
+    }
+  }, [isChecked])
 
   const years = [
     "Select year",
@@ -83,6 +89,9 @@ const GroupMaster = () => {
       setSubject(response);
       setEditable(false)
       setEditSubjectsAllIds([])
+      if (isChecked) {
+        fetchEditData()
+      }
     } else {
       setGroupName("")
       setSubject(response);
@@ -158,10 +167,6 @@ const GroupMaster = () => {
       allSubjectIds: editSubjectAllIds
     }
    
-    console.log(data.subjectIds);
-    console.log(data.allSubjectIds);
-
-
     if (editSelectedIds.length === 0) {
       toast.error('Select at list one subject!',{
         position:'top-right',
@@ -195,6 +200,106 @@ const GroupMaster = () => {
         pauseOnHover:false
       })
     }
+ 
+  }
+
+  const editPreYearGroupName = async () => {
+    if (toYear === fromYear) {
+      toast.error('Toyear and FromYear is equal',{
+        position:'top-right',
+        autoClose: 2500,
+        theme: 'colored',
+        newestOnTop: true,
+        pauseOnHover:false
+      })
+      return
+    }
+    const data = {
+      groupName: groupName,
+      selectedIds: editSelectedIds,
+      toYear: toYear,
+      fromYear: fromYear
+    }
+  
+    console.log("groupName " + data.groupName);
+    console.log("editSelectedIds " + data.editSelectedIds);
+    console.log("toYear " + data.toYear);
+    console.log("fromYear " + data.fromYear);
+    
+    
+
+    if (editSelectedIds.length === 0) {
+      toast.error('Select at list one subject!',{
+        position:'top-right',
+        autoClose: 2500,
+        theme: 'colored',
+        newestOnTop: true,
+        pauseOnHover:false
+      })
+      return;
+    }
+   try {
+     const response = await window.api.invoke('add-pre-year-group', data);
+     if (response === true) {
+       toast.success('Group create Successfully',{
+        position:'top-right',
+        autoClose: 2500,
+        theme: 'colored',
+        newestOnTop: true,
+        pauseOnHover:false
+      })
+      setEditSelectedIds("");
+      handleRefreshBtn()
+     }
+   } catch(error) {
+    console.error("Error:", error.message);
+    // Display the error message to the user in a friendly way
+    if (error.message.includes("No data found for current year")) {
+      alert("No data found for current year");
+    } else if (error.message.includes("No data found for previous year")) {
+      alert("No data found for previous year");
+    } else {
+      alert("An error occurred while updating the subjects. Please try again.");
+    }
+   }
+   
+    // console.log("response " + response);
+
+    // if (response === true) {
+    //   toast.success('Group create Successfully',{
+    //     position:'top-right',
+    //     autoClose: 2500,
+    //     theme: 'colored',
+    //     newestOnTop: true,
+    //     pauseOnHover:false
+    //   })
+    //   setEditSelectedIds("");
+    //   handleRefreshBtn()
+    // } else if (response === "DFTOY"){
+    //   toast.error('data for previous year and subject is not present!',{
+    //     position:'top-right',
+    //     autoClose: 2500,
+    //     theme: 'colored',
+    //     newestOnTop: true,
+    //     pauseOnHover:false
+    //   })
+    // } else if (response === "DFTY"){
+    //   toast.error('data for this year and subjet is not presnet!',{
+    //     position:'top-right',
+    //     autoClose: 2500,
+    //     theme: 'colored',
+    //     newestOnTop: true,
+    //     pauseOnHover:false
+    //   })
+    // } else if (response === "NOU"){
+    //   toast.error('Something went wrong!',{
+    //     position:'top-right',
+    //     autoClose: 2500,
+    //     theme: 'colored',
+    //     newestOnTop: true,
+    //     pauseOnHover:false
+    //   })
+    // }
  
   }
 
@@ -290,6 +395,7 @@ const GroupMaster = () => {
                             id="year"
                             value={fromYear}
                             onChange={(e) => {
+                              setYear(e.target.value)
                               setFromYear(e.target.value)
                             } }
                         >
@@ -383,18 +489,14 @@ const GroupMaster = () => {
                         value={groupName}
                         onChange={(e) => setGroupName(e.target.value)}
                     >
-                        {semesters.map((option, index) => (
-                        <option key={index} value={option}>
-                            {option}
-                        </option>
-                        ))}
+                        <option>{groupName}</option>
                     </select>
                 </div>
             )}
             {!isChecked && (
                 <div className="form-group">
                     <label htmlFor="semester">Group name</label>
-                    <input type="text" placeholder="Enter group name" value={groupName} onChange={(e) => setGroupName(e.target.value)}/>
+                    <input type="text" disabled={editable} placeholder="Enter group name" value={groupName} onChange={(e) => setGroupName(e.target.value)}/>
                 </div>
             )}
 
@@ -442,10 +544,10 @@ const GroupMaster = () => {
             {editable && groupAlreadyDefined && (
             <tbody>
                 {editSubjects.map((subject, index) => {
-                  
                     return (
                         <tr key={index}>
                             <td><input type="checkbox" 
+                              disabled={isChecked}
                               checked={editSelectedIds.includes(subject.subject_id)}
                               onChange={() => handleCheckboxChangeforEdit(subject.subject_id)}/></td>
                             <td>{subject.subject_id}</td>
@@ -482,11 +584,20 @@ const GroupMaster = () => {
                     Edit
                 </button>
               )}
-              {editable &&  (
+              {editable && !isChecked && (
                 <button type="button" className="bg-orange-300 w-1/4" onClick={() => {
                   editGroupName()
                 }}>
                     Update
+                </button>
+              )}
+              {editable && isChecked && (
+                <button type="button" className="bg-orange-300 w-1/4" onClick={() => {
+                   editPreYearGroupName()
+                  // console.log(editSubjectNames)
+                  
+                }}>
+                    Create Group
                 </button>
               )}
             </div>

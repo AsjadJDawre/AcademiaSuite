@@ -2,6 +2,7 @@ const { ipcMain } = require('electron');
 const bcrypt = require('bcrypt');
 const sqlite3 = require('sqlite3').verbose();
 const { v4: uuidv4 } = require('uuid');
+const { promises } = require('original-fs');
 
 // Generate a UUID
 const id = uuidv4();
@@ -133,7 +134,7 @@ ipcMain.handle('fetch-subject-name-id', async(event, data) => {
   const { year, pattern, branch, semester } = data;
   
   return new Promise((resolve, reject) => {
-    const query = 'SELECT subject_name, subject_id, subject_group FROM subject_master WHERE year = ? AND pattern = ? AND branch = ? AND semester = ?';
+    const query = 'SELECT * FROM subject_master WHERE year = ? AND pattern = ? AND branch = ? AND semester = ?';
 
     db.all(query,[year, pattern, branch, semester], (err, rows) => {
       if (err) {
@@ -239,9 +240,10 @@ ipcMain.handle('update-subject-group-name', async (e, data) => {
 });
 
 
+// update group list group master
 ipcMain.handle('edit-subject-group-name', async (e, data) => {
   const { groupName, subjectIds, allSubjectIds } = data;
-
+  console.log(subjectIds);
   if (!Array.isArray(subjectIds) || subjectIds.length === 0) {
     return Promise.reject('No subject IDs provided.');
   }
@@ -273,94 +275,151 @@ ipcMain.handle('edit-subject-group-name', async (e, data) => {
   } catch (err) {
     return false;
   }
-
-  // return new Promise((resolve, reject) => {
-    
-  //     allSubjectIds.forEach(subjectId => {
-  //       const updateSql = `UPDATE subject_master SET subject_group = ? WHERE subject_id = ?`;
-  //       db.run(updateSql, [null, subjectId], (err) => {
-  //         if (err) {
-  //           console.log("No Update: ", err);
-  //           reject(false);
-  //         } else {
-  //           console.log("Successfully Updated to null");
-  //           resolve("set null");
-  //         }
-  //         })
-  //     })
-  //     subjectIds.forEach(subjectId => {
-  //       const updateSql = `UPDATE subject_master SET subject_group = ? WHERE subject_id = ?`;
-  //       db.run(updateSql, [groupName, subjectId], (err) => {
-  //         if (err) {
-  //           console.log("No Update: ", err);
-  //           reject(false);
-  //         } else {
-  //           console.log("Successfully Updated to group name");
-  //           resolve(true);
-  //         }
-  //         })
-  //     })
-
-      // Step 2: Check each subjectId and update if applicable
-      // subjectIds.forEach(subjectId => {
-      //   const checkSql = `SELECT subject_group FROM subject_master WHERE subject_id = ?`;
-
-      //   db.get(checkSql, [subjectId], (err, row) => {
-      //     if (err) {
-      //       hasError = true;
-      //       console.log(`Error checking subject group for ID ${subjectId}: `, err);
-      //     } else if (row) {
-      //       if (row.subject_group === null || row.subject_group === groupName) {
-      //         // Proceed with the update if the value is NULL or already matches the groupName
-      //         const updateSql = `UPDATE subject_master SET subject_group = ? WHERE subject_id = ?`;
-
-      //         db.run(updateSql, [groupName, subjectId], (err) => {
-      //           if (err) {
-      //             hasError = true;
-      //             console.log(`No Update for ID ${subjectId}: `, err);
-      //           } else {
-      //             updatedCount++;
-      //           }
-
-      //           // Check if all operations are complete
-      //           completedCount++;
-      //           if (completedCount === totalToUpdate) {
-      //             if (hasError) {
-      //               reject(false);
-      //             } else {
-      //               console.log(`Successfully Updated ${updatedCount} rows.`);
-      //               resolve(true);
-      //             }
-      //           }
-      //         });
-      //       } else {
-      //         // If subject_group is not NULL and does not match groupName, do not update
-      //         completedCount++;
-      //         if (completedCount === totalToUpdate) {
-      //           if (hasError) {
-      //             reject(false);
-      //           } else {
-      //             resolve("ISNNMG");
-      //           }
-      //         }
-      //       }
-      //     } else {
-      //       // No row found for the given subjectId
-      //       completedCount++;
-      //       if (completedCount === totalToUpdate) {
-      //         if (hasError) {
-      //           reject(false);
-      //         } else {
-      //           resolve(true);
-      //         }
-      //       }
-      //     }
-      //   });
-      // });
     
   });
 
+ // pre year data copy group master 
+// ipcMain.handle('add-pre-year-group', async(e, data) => {
+//   const { groupName, selectedIds, toYear , fromYear} = data;
+
+//   console.log(groupName, selectedIds);
+//   return new Promise(async (resolve, reject) => {
+//     const updatePreYearSubject = (group, selectedId, toYear, fromYear) => {
+//       const findFromYear = 'SELECT subject_name FROM subject_master WHERE subject_id = ? AND year = ?';
+//       db.get(findFromYear , [selectedId, fromYear], (err, row) => {
+//         console.log(row.subject_name);
+//         // const checkToYear = 'SELECT subject_name FROM subject_master WHERE subject_name = ? AND year = ?';
+//         if(!row) {
+//           console.log("data for previous year and subject is not present");
+//           reject(false)
+//           return("DFTOY")
+//         }  else {
+//           const checkToYear = 'SELECT subject_name FROM subject_master WHERE subject_name = ? AND year = ?';
+//           db.get(checkToYear, [row.subject_name, toYear], (err, row) => {
+//             if (!row) {
+//               console.log("data for this year and subjet is not presnet");
+//               reject(false)
+//               return("DFTY")
+//             } else {
+//               const findToYear = `UPDATE subject_master SET subject_group = ? WHERE year = ? AND subject_name = ?`;
+//               db.run(findToYear, [groupName , toYear, row.subject_name], (err) => {
+//                 if (err) {
+//                   console.log("No Update: ", err);
+//                   reject(false)
+//                   return("NOU");
+                  
+//                 } else {
+//                   console.log("Successfully Updated to", group);
+//                   resolve(true)
+//                 }
+//               })
+//             }
+//           })
+//         }
+//       })
+//     }
+//     try {
+//       await Promise.all(selectedIds.map(id => updatePreYearSubject(groupName, id, toYear, fromYear)));
+//       // return true;
+//     } catch (err) {
+//       return false;
+//     }
+//   })
+//   })
+   
  
+
+  // console.log(subjectNames);
+   // Function to update a subject's group
+  //  const updateSubjectGroup = (group, toYear, subjectName) => {
+  //   return new Promise((resolve, reject) => {
+  //     const updateSql = `UPDATE subject_master SET subject_group = ? WHERE year = ? AND subject_name = ?`;
+  //     db.run(updateSql, [group, toYear, subjectName], (err) => {
+  //       if (err) {
+  //         console.log("No Update: ", err);
+  //         reject(err);
+  //       } else {
+  //         console.log("Successfully Updated to", group);
+  //         resolve();
+  //       }
+  //     });
+  //   });
+  // };
+  // try { 
+  //    await Promise.all(subjectNames.map(subjectName => updateSubjectGroup(groupName, toYear, subjectName)));
+
+  //   return true;
+  // } catch (err) {
+  //   return false;
+  // }
+  ipcMain.handle('add-pre-year-group', async (e, data) => {
+    const { groupName, selectedIds, toYear, fromYear } = data;
+  
+    if (!groupName || !Array.isArray(selectedIds) || !selectedIds.length || !toYear || !fromYear) {
+      return Promise.reject(new Error('Invalid input data.'));
+    }
+  
+    console.log('Starting update for groupName:', groupName, 'with IDs:', selectedIds);
+  
+    return new Promise(async (resolve, reject) => {
+      try {
+        // Function to update a subject's group based on the IDs provided
+        const updatePreYearSubject = (selectedId) => {
+          return new Promise((resolve, reject) => {
+            // Check if the subject from the previous year exists
+            const findFromYearSql = 'SELECT subject_name FROM subject_master WHERE subject_id = ? AND year = ?';
+            db.get(findFromYearSql, [selectedId, fromYear], (err, fromYearRow) => {
+              if (err) {
+                console.error(`Error querying fromYear for ID ${selectedId}:`, err);
+                return reject(new Error("Database error querying fromYear."));
+              }
+              if (!fromYearRow) {
+                console.warn(`No data found for previous year with ID ${selectedId}`);
+                return reject(new Error("No data found for previous year."));
+              }
+  
+              const { subject_name: subjectName } = fromYearRow;
+  
+              // Check if the subject for the current year exists
+              const checkToYearSql = 'SELECT subject_name FROM subject_master WHERE subject_name = ? AND year = ?';
+              db.get(checkToYearSql, [subjectName, toYear], (err, toYearRow) => {
+                if (err) {
+                  console.error(`Error querying toYear for subject ${subjectName}:`, err);
+                  return reject(new Error("Database error querying toYear."));
+                }
+                if (!toYearRow) {
+                  console.warn(`No data found for current year with subject ${subjectName}`);
+                  return reject(new Error(`No data found for current year for subject: ${subjectName}`));
+                }
+  
+                // Update the subject group for the current year
+                const updateToYearSql = 'UPDATE subject_master SET subject_group = ? WHERE year = ? AND subject_name = ?';
+                db.run(updateToYearSql, [groupName, toYear, subjectName], (err) => {
+                  if (err) {
+                    console.error(`Error updating group for subject ${subjectName}:`, err);
+                    return reject(new Error("Database error updating subject group."));
+                  }
+  
+                  console.log(`Successfully updated subject ${subjectName} to group ${groupName}`);
+                  resolve(true);
+                });
+              });
+            });
+          });
+        };
+  
+        // Run updates for all selected IDs and wait for all promises to complete
+        await Promise.all(selectedIds.map(id => updatePreYearSubject(id)));
+        resolve(true); // Resolve the promise if all updates succeed
+      } catch (err) {
+        console.error("Error in 'add-pre-year-group' handler:", err.message);
+        reject(err); // Reject the promise with the caught error
+      }
+    });
+  });
+  
+
+   
 
 
 ipcMain.handle('login-user', async (event, { username, password }) => {
