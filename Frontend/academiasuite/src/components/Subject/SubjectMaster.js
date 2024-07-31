@@ -12,7 +12,6 @@ const SubjectMaster = () => {
   const [branch, setBranch] = useState('');
   const [courseCredit, setCourseCredit] = useState('0');
   const [data, setData] = useState({});
-  const [refresh,setRefreh] =useState(false)
 const[editBtn,seteditBtn]=useState(false)
   const [subjects, setSubjects] = useState(['Select subject']);
   const [newSubjectAdded, setNewSubjectAdded] = useState(false);
@@ -109,6 +108,7 @@ const  validataInput=()=>{
   
       // console.log('Subject entry found:', subjectEntry);
       setData(subjectEntry) 
+      
   
       // Check if the subject was found
       if (!subjectEntry) {
@@ -212,42 +212,74 @@ const  validataInput=()=>{
   const disableAddCreditStyle = {
     display: 'none',
   }
-
-  const handleSubjectSave = async ()=>{
-    const data ={
-      subjectName,
-      subjectCode
+  console.log(subjects);
+ const subject_exits = async (subjectName) => {
+    try {
+      const res = await window.api.invoke('check-subject', subjectName);
+      if (res === "SNF") {
+        return false; // Subject Not Found
+      } else if (res === "SF") {
+        return true; // Subject Found
+      }
+    } catch (error) {
+      console.error("Error occurred in handler for 'check-subject':", error);
+      return "DE"; // Database Error
     }
-    const response = await window.api.invoke('subject-save',data)
+  };
+  
+  
+  const handleSubjectSave = async () => {
+    if(subjectName==''|| subjectCode==''){
+      toast.error("Please fill all the required Fields",{
+        position:'top-center',
+        pauseOnHover:false,
+        theme:'colored',
+        newestOnTop: true,
+        autoClose:2000
 
-    if(response.success){
-      toast.success('Subject added Successfully !',{
-        position:'top-right',
-        autoClose: 2500,
-        theme: 'colored',
-        newestOnTop: true,
-        pauseOnHover:false
-      })
-      setSubjectName('');
-      setSubjectCode('');
-      setSubject('')
-      // setEseOom();
-      // setEsePm(0)
-      setNewSubjectAdded(!newSubjectAdded)
-      resetCreditFields()
-    }
-    else{
-      toast.error(`Can't add subject Error: ${response.error}`,{
-        position:'top-right',
-        autoClose: 2500,
-        theme: 'colored',
-        newestOnTop: true,
-        pauseOnHover:false
+        
       })
     }
-    
-    
-  }
+    else {
+    if (!(await subject_exits(subjectName))) {
+      const data = {
+        subjectName,
+        subjectCode
+      };
+      const response = await window.api.invoke('subject-save', data);
+
+      if (response.success) {
+        toast.success('Subject added Successfully!', {
+          position: 'top-right',
+          autoClose: 2500,
+          theme: 'colored',
+          newestOnTop: true,
+          pauseOnHover: false
+        });
+        setSubjectName('');
+        setSubjectCode('');
+        setNewSubjectAdded(!newSubjectAdded);
+        resetCreditFields();
+      } else {
+        toast.error(`Can't add subject. Error: ${response.error}`, {
+          position: 'top-right',
+          autoClose: 2500,
+          theme: 'colored',
+          newestOnTop: true,
+          pauseOnHover: false
+        });
+      }
+    } else {
+      toast.error("Subject Already Exists!!", {
+        position: 'top-right',
+        autoClose: 2000,
+        pauseOnHover: false,
+        theme: 'colored',
+        newestOnTop: true
+      });
+    }
+  };
+}
 
   const handleCreditSave = async ()=> {
 const data={
