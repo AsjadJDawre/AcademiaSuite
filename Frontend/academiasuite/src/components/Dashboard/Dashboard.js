@@ -4,6 +4,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import Navbar from "./Navbar";
 import Home from '../Home/Home'
 import SubjectMaster from '../Subject/SubjectMaster'
+import GroupMaster from "../Subject/GroupMaster";
 
 const Dashboard = (props) => {
   const [activeMainComponent, setActiveMainComponent] = useState("home")
@@ -14,6 +15,8 @@ const Dashboard = (props) => {
         return <Home setActiveMainComponent={setActiveMainComponent} />;
       case 'subject_master':
         return <SubjectMaster setActiveMainComponent={setActiveMainComponent} />
+      case 'group_master':
+        return <GroupMaster setActiveMainComponent={setActiveMainComponent} />
     }
 
   }
