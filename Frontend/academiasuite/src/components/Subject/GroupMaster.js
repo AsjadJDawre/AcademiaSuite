@@ -162,6 +162,7 @@ const GroupMaster = () => {
       groupName: groupName,
       subjectIds: selectedIds
     }
+    console.log(data.subjectIds);
     if (groupName === "") {
       toast.error('Enter group name!',{
         position:'top-right',
@@ -416,6 +417,10 @@ const GroupMaster = () => {
     
   }
 
+  useEffect(() => {
+    console.log(editSelectedIds);
+  }, [editSelectedIds])
+
   return (
     <div className="group-master-container">
       <ToastContainer />
@@ -565,7 +570,7 @@ const GroupMaster = () => {
             {!isChecked && (
                 <div className="form-group" style={editable ? {cursor: "not-allowed"} : {cursor: "pointer"}}>
                     <label htmlFor="semester" style={editable ? {cursor: "not-allowed"} : {cursor: "pointer"}}>Group name</label>
-                    <input type="text" style={editable ? {cursor: "not-allowed"} : {cursor: "pointer"}} disabled={editable || groupAlreadyDefined || !noData} placeholder="Enter group name" value={groupName} onChange={(e) => setGroupName(e.target.value)}/>
+                    <input type="text" style={editable ? {cursor: "not-allowed"} : {cursor: "pointer"}} disabled={editable || groupAlreadyDefined } placeholder="Enter group name" value={groupName} onChange={(e) => setGroupName(e.target.value)}/>
                 </div>
             )}
 
@@ -643,8 +648,11 @@ const GroupMaster = () => {
               {!groupAlreadyDefined && !noData && (
                  <div className="flex justify-between w-full">
                  <button type="button" className="btn-exit" onClick={() => {
+                  console.log(editSelectedIds);
+                  setSelectedIds("")
                    setEditSelectedIds("")
                    handleRefreshBtn()
+                   console.log(editSelectedIds);
                  }}>
                      Exit
                  </button>
@@ -712,12 +720,11 @@ const GroupMaster = () => {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          {"Are you sure you want to delete this group?"}
+          {"Delete Group"}
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-             <p>Year: {year} <br></br> Branch: {branch} <br></br> Semester: {semester} <br></br> Pattern: {pattern}   </p> 
-             
+              Are you sure?
           </DialogContentText>
         </DialogContent>
         <DialogActions>

@@ -180,7 +180,7 @@ ipcMain.handle('fetch-subject-for-this-year', async (event, data) => {
 // group master update subject group name
 ipcMain.handle('update-subject-group-name', async (e, data) => {
   const { groupName, subjectIds } = data;
-
+  console.log(subjectIds);
   if (!Array.isArray(subjectIds) || subjectIds.length === 0) {
     return Promise.reject('No subject IDs provided.');
   }
