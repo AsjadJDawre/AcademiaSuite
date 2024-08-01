@@ -4,6 +4,7 @@ import { ToastContainer, toast } from 'react-toastify';
 
 const GroupMaster = () => {
   const [isChecked, setIsChecked] = useState(false);
+  const [disableInputs, setDisableInputs] = useState(false);
 
   const [year, setYear] = useState("Select year");
   const [toYear, setToYear] = useState("Select toyear");
@@ -32,7 +33,7 @@ const GroupMaster = () => {
       setGroupAlreadyDefine(false);
     }
   }, [subject]);
- 
+   
   useEffect(() => {
     if(!isChecked) {
       handleRefreshBtn()
@@ -99,11 +100,36 @@ const GroupMaster = () => {
       setEditable(false)
     }
   };
+
   useEffect(() => {
     if (year !== "Select year" && pattern !== "Select pattern" && branch !== "Select branch" && semester !== "Select semester") {
       fetchData();
     } 
   }, [year, pattern, branch, semester])
+
+  const fetchtoYearData = async () => {
+    const dataFortoYear = {
+      year: toYear,
+      pattern: pattern,
+      branch: branch,
+      semester: semester,
+      subject: subject
+    }
+    const response = await window.api.invoke('fetch-subject-for-this-year', dataFortoYear);
+
+    if (response === true) {
+      editPreYearGroupName()
+    } else {
+      toast.info('Group for this year is Already Define, You can Edit',{
+        position:'top-right',
+        autoClose: 2500,
+        theme: 'colored',
+        newestOnTop: true,
+        pauseOnHover:false
+      })
+    }
+  };
+   
 
 
   const updateGroupName = async () => {
@@ -218,16 +244,12 @@ const GroupMaster = () => {
       groupName: groupName,
       selectedIds: editSelectedIds,
       toYear: toYear,
-      fromYear: fromYear
+      fromYear: fromYear,
+      semester: semester,
+      branch: branch,
+      pattern: pattern
     }
-  
-    console.log("groupName " + data.groupName);
-    console.log("editSelectedIds " + data.editSelectedIds);
-    console.log("toYear " + data.toYear);
-    console.log("fromYear " + data.fromYear);
-    
-    
-
+   
     if (editSelectedIds.length === 0) {
       toast.error('Select at list one subject!',{
         position:'top-right',
@@ -255,52 +277,17 @@ const GroupMaster = () => {
     console.error("Error:", error.message);
     // Display the error message to the user in a friendly way
     if (error.message.includes("No data found for current year")) {
-      alert("No data found for current year");
+      alert("No subjects are define for current year");
     } else if (error.message.includes("No data found for previous year")) {
       alert("No data found for previous year");
-    } else {
-      alert("An error occurred while updating the subjects. Please try again.");
+    } else if (error.message.includes("Data found for this year")) {
+      alert("Group Already Define for this year");
+    } 
+     else {
+      alert("An error occurred while creating the group. Please try again. Check your input fields.");
     }
    }
    
-    // console.log("response " + response);
-
-    // if (response === true) {
-    //   toast.success('Group create Successfully',{
-    //     position:'top-right',
-    //     autoClose: 2500,
-    //     theme: 'colored',
-    //     newestOnTop: true,
-    //     pauseOnHover:false
-    //   })
-    //   setEditSelectedIds("");
-    //   handleRefreshBtn()
-    // } else if (response === "DFTOY"){
-    //   toast.error('data for previous year and subject is not present!',{
-    //     position:'top-right',
-    //     autoClose: 2500,
-    //     theme: 'colored',
-    //     newestOnTop: true,
-    //     pauseOnHover:false
-    //   })
-    // } else if (response === "DFTY"){
-    //   toast.error('data for this year and subjet is not presnet!',{
-    //     position:'top-right',
-    //     autoClose: 2500,
-    //     theme: 'colored',
-    //     newestOnTop: true,
-    //     pauseOnHover:false
-    //   })
-    // } else if (response === "NOU"){
-    //   toast.error('Something went wrong!',{
-    //     position:'top-right',
-    //     autoClose: 2500,
-    //     theme: 'colored',
-    //     newestOnTop: true,
-    //     pauseOnHover:false
-    //   })
-    // }
- 
   }
 
   const handleCheckboxChange = (id) => {
@@ -345,11 +332,11 @@ const GroupMaster = () => {
       if (subject.subject_group !== null) {
         setGroupName(subject.subject_group)
         setEditSelectedIds(prevEditid => {
-          return [...prevEditid, subject.subject_id]
+          return [...prevEditid, subject.id]
         })
       }
       setEditSubjectsAllIds(prevEditid => {
-        return [...prevEditid, subject.subject_id]
+        return [...prevEditid, subject.id]
       })
     })
     
@@ -360,11 +347,12 @@ const GroupMaster = () => {
       <ToastContainer />
       <div className="first-div">
         <div className="form-container form-sub-mas">
-          <h1 className="form-title">Subject Master</h1>
+          <h1 className="form-title">Group Master</h1>
           <form className="form-main">
             <div className="form-element-appy">
               <label htmlFor="year">As per previous syllabus</label>
               <input
+              disabled={editable || groupAlreadyDefined}
                 type="checkbox"
                 checked={isChecked}
                 onChange={handleCheckbox}
@@ -376,6 +364,7 @@ const GroupMaster = () => {
                     <div className="form-group">
                         <label htmlFor="year">To Year</label>
                         <select
+                            disabled={editable || groupAlreadyDefined}
                             id="year"
                             value={toYear}
                             onChange={(e) => {
@@ -392,6 +381,7 @@ const GroupMaster = () => {
                     <div className="form-group">
                         <label htmlFor="year">From Year</label>
                         <select
+                        disabled={editable || groupAlreadyDefined}
                             id="year"
                             value={fromYear}
                             onChange={(e) => {
@@ -413,6 +403,7 @@ const GroupMaster = () => {
                 <div className="form-group">
                 <label htmlFor="year">Year</label>
                 <select
+                disabled={editable || groupAlreadyDefined}
                     id="year"
                     value={year}
                     onChange={(e) => {
@@ -434,6 +425,7 @@ const GroupMaster = () => {
             <div className="form-group">
               <label htmlFor="pattern">Pattern</label>
               <select
+              disabled={editable || groupAlreadyDefined}
                 id="pattern"
                 value={pattern}
                 onChange={(e) => {
@@ -450,6 +442,7 @@ const GroupMaster = () => {
             <div className="form-group">
               <label htmlFor="branch">Branch</label>
               <select
+              disabled={editable || groupAlreadyDefined}
                 id="branch"
                 value={branch}
                 onChange={(e) => {
@@ -467,6 +460,7 @@ const GroupMaster = () => {
             <div className="form-group">
               <label htmlFor="semester">Semester</label>
               <select
+              disabled={editable || groupAlreadyDefined}
                 id="semester"
                 value={semester}
                 onChange={(e) => {
@@ -485,6 +479,7 @@ const GroupMaster = () => {
                 <div className="form-group">
                     <label htmlFor="semester">Group name</label>
                     <select
+                    disabled={editable || groupAlreadyDefined}
                         id="semester"
                         value={groupName}
                         onChange={(e) => setGroupName(e.target.value)}
@@ -494,14 +489,15 @@ const GroupMaster = () => {
                 </div>
             )}
             {!isChecked && (
-                <div className="form-group">
-                    <label htmlFor="semester">Group name</label>
-                    <input type="text" disabled={editable} placeholder="Enter group name" value={groupName} onChange={(e) => setGroupName(e.target.value)}/>
+                <div className="form-group" style={editable ? {cursor: "not-allowed"} : {cursor: "pointer"}}>
+                    <label htmlFor="semester" style={editable ? {cursor: "not-allowed"} : {cursor: "pointer"}}>Group name</label>
+                    <input type="text" style={editable ? {cursor: "not-allowed"} : {cursor: "pointer"}} disabled={editable || groupAlreadyDefined} placeholder="Enter group name" value={groupName} onChange={(e) => setGroupName(e.target.value)}/>
                 </div>
             )}
 
             <div className="form-buttons">
               <button
+              disabled={editable || groupAlreadyDefined}
                 type="button"
                 className="btn-refresh"
                 id="btn-ref-sub-mas"
@@ -533,9 +529,9 @@ const GroupMaster = () => {
                     return (
                         <tr key={index}>
                             <td><input type="checkbox" 
-                              checked={selectedIds.includes(subject.subject_id)}
-                              onChange={() => handleCheckboxChange(subject.subject_id)}/></td>
-                            <td>{subject.subject_id}</td>
+                              checked={selectedIds.includes(subject.id)}
+                              onChange={() => handleCheckboxChange(subject.id)}/></td>
+                            <td>{subject.id}</td>
                             <td>{subject.subject_name}</td>
                         </tr>
                     )
@@ -548,9 +544,9 @@ const GroupMaster = () => {
                         <tr key={index}>
                             <td><input type="checkbox" 
                               disabled={isChecked}
-                              checked={editSelectedIds.includes(subject.subject_id)}
-                              onChange={() => handleCheckboxChangeforEdit(subject.subject_id)}/></td>
-                            <td>{subject.subject_id}</td>
+                              checked={editSelectedIds.includes(subject.id)}
+                              onChange={() => handleCheckboxChangeforEdit(subject.id)}/></td>
+                            <td>{subject.id}</td>
                             <td>{subject.subject_name}</td>
                         </tr>
                     )
@@ -578,27 +574,51 @@ const GroupMaster = () => {
                 </button>
               )}
               {groupAlreadyDefined && !editable && (
+                <div className="flex justify-between w-full">
+                <button type="button" className="btn-exit" onClick={() => {
+                  setEditSelectedIds("")
+                  handleRefreshBtn()
+                }}>
+                    Exit
+                </button>
+                
                 <button type="button" className="btn-edit w-1/4" onClick={() => {
                   fetchEditData()
                 }}>
                     Edit
                 </button>
+                </div>
               )}
               {editable && !isChecked && (
+                <div className="flex justify-between w-full">
+                <button type="button" className="btn-exit" onClick={() => {
+                  setEditSelectedIds("")
+                  handleRefreshBtn()
+                }}>
+                    Exit
+                </button>
                 <button type="button" className="bg-orange-300 w-1/4" onClick={() => {
                   editGroupName()
                 }}>
                     Update
                 </button>
+              </div>
               )}
               {editable && isChecked && (
+                <div className="flex justify-between w-full">
+                <button type="button" className="btn-exit" onClick={() => {
+                  setEditSelectedIds("")
+                  handleRefreshBtn()
+                }}>
+                    Exit
+                </button>
+                
                 <button type="button" className="bg-orange-300 w-1/4" onClick={() => {
-                   editPreYearGroupName()
-                  // console.log(editSubjectNames)
-                  
+                   fetchtoYearData()
                 }}>
                     Create Group
                 </button>
+                </div>
               )}
             </div>
       </div>
