@@ -450,53 +450,53 @@ const handleSubDelete=async ()=>{
     <div className="subject-master-container">
       <ToastContainer />
       <div className='first-div'>
-      <div className="form-container form-sub-mas">
-        <h1 className='form-title'>Subject Master</h1>
-        <form className='form-main'>
-          <div className="form-group">
-            <label htmlFor="year">Year</label>
-            <select id="year" value={year} onChange={(e) => setYear(e.target.value)}>
-              {years.map((option, index) => (
-                <option key={index} value={option}>{option}</option>
-              ))}
-            </select>
-          </div>
+        <div className="form-container form-sub-mas">
+          <h1 className='form-title'>Subject Master</h1>
+          <form className='form-main'>
+            <div className="form-group">
+              <label htmlFor="year">Year</label>
+              <select id="year" value={year} onChange={(e) => setYear(e.target.value)}>
+                {years.map((option, index) => (
+                  <option key={index} value={option}>{option}</option>
+                ))}
+              </select>
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="pattern">Pattern</label>
-            <select id="pattern" value={pattern} onChange={(e) => setPattern(e.target.value)}>
-              {patterns.map((option, index) => (
-                <option key={index} value={option}>{option}</option>
-              ))}
-            </select>
-          </div>
+            <div className="form-group">
+              <label htmlFor="pattern">Pattern</label>
+              <select id="pattern" value={pattern} onChange={(e) => setPattern(e.target.value)}>
+                {patterns.map((option, index) => (
+                  <option key={index} value={option}>{option}</option>
+                ))}
+              </select>
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="semester">Semester</label>
-            <select id="semester" value={semester} onChange={(e) => setSemester(e.target.value)}>
-              {semesters.map((option, index) => (
-                <option key={index} value={option}>{option}</option>
-              ))}
-            </select>
-          </div>
+            <div className="form-group">
+              <label htmlFor="semester">Semester</label>
+              <select id="semester" value={semester} onChange={(e) => setSemester(e.target.value)}>
+                {semesters.map((option, index) => (
+                  <option key={index} value={option}>{option}</option>
+                ))}
+              </select>
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="subject">Subject</label>
-            <select id="subject" value={subject} onChange={(e) => setSubject(e.target.value)}>
-              {subjects.map((option, index) => (
-                <option key={index} value={option}>{option}</option>
-              ))}
-            </select>
-          </div>
+            <div className="form-group">
+              <label htmlFor="subject">Subject</label>
+              <select id="subject" value={subject} onChange={(e) => setSubject(e.target.value)}>
+                {subjects.map((option, index) => (
+                  <option key={index} value={option}>{option}</option>
+                ))}
+              </select>
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="branch">Branch</label>
-            <select id="branch" value={branch} onChange={(e) => setBranch(e.target.value)}>
-              {branches.map((option, index) => (
-                <option key={index} value={option}>{option}</option>
-              ))}
-            </select>
-          </div>
+            <div className="form-group">
+              <label htmlFor="branch">Branch</label>
+              <select id="branch" value={branch} onChange={(e) => setBranch(e.target.value)}>
+                {branches.map((option, index) => (
+                  <option key={index} value={option}>{option}</option>
+                ))}
+              </select>
+            </div>
 
           <div className="form-group">
             <label htmlFor="courseCredit">No. of Course Credit:</label>

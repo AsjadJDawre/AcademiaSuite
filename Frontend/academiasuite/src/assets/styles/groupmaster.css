@@ -1,0 +1,58 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+.form-element-appy{
+    display: flex;
+    gap: 2rem;
+}
+.group-master-container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 2rem;
+    font-family: 'Roboto', sans-serif;
+    justify-content: space-around;
+}
+.first-div {
+    width: 45%;
+}
+.sec-div {
+    width: 45%;
+    border-radius: 3px;
+    position: relative;
+}
+.fetch-subject {
+    background-color: white;
+}
+table {
+    text-align: center;
+    padding: 2rem;
+    margin: 2rem;
+    border: 1px solid white;
+    border-collapse: collapse;
+}
+table tr:nth-child(even) {
+    background-color: #f2f2f2;
+    margin-top: 20px;
+}
+
+table, th, tr, td {
+    padding: 10px;
+}
+th {
+    background-color: #2B5ED6;
+    color: white;
+    border: 1px solid white;
+    border-collapse: collapse;
+}
+td {
+    border: 1px solid white;
+    border-collapse: collapse;
+    text-align: center;
+}
+.btn-div {
+    display: flex;
+    flex-direction: row-reverse;
+    padding: 2rem;
+}
