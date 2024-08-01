@@ -175,7 +175,22 @@ ipcMain.handle('fetch-subject-for-this-year', async (event, data) => {
   }
 });
 
-
+ipcMain.handle('check-subject', async (event, subjectName) => {
+  return new Promise((resolve, reject) => {
+    db.get("SELECT * FROM subject_master WHERE subject_name = ?", [subjectName], (err, row) => {
+      if (err) {
+        console.log("Database error:", err);
+        reject("DE");
+      } else if (!row) {
+        console.log("SNF");
+        resolve("SNF");
+      } else {
+        console.log("SF");
+        resolve("SF");
+      }
+    });
+  });
+});
  
 // group master update subject group name
 ipcMain.handle('update-subject-group-name', async (e, data) => {
