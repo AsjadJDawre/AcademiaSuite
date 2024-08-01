@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import "../../assets/styles/groupmaster.css";
 import { ToastContainer, toast } from 'react-toastify';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Button from '@mui/material/Button';
 
 const GroupMaster = () => {
   const [isChecked, setIsChecked] = useState(false);
@@ -21,9 +27,28 @@ const GroupMaster = () => {
   const [editSubjects, setEditSubjects] = useState([]);
   const [editable, setEditable] = useState(false);
   const [editSubjectAllIds, setEditSubjectsAllIds] = useState([]);
-  
+
+  const [open, setOpen] = React.useState(false);
 
   const [groupAlreadyDefined, setGroupAlreadyDefine] = useState(false);
+
+  const handleClickOpen = () => {
+    if (year !== "Select year" && pattern !== "Select pattern" && branch !== "Select branch" && semester !== "Select semester") {
+      setOpen(true);
+    } else {
+      toast.info('Please select all require fields!',{
+        position:'top-right',
+        autoClose: 2500,
+        theme: 'colored',
+        newestOnTop: true,
+        pauseOnHover:false
+      })
+    }
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   useEffect(() => {
     const hasGroup = subject.some(subject => subject.subject_group !== null);
@@ -342,6 +367,55 @@ const GroupMaster = () => {
     
   }, [editSubjects])
  
+  const deleteGroup = async () => {
+    const dataFortoYear = {
+      year: year,
+      pattern: pattern,
+      branch: branch,
+      semester: semester,
+      subject: subject
+    }
+    const response = await window.api.invoke('fetch-subject-for-this-year', dataFortoYear);
+
+    if (response === true) {
+      toast.info('Group not Define! Cant delete!',{
+        position:'top-right',
+        autoClose: 2500,
+        theme: 'colored',
+        newestOnTop: true,
+        pauseOnHover:false
+      })
+    } else {
+      const data = {
+        year: year,
+        branch: branch,
+        pattern: pattern,
+        semester: semester,
+      }
+      try {
+        const response = await window.api.invoke('delete-group', data);
+        if (response) {
+          toast.success('Group deleted Successfully',{
+            position:'top-right',
+            autoClose: 2500,
+            theme: 'colored',
+            newestOnTop: true,
+            pauseOnHover:false
+          })
+        }
+      } catch(err) {
+        toast.error('Something went wrong!',{
+          position:'top-right',
+          autoClose: 2500,
+          theme: 'colored',
+          newestOnTop: true,
+          pauseOnHover:false
+        })
+      }
+    }
+    
+  }
+
   return (
     <div className="group-master-container">
       <ToastContainer />
@@ -352,7 +426,7 @@ const GroupMaster = () => {
             <div className="form-element-appy">
               <label htmlFor="year">As per previous syllabus</label>
               <input
-              disabled={editable || groupAlreadyDefined}
+              disabled={editable || groupAlreadyDefined || !noData}
                 type="checkbox"
                 checked={isChecked}
                 onChange={handleCheckbox}
@@ -364,7 +438,7 @@ const GroupMaster = () => {
                     <div className="form-group">
                         <label htmlFor="year">To Year</label>
                         <select
-                            disabled={editable || groupAlreadyDefined}
+                            disabled={editable || groupAlreadyDefined || !noData}
                             id="year"
                             value={toYear}
                             onChange={(e) => {
@@ -381,7 +455,7 @@ const GroupMaster = () => {
                     <div className="form-group">
                         <label htmlFor="year">From Year</label>
                         <select
-                        disabled={editable || groupAlreadyDefined}
+                        disabled={editable || groupAlreadyDefined || !noData}
                             id="year"
                             value={fromYear}
                             onChange={(e) => {
@@ -403,7 +477,7 @@ const GroupMaster = () => {
                 <div className="form-group">
                 <label htmlFor="year">Year</label>
                 <select
-                disabled={editable || groupAlreadyDefined}
+                disabled={editable || groupAlreadyDefined || !noData}
                     id="year"
                     value={year}
                     onChange={(e) => {
@@ -425,7 +499,7 @@ const GroupMaster = () => {
             <div className="form-group">
               <label htmlFor="pattern">Pattern</label>
               <select
-              disabled={editable || groupAlreadyDefined}
+              disabled={editable || groupAlreadyDefined || !noData}
                 id="pattern"
                 value={pattern}
                 onChange={(e) => {
@@ -442,7 +516,7 @@ const GroupMaster = () => {
             <div className="form-group">
               <label htmlFor="branch">Branch</label>
               <select
-              disabled={editable || groupAlreadyDefined}
+              disabled={editable || groupAlreadyDefined || !noData}
                 id="branch"
                 value={branch}
                 onChange={(e) => {
@@ -460,7 +534,7 @@ const GroupMaster = () => {
             <div className="form-group">
               <label htmlFor="semester">Semester</label>
               <select
-              disabled={editable || groupAlreadyDefined}
+              disabled={editable || groupAlreadyDefined || !noData}
                 id="semester"
                 value={semester}
                 onChange={(e) => {
@@ -479,7 +553,7 @@ const GroupMaster = () => {
                 <div className="form-group">
                     <label htmlFor="semester">Group name</label>
                     <select
-                    disabled={editable || groupAlreadyDefined}
+                    disabled={editable || groupAlreadyDefined || !noData}
                         id="semester"
                         value={groupName}
                         onChange={(e) => setGroupName(e.target.value)}
@@ -491,13 +565,13 @@ const GroupMaster = () => {
             {!isChecked && (
                 <div className="form-group" style={editable ? {cursor: "not-allowed"} : {cursor: "pointer"}}>
                     <label htmlFor="semester" style={editable ? {cursor: "not-allowed"} : {cursor: "pointer"}}>Group name</label>
-                    <input type="text" style={editable ? {cursor: "not-allowed"} : {cursor: "pointer"}} disabled={editable || groupAlreadyDefined} placeholder="Enter group name" value={groupName} onChange={(e) => setGroupName(e.target.value)}/>
+                    <input type="text" style={editable ? {cursor: "not-allowed"} : {cursor: "pointer"}} disabled={editable || groupAlreadyDefined || !noData} placeholder="Enter group name" value={groupName} onChange={(e) => setGroupName(e.target.value)}/>
                 </div>
             )}
 
             <div className="form-buttons">
               <button
-              disabled={editable || groupAlreadyDefined}
+              disabled={editable || groupAlreadyDefined || !noData}
                 type="button"
                 className="btn-refresh"
                 id="btn-ref-sub-mas"
@@ -505,7 +579,7 @@ const GroupMaster = () => {
               >
                 Refresh
               </button>
-              <button type="button" className="btn-exit">
+              <button type="button" style={isChecked ? {display: 'none'} : {display: 'inline'}} className="btn-exit" onClick={() => {handleClickOpen()}}>
                 Delete
               </button>
             </div>
@@ -567,11 +641,19 @@ const GroupMaster = () => {
           )}
             <div className="btn-div ">
               {!groupAlreadyDefined && !noData && (
+                 <div className="flex justify-between w-full">
+                 <button type="button" className="btn-exit" onClick={() => {
+                   setEditSelectedIds("")
+                   handleRefreshBtn()
+                 }}>
+                     Exit
+                 </button>
                 <button type="button" className="btn-save w-1/3" onClick={() => {
                   updateGroupName()
                 }}>
                     Create group
                 </button>
+                </div>
               )}
               {groupAlreadyDefined && !editable && (
                 <div className="flex justify-between w-full">
@@ -622,6 +704,34 @@ const GroupMaster = () => {
               )}
             </div>
       </div>
+
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Are you sure you want to delete this group?"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+             <p>Year: {year} <br></br> Branch: {branch} <br></br> Semester: {semester} <br></br> Pattern: {pattern}   </p> 
+             
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={() => {
+            handleClose()
+            deleteGroup()
+            setEditSelectedIds("")
+            handleRefreshBtn()
+            }} autoFocus>
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

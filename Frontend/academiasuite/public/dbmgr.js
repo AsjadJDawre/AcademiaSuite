@@ -148,35 +148,7 @@ ipcMain.handle('fetch-subject-name-id', async(event, data) => {
   });
 })
 
-// ipcMain.handle('fetch-subject-for-this-year', async(event, data) => {
-//   const { year, pattern, branch, semester } = data;
-
-//   const updateSubjectGroup = (subject_name, group) => {
-//     return new Promise((resolve, reject) => {
-//       const query = 'SELECT * FROM subject_master WHERE year = ? AND pattern = ? AND branch = ? AND semester = ? AND subject_name = ? AND subject_group = ?';
-
-//       db.all(query,[year, pattern, branch, semester, subject_name, group], (err, rows) => {
-//         if (err) {
-//           console.error('Error while subjectname and subjectcode fetching data:', err);
-//           reject(err);
-//         } else {
-//           console.log('Fetched data:', rows);
-//           resolve(rows);
-//         }
-//       });
-//     });
-//   };
-
-//   try {
-//     // First, set subject_group to null for all subjects in allSubjectIds
-//     await Promise.all(allSubjectIds.map(subjectId => updateSubjectGroup(subjectId, null)));
-
-//     return true;
-//   } catch (err) {
-//     return false;
-//   }
-// })
-
+// for checking data is present for this year or not
 ipcMain.handle('fetch-subject-for-this-year', async (event, data) => {
   const { year, pattern, branch, semester } = data;
 
@@ -404,7 +376,23 @@ ipcMain.handle('edit-subject-group-name', async (e, data) => {
     });
   });
   
+// for deleting group
+ipcMain.handle('delete-group', async(event, data) => {
+  const { year, pattern, branch, semester } = data;
 
+  return new Promise((resolve, reject) => {
+    const updateSql = 'UPDATE subject_master SET subject_group = ? WHERE year = ? AND pattern = ? AND branch = ? AND semester = ?';
+          db.run(updateSql, [null, year, pattern, branch, semester], (err) => {
+            if (err) {
+              console.error(`Error deleting group`, err);
+              return reject(new Error("Error deleting group."));
+            }
+
+            console.log(`Successfully deleted group`);
+            resolve(true);
+          });
+  })
+})
    
 
 
