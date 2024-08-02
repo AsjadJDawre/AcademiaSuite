@@ -53,4 +53,4 @@ SELECT * FROM subject_master WHERE year = '01/June 2011-31/May/2012' AND pattern
 
 UPDATE subject_master SET year = '01/June 2012-31/May/2013' WHERE id = "32"
 
-UPDATE subject_master SET subject_group = null WHERE id = "32"
+UPDATE subject_master SET subject_name = 'Applied Chemistry-I' WHERE id = "26"

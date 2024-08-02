@@ -12,7 +12,7 @@ const SubjectMaster = () => {
   const [branch, setBranch] = useState('');
   const [courseCredit, setCourseCredit] = useState('0');
   const [data, setData] = useState({});
-const[editBtn,seteditBtn]=useState(false)
+  const[editBtn,seteditBtn]=useState(false)
   const [subjects, setSubjects] = useState(['Select subject']);
   const [newSubjectAdded, setNewSubjectAdded] = useState(false);
   
