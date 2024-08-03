@@ -10,6 +10,7 @@
     padding: 2rem;  
     gap: 2rem;
     justify-content: center;
+    color: #555555;
 }
 .radio-group {
     display: flex;
@@ -33,18 +34,20 @@
 .heldin div select {
     background-color: rgb(255, 255, 255);
     padding: 1rem;
-    width: 40%;
+    width: 50%;
     border-radius: 3px;
 }
-.status-div {
+.status-div-1{
     background-color: white;
     border-radius: 3px;
-    
+    max-height: 31.5rem;
     overflow: scroll;
+    overflow-x: hidden;
 }
-table {
-    max-height: 70%;
-}
+.status-div {
+    border-radius: 3px;
+    background-color: white;
+} 
 .btn-close-status {
     width: 100%;
     display: flex;

@@ -34,7 +34,6 @@
 
 -- ** DROP Old table **
 
--- DROP TABLE IF EXISTS subject_master;
 
 -- ** RENAME the new table ** 
 -- ALTER TABLE new_subject_master RENAME TO subject_master;
@@ -46,9 +45,32 @@
 
 -- UPDATE user SET password = "$2b$10$N2gD2H1MdUbP53AIOm8mYu1zm.fuUg0V5ca5q0OjhthbYHJY.4hb2" WHERE id = 1;
 
--- SELECT * FROM subject_master WHERE year = '01/June 2011-31/May/2012' AND pattern = 'CBGS' AND branch = 'COMPUTER ENGINEERING' AND semester = 'Semester 1';
+SELECT * FROM subject_master WHERE year = '01/June 2011-31/May/2012' AND pattern = 'CBGS' AND branch = 'COMPUTER ENGINEERING' AND semester = 'Semester 1';
 
 -- UPDATE subject_master SET year = '01/June 2012-31/May/2013' WHERE id = "32"
 
 UPDATE subject_master SET subject_name = 'Applied Chemistry-I' WHERE id = "26"
 -- UPDATE subject_master SET subject_group = null WHERE id = "32"
+
+ CREATE TABLE exam_code (
+    exam_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    year TEXT,
+    branch TEXT,
+    heldin_year TEXT,
+    heldin_month TEXT,
+    type TEXT,
+    is_current BOOLEAN,
+    is_lock BOOLEAN
+);
+
+DROP TABLE IF EXISTS exam_code;
+
+INSERT INTO exam_code (year, branch, heldin_year, heldin_month, type, is_current, is_lock)
+VALUES ('01/June 2013-31/May/2014', 'COMPUTER ENGINEERING','2021', 'August', 'Regular Exam', 0, 0);
+
+SELECT ec.heldin_year, ec.heldin_month, ec.type, 
+       sm.h1_credit, sm.h2_credit, sm.ese_res, sm.ia_res
+FROM exam_code AS ec
+JOIN subject_master AS sm ON ec.subject_id = sm.id;
+
+ 
