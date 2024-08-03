@@ -39,10 +39,7 @@
 -- ** RENAME the new table ** 
 -- ALTER TABLE new_subject_master RENAME TO subject_master;
 
-
-
-
-
+DELETE FROM subject_master WHERE subject_code='daas';
 
 
 -- INSERT INTO user (username, password) VALUES ("admin", "12345")
