@@ -76,3 +76,7 @@
   display: inline;
   background-color: red;
 }
+
+.hidden {
+  display: none;
+}
