@@ -44,17 +44,20 @@ const[editBtn,seteditBtn]=useState(false)
   const patterns = ['Select pattern', 'CBGS', 'Old Pattern'];
   const semesters = ['Select semester', 'Semester 1', 'Semester 2', 'Semester 3', 'Semester 4'];
   const branches = ['Select branch', 'MECHANICAL ENGINEERING', 'COMPUTER ENGINEERING', 'CIVIL ENGINEERING'];
-
   useEffect(() => {
     const fetchData = async () => {
       const response = await window.api.invoke('fetch-data');
       const filteredSubjects = response.filter(item => item.subject_name !== null && item.subject_name.trim() !== '');
-      const subjectNames = filteredSubjects.map(item => item.subject_name);
-      setSubjects(['Select subject', ...subjectNames]);
+      
+      // Use a Set to filter out duplicate subject names
+      const uniqueSubjectNames = Array.from(new Set(filteredSubjects.map(item => item.subject_name)));
+      
+      setSubjects(['Select subject', ...uniqueSubjectNames]);
     };
-
+  
     fetchData();
   }, [newSubjectAdded]);
+  
 
 
   const resetCreditFields = () => {
@@ -85,7 +88,7 @@ const  validataInput=()=>{
   return true
   }
 
-  const creditsExits = async (subject) => {
+  const creditsExits = async () => {
     try {
       const response = await window.api.invoke('fetch-data');
   
@@ -104,9 +107,11 @@ const  validataInput=()=>{
         'or_oom', 'or_pm', 'or_res'
       ];
   
-      const subjectEntry = response.find(item => item.subject_name === subject);
+      const subjectEntry = response.find(item => item.subject_name === subject
+        && item.year===year
+      );
   
-      // console.log('Subject entry found:', subjectEntry);
+      console.log('Subject entry found:', subjectEntry);
       setData(subjectEntry) 
       
   
@@ -120,12 +125,12 @@ const  validataInput=()=>{
         const value = subjectEntry[column];
         if (value !== null && value !== undefined && value > 0) {
           console.log(`Column '${column}' has value greater than 0: ${value}`);
-          return false; // Return false if any column has a value greater than 0
+          return true; // Return true if any column has a value greater than 0
         }
       }
   
-      // If no columns with values greater than 0 are found, return true
-      return true;
+      // If no columns with values greater than 0 are found, return false
+      return false;
   
     } catch (error) {
       console.error('Error fetching data or processing:', error);
@@ -146,9 +151,9 @@ const  validataInput=()=>{
     }
   
     // Await the result of creditsExits
-    const creditsExist = await creditsExits(subject);
+    const creditsExist = await creditsExits();
   
-    if (creditsExist) {
+    if (!creditsExist) {
       seteditBtn(false)
 
       setAddCreditDivVisible(true);
@@ -165,7 +170,12 @@ const  validataInput=()=>{
   };
   
   const handleExitBtn = () => {
-    
+    setYear('');
+    setPattern('');
+    setBranch('');
+    setSemester('');
+    setSubject('')
+    setCourseCredit(0)
     setAddCreditDivVisible(false);
   }
 
@@ -212,7 +222,7 @@ const  validataInput=()=>{
   const disableAddCreditStyle = {
     display: 'none',
   }
-  console.log(subjects);
+  // console.log(subjects);
  const subject_exits = async (subjectName) => {
     try {
       const res = await window.api.invoke('check-subject', subjectName);
@@ -229,57 +239,71 @@ const  validataInput=()=>{
   
   
   const handleSubjectSave = async () => {
-    if(subjectName==''|| subjectCode==''){
-      toast.error("Please fill all the required Fields",{
-        position:'top-center',
-        pauseOnHover:false,
-        theme:'colored',
+    if (subjectName === '' || subjectCode === '') {
+      toast.error("Please fill all the required fields", {
+        position: 'top-center',
+        pauseOnHover: false,
+        theme: 'colored',
         newestOnTop: true,
-        autoClose:2000
-
-        
-      })
+        autoClose: 2000
+      });
+      return; // Exit the function if the fields are empty
     }
-    else {
-    if (!(await subject_exits(subjectName))) {
-      const data = {
-        subjectName,
-        subjectCode
-      };
-      const response = await window.api.invoke('subject-save', data);
-
-      if (response.success) {
-        toast.success('Subject added Successfully!', {
+  
+    try {
+      const res = await window.api.invoke('check-subject', subjectName);
+      if (res === "SF") {
+        setSubjectName('')
+        setSubjectCode('')
+        toast.info("Subject already exists with no credits defined. Please define the credits before adding.", {
           position: 'top-right',
           autoClose: 2500,
+          pauseOnHover: false,
           theme: 'colored',
-          newestOnTop: true,
-          pauseOnHover: false
+          newestOnTop: true
         });
-        setSubjectName('');
-        setSubjectCode('');
-        setNewSubjectAdded(!newSubjectAdded);
-        resetCreditFields();
-      } else {
-        toast.error(`Can't add subject. Error: ${response.error}`, {
-          position: 'top-right',
-          autoClose: 2500,
-          theme: 'colored',
-          newestOnTop: true,
-          pauseOnHover: false
-        });
+      } else if (res === "SNF") {
+        const data = {
+          subjectName,
+          subjectCode
+        };
+        const response = await window.api.invoke('subject-save', data);
+  
+        if (response.success) {
+          toast.success('Subject added successfully!', {
+            position: 'top-right',
+            autoClose: 2500,
+            theme: 'colored',
+            newestOnTop: true,
+            pauseOnHover: false
+          });
+          setSubjectName('');
+          setSubjectCode('');
+          setNewSubjectAdded(!newSubjectAdded);
+          resetCreditFields();
+        } else {
+          toast.error("Can't add subject!", {
+            position: 'top-right',
+            autoClose: 2000,
+            pauseOnHover: false,
+            theme: 'colored',
+            newestOnTop: true
+          });
+        }
       }
-    } else {
-      toast.error("Subject Already Exists!!", {
+    } catch (error) {
+      toast.error("An error occurred. Please try again.", {
         position: 'top-right',
         autoClose: 2000,
         pauseOnHover: false,
         theme: 'colored',
         newestOnTop: true
       });
+      console.error("Error in handleSubjectSave:", error);
     }
   };
-}
+  
+  
 
   const handleCreditSave = async ()=> {
 const data={
@@ -319,13 +343,13 @@ if(response){
         newestOnTop: true,
   
   })
-  // setYear('');
-  //     setPattern('');
-  //     setBranch('');
-  //     setCourseCredit('0');
-  //     setSemester('')
+  setYear('');
+      setPattern('');
+      setBranch('');
+      setCourseCredit('0');
+      setSemester('')
   setAddCreditDivVisible(!addCreditDivVisible)
-  const res =creditsExits(subject)
+  const res =creditsExits()
 }
 else{
   toast.error("Can't Add Credits!",{
@@ -341,6 +365,68 @@ else{
   }
 
 
+
+  const updateCredits = async ()=> {
+    const data={
+      eseOom,
+      esePm,
+      eseRes,
+      iaOom,iaPm,
+      iaRes,
+      twOom,
+      twPm,
+      twRes,
+      prOom,
+      prPm,
+      prRes,
+      orOom,
+      orPm,
+      orRes,
+      h1Credit,
+      h2Credit,
+      opc,
+      year,
+      pattern,
+      semester,
+      subject,
+      branch,
+      courseCredit
+    }
+    
+    console.log("Data to be sent:", data);
+    const response = await window.api.invoke('update-credits',data)
+    if(response){
+      toast.success("Credits Added SuccessFully!",{
+        pauseOnHover:false,
+        position:'top-right',
+        autoClose: 2500,
+            theme: 'colored',
+            newestOnTop: true,
+      
+      })
+      setYear('');
+          setPattern('');
+          setBranch('');
+          setCourseCredit('0');
+          setSemester('')
+      setAddCreditDivVisible(!addCreditDivVisible)
+      const res =creditsExits(subject,year)
+    }
+    else{
+      toast.error("Can't Add Credits!",{
+        pauseOnHover:false,
+        position:'top-right',
+        autoClose: 2500,
+            theme: 'colored',
+            newestOnTop: true,
+      
+    })
+    }
+    
+      }
+    
+
+
 const handleEdit=async()=>{
 
   if (!validataInput()) {
@@ -353,9 +439,9 @@ const handleEdit=async()=>{
     });
   }
 
-  const creditsExist = await creditsExits(subject);
+  const creditsExist = await creditsExits(subject,year);
 
-  if (creditsExist) {
+  if (!creditsExist) {
     toast.error("No Credits were Found!", {
       autoClose: 2000,
       theme: 'colored',
@@ -393,9 +479,9 @@ const handleEdit=async()=>{
   }
 };
 
-const handleSubDelete=async ()=>{
-  if (!validataInput()) {
-    return toast.error('Please Select all the required fields!', {
+const handleSubDelete = async () => {
+  if (subject === '') {
+    return toast.error('Please select a subject!', {
       position: 'top-right',
       autoClose: 2500,
       theme: 'colored',
@@ -404,46 +490,43 @@ const handleSubDelete=async ()=>{
     });
   }
 
-  const creditsExist = await creditsExits(subject);
-
-  if (!creditsExist) {
-    toast.error("Subject Credits found! Can't delete", {
-      autoClose: 2000,
+  const response = await window.api.invoke('delete-subject', subject );
+  if (response.success) {
+    if (response.changes === 0) {
+      toast.error("Subject credits found! Can't delete subject.", {
+        autoClose: 2000,
+        theme: 'colored',
+        newestOnTop: true,
+        pauseOnHover: false
+      });
+      setSubject('')
+    } else {
+      toast.success('Subject deleted successfully!', {
+        position: 'top-right',
+        autoClose: 2000,
+        theme: 'colored',
+        newestOnTop: true,
+        pauseOnHover: false
+      });
+      setNewSubjectAdded(!newSubjectAdded);
+      setSubject('');
+      setPattern('');
+      setBranch('');
+      setCourseCredit('0');
+      setSemester('');
+    }
+  } else {
+    toast.error("Can't delete subject!", {
+      position: 'top-right',
+      autoClose: 2500,
       theme: 'colored',
       newestOnTop: true,
       pauseOnHover: false
     });
-  } else {
-    
-    const response =await window.api.invoke('delete-subject',subject)
-    if(response.success===true){
-      toast.success('Subject Deleted Successfully!',{
-        position:'top-right',
-        autoClose: 2000,
-        theme: 'colored',
-        newestOnTop: true,
-        pauseOnHover:false
+  }
+};
 
-      })
-      setNewSubjectAdded(!newSubjectAdded)
-      setYear('');
-      setPattern('');
-      setBranch('');
-      setCourseCredit('0');
-      setSemester('')
-    }
-    else{
-      toast.error("can't Delete subject!",{
-        position:'top-right',
-        autoClose: 2500,
-        theme: 'colored',
-        newestOnTop: true,
-        pauseOnHover:false
-      })
-    }
 
-}
-}
 
 
   return (
@@ -786,7 +869,11 @@ const handleSubDelete=async ()=>{
             </div>
 
             <div className="form-buttons">
-              <button type="button" className="btn-save" onClick={handleCreditSave}> {editBtn? "Edit":"Save"} </button>
+            {
+              editBtn? <button type="button" className="btn-save" onClick={updateCredits}> Update </button>:
+              <button type="button" className="btn-save" onClick={handleCreditSave}> Save </button>
+
+            }
               {/* <button type="button" className="btn-refresh" id='btn-ref-add-credit' onClick={handleRefreshBtn}>Refresh</button> */}
               <button type="button" className="btn-exit" onClick={handleExitBtn}>Exit</button>
             </div>
