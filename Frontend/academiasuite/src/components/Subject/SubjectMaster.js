@@ -34,6 +34,37 @@ const[editBtn,seteditBtn]=useState(false)
   const [orOom, setOrOom] = useState(0);
   const [orPm, setOrPm] = useState(0);
   const [orRes, setOrRes] = useState(0);
+
+
+  const [isPreviousYearChecked, setIsPreviousYearChecked] = useState(false);
+  const [fromYear, setFromYear] = useState('');
+  const [toYear, setToYear] = useState('');
+
+  const handleCheckboxChange = (event) => {
+    setIsPreviousYearChecked(event.target.checked);
+    if (!event.target.checked) {
+      setFromYear('');
+      setToYear('');
+    }
+  };
+
+  const handleFromYearChange = (event) => {
+    setFromYear(event.target.value);
+  };
+
+  const handleToYearChange = (event) => {
+    setToYear(event.target.value);
+  };
+
+
+
+
+
+
+
+
+
+
   
   
   const [h1Credit, setH1Credit] = useState(0);
@@ -175,7 +206,7 @@ const  validataInput=()=>{
     setBranch('');
     setSemester('');
     setSubject('')
-    setCourseCredit(0)
+    setCourseCredit('0')
     setAddCreditDivVisible(false);
   }
 
@@ -532,54 +563,94 @@ const handleSubDelete = async () => {
   return (
     <div className="subject-master-container">
       <ToastContainer />
+
       <div className='first-div'>
-      <div className="form-container form-sub-mas">
-        <h1 className='form-title'>Subject Master</h1>
-        <form className='form-main'>
-          <div className="form-group">
-            <label htmlFor="year">Year</label>
-            <select id="year" value={year} onChange={(e) => setYear(e.target.value)}>
-              {years.map((option, index) => (
-                <option key={index} value={option}>{option}</option>
-              ))}
-            </select>
-          </div>
+        <div className="form-container form-sub-mas">
+          <h1 className='form-title'>Subject Master</h1>
+          <form className='form-main'>
+            
+          <div >
+              <label>
+                <input
+                  type="checkbox"
+                  checked={isPreviousYearChecked}
+                  onChange={handleCheckboxChange}
+                />
+               Use as per Previous Year
+              </label>
+            </div>
+            {/* Conditionally rendered year selects */}
+            {isPreviousYearChecked && (
+              <>
+                <div className="form-group">
+                  <label htmlFor="fromYear">From Year:</label>
+                  <select id="fromYear" value={fromYear} onChange={handleFromYearChange}>
+                    {years.map((year, index) => (
+                      <option key={index} value={year}>{year}</option>
+                    ))}
+                  </select>
+                </div>
 
-          <div className="form-group">
-            <label htmlFor="pattern">Pattern</label>
-            <select id="pattern" value={pattern} onChange={(e) => setPattern(e.target.value)}>
-              {patterns.map((option, index) => (
-                <option key={index} value={option}>{option}</option>
-              ))}
-            </select>
-          </div>
+                <div className="form-group">
+                  <label htmlFor="toYear">To Year:</label>
+                  <select id="toYear" value={toYear} onChange={handleToYearChange}>
+                    {years.map((year, index) => (
+                      <option key={index} value={year}>{year}</option>
+                    ))}
+                  </select>
+                </div>
+              </>
+            )}
+            
+            
+            
+            <div
+  className={`form-group ${isPreviousYearChecked ? 'hidden' : ''}`}
+>
+  <label htmlFor="year">Year</label>
+  <select id="year" value={year} onChange={(e) => setYear(e.target.value)}>
+    <option value="">Select Year</option>
+    {years.map((option, index) => (
+      <option key={index} value={option}>{option}</option>
+    ))}
+  </select>
+</div>
 
-          <div className="form-group">
-            <label htmlFor="semester">Semester</label>
-            <select id="semester" value={semester} onChange={(e) => setSemester(e.target.value)}>
-              {semesters.map((option, index) => (
-                <option key={index} value={option}>{option}</option>
-              ))}
-            </select>
-          </div>
+            <div className="form-group">
+              <label htmlFor="pattern">Pattern</label>
+              <select id="pattern" value={pattern} onChange={(e) => setPattern(e.target.value)}>
+                {patterns.map((option, index) => (
+                  <option key={index} value={option}>{option}</option>
+                ))}
+              </select>
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="subject">Subject</label>
-            <select id="subject" value={subject} onChange={(e) => setSubject(e.target.value)}>
-              {subjects.map((option, index) => (
-                <option key={index} value={option}>{option}</option>
-              ))}
-            </select>
-          </div>
+            <div className="form-group">
+              <label htmlFor="semester">Semester</label>
+              <select id="semester" value={semester} onChange={(e) => setSemester(e.target.value)}>
+                {semesters.map((option, index) => (
+                  <option key={index} value={option}>{option}</option>
+                ))}
+              </select>
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="branch">Branch</label>
-            <select id="branch" value={branch} onChange={(e) => setBranch(e.target.value)}>
-              {branches.map((option, index) => (
-                <option key={index} value={option}>{option}</option>
-              ))}
-            </select>
-          </div>
+            <div className="form-group">
+              <label htmlFor="subject">Subject</label>
+              <select id="subject" value={subject} onChange={(e) => setSubject(e.target.value)}>
+                {subjects.map((option, index) => (
+                  <option key={index} value={option}>{option}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="branch">Branch</label>
+              <select id="branch" value={branch} onChange={(e) => setBranch(e.target.value)}>
+                {branches.map((option, index) => (
+                  <option key={index} value={option}>{option}</option>
+                ))}
+              </select>
+            </div>
 
           <div className="form-group">
             <label htmlFor="courseCredit">No. of Course Credit:</label>
