@@ -73,4 +73,17 @@ SELECT ec.heldin_year, ec.heldin_month, ec.type,
 FROM exam_code AS ec
 JOIN subject_master AS sm ON ec.subject_id = sm.id;
 
- 
+ UPDATE exam_code SET is_current = 1 WHERE exam_id = "35"
+
+ CREATE TABLE exam_res (
+    exam_res_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    pattern TEXT,
+    semester TEXT,
+    exam TEXT,
+    subject TEXT,
+    h1_res INTEGER,
+    h2_res INTEGER
+);
+
+INSERT INTO exam_res (pattern, semester, exam, subject, h1_res, h2_res)
+VALUES ('CBGS','Semester 1', 'December 2021 (A.T.K.T)', 'Engineering Mathematics-I', 0, 0)

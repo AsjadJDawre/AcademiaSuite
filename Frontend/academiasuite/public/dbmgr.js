@@ -589,9 +589,9 @@ ipcMain.handle('fetch-exam-code', async (event, data) => {
 // Delete one exam
 ipcMain.handle('delete-exam-code', async (event, exam_id) => {
   return new Promise((resolve, reject) => {
-    const query = 'DELETE FROM exam_code WHERE exam_id = ?';
+    const query = 'DELETE FROM exam_code WHERE exam_id = ? AND is_current = ?';
 
-    db.run(query, [exam_id], function (err) {
+    db.run(query, [exam_id, 0], function (err) {
       if (err) {
         console.error('Error while deleting data:', err);
         return reject(err);
@@ -630,6 +630,110 @@ ipcMain.handle('update-exam-code', async (event, { exam_id, heldin_month, heldin
         resolve(false); // No rows were updated
       }
     });
+  });
+});
+
+// update is_current 
+ipcMain.handle('update-is-current', async (event, data) => {
+  const {exam_id, is_current} = data;
+  return new Promise((resolve, reject) => {
+    const query = 'UPDATE exam_code SET is_current = ? WHERE exam_id = ?';
+
+    db.run(query, [is_current, exam_id], function (err) {
+      if (err) {
+        console.error('Error while updating data:', err);
+        return reject(err);
+      }
+
+      if (this.changes > 0) {
+        console.log(`Successfully updated is_current for exam_id: ${exam_id}`);
+        resolve(true);
+      } else {
+        console.log(`No rows found with exam_id: ${exam_id}`);
+        resolve(false);
+      }
+    });
+  });
+});
+
+// update is_lock 
+ipcMain.handle('update-is-lock', async (event, data) => {
+  const {exam_id, is_lock} = data;
+  return new Promise((resolve, reject) => {
+    const query = 'UPDATE exam_code SET is_lock = ? WHERE exam_id = ?';
+
+    db.run(query, [is_lock, exam_id], function (err) {
+      if (err) {
+        console.error('Error while updating data:', err);
+        return reject(err);
+      }
+
+      if (this.changes > 0) {
+        console.log(`Successfully updated is_current for exam_id: ${exam_id}`);
+        resolve(true);
+      } else {
+        console.log(`No rows found with exam_id: ${exam_id}`);
+        resolve(false);
+      }
+    });
+  });
+});
+
+
+
+// For Exam_Res
+// Insert in Exam-Res table
+ipcMain.handle('insert-in-exam-res', async (event, data) => {
+  const {pattern, semester, exam, subject, h1_res, h2_res} = data;
+
+  return new Promise((resolve, reject) => {
+    const query = 'SELECT * FROM exam_res WHERE pattern = ? AND semester = ? AND exam = ? AND subject = ?';
+
+    db.get(query, [pattern, semester, exam, subject], (err, row) => {
+      if (err) {
+        console.error('Error while checking data:', err);
+        return reject(err);
+      }
+
+      if (row) {
+        console.log('Record found:', row);
+        return resolve('found');
+      }
+
+      const insertData = 'INSERT INTO exam_res (pattern, semester, exam, subject, h1_res, h2_res) VALUES (?, ?, ?, ?, ?, ?)';
+      db.run(insertData, [pattern, semester, exam, subject, h1_res, h2_res], (err) => {
+        if (err) {
+          console.error('Error creating exam:', err);
+          return reject(new Error('Error inserting exam data.'));
+        }
+
+        console.log('Successfully created exam');
+        resolve('not found');
+      });
+    });
+  });
+});
+
+// check before insert
+ipcMain.handle('check-in-exam-res', async (event, data) => {
+  const {pattern, semester, exam, subject, h1_res, h2_res} = data;
+
+  return new Promise((resolve, reject) => {
+    const query = 'SELECT * FROM exam_res WHERE pattern = ? AND semester = ? AND exam = ? AND subject = ?';
+
+    db.get(query, [pattern, semester, exam, subject], (err, row) => {
+      if (err) {
+        console.error('Error while checking data:', err);
+        return reject(err);
+      }
+
+      if (row) {
+        console.log('Record found:', row);
+        return resolve('found');
+      } else {
+        return resolve('not found')
+      }
+    })
   });
 });
 
