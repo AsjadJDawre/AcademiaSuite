@@ -51,3 +51,23 @@
 -- UPDATE subject_master SET year = '01/June 2012-31/May/2013' WHERE id = "32"
 
 -- UPDATE subject_master SET subject_group = null WHERE id = "32"
+
+-- CREATE TABLE exam_code (
+--     id INTEGER PRIMARY KEY AUTOINCREMENT,
+--     heldIn_year INTEGER,
+--     month TEXT,
+--     exam TEXT,
+--     subject_id INTEGER,
+--     FOREIGN KEY (subject_id) REFERENCES subject_master(id)
+-- );
+
+-- INSERT INTO exam_code (heldIn_year, month, exam, subject_id)
+-- VALUES (2024, 'August', 'Final Exam', 1);
+
+
+
+-- UPDATE subject_master SET id='1'  WHERE  id ='2'
+-- SELECT ec.heldIn_year, ec.month, ec.exam, 
+--        sm.h1_credit, sm.h2_credit, sm.ese_res, sm.ia_res, sm.ese_oom
+-- FROM exam_code  AS ec
+-- JOIN subject_master AS  sm ON ec.subject_id = sm.id;
