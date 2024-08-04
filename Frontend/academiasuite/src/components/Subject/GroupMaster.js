@@ -625,7 +625,7 @@ const GroupMaster = () => {
                               disabled={isChecked}
                               checked={editSelectedIds.includes(subject.id)}
                               onChange={() => handleCheckboxChangeforEdit(subject.id)}/></td>
-                            <td>{subject.id}</td>
+                            <td>{`SUB${subject.id}`}</td>
                             <td>{subject.subject_name}</td>
                         </tr>
                     )
