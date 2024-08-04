@@ -52,6 +52,7 @@ SELECT * FROM subject_master WHERE year = '01/June 2011-31/May/2012' AND pattern
 UPDATE subject_master SET subject_name = 'Applied Chemistry-I' WHERE id = "26"
 -- UPDATE subject_master SET subject_group = null WHERE id = "32"
 
+<<<<<<< HEAD
  CREATE TABLE exam_code (
     exam_id INTEGER PRIMARY KEY AUTOINCREMENT,
     year TEXT,
@@ -87,3 +88,25 @@ JOIN subject_master AS sm ON ec.subject_id = sm.id;
 
 INSERT INTO exam_res (pattern, semester, exam, subject, h1_res, h2_res)
 VALUES ('CBGS','Semester 1', 'December 2021 (A.T.K.T)', 'Engineering Mathematics-I', 0, 0)
+=======
+-- CREATE TABLE exam_code (
+--     id INTEGER PRIMARY KEY AUTOINCREMENT,
+--     heldIn_year INTEGER,
+--     month TEXT,
+--     exam TEXT,
+--     subject_id INTEGER,
+--     FOREIGN KEY (subject_id) REFERENCES subject_master(id)
+-- );
+
+-- INSERT INTO exam_code (heldIn_year, month, exam, subject_id)
+-- VALUES (2024, 'August', 'Final Exam', 1);
+
+
+
+-- UPDATE subject_master SET id='1'  WHERE  id ='2'
+-- SELECT ec.heldIn_year, ec.month, ec.exam, 
+--        sm.h1_credit, sm.h2_credit, sm.ese_res, sm.ia_res, sm.ese_oom
+-- FROM exam_code  AS ec
+-- JOIN subject_master AS  sm ON ec.subject_id = sm.id;
+
+>>>>>>> main

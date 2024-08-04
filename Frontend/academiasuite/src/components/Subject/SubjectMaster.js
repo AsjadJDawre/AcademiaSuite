@@ -3,18 +3,20 @@ import '../../assets/styles/form.css';
 import '../../assets/styles/subjectmaster.css';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
+import Select from 'react-select';
 
 const SubjectMaster = () => {
-  const [year, setYear] = useState('');
-  const [pattern, setPattern] = useState('');
-  const [semester, setSemester] = useState('');
-  const [subject, setSubject] = useState('');
-  const [branch, setBranch] = useState('');
+  const [year, setYear] = useState({});
+  const [pattern, setPattern] = useState({});
+  const [semester, setSemester] = useState({});
+  const [subject, setSubject] = useState({});
+  const [branch, setBranch] = useState({});
   const [courseCredit, setCourseCredit] = useState('0');
   const [data, setData] = useState({});
-  const[editBtn,seteditBtn]=useState(false)
-  const [subjects, setSubjects] = useState(['Select subject']);
-  const [newSubjectAdded, setNewSubjectAdded] = useState(false);
+const[editBtn,seteditBtn]=useState(false)
+const [subjects, setSubjects] = useState([]);
+const [newSubjectAdded, setNewSubjectAdded] = useState(false);
+  const [disable,setDisable]=useState(false)
   
   const [subjectName, setSubjectName] = useState('');
   const [subjectCode, setSubjectCode] = useState('');
@@ -35,10 +37,11 @@ const SubjectMaster = () => {
   const [orPm, setOrPm] = useState(0);
   const [orRes, setOrRes] = useState(0);
 
-
   const [isPreviousYearChecked, setIsPreviousYearChecked] = useState(false);
   const [fromYear, setFromYear] = useState('');
   const [toYear, setToYear] = useState('');
+
+  const [newSubjects, setNewSubjects] = useState([]);
 
   const handleCheckboxChange = (event) => {
     setIsPreviousYearChecked(event.target.checked);
@@ -56,6 +59,8 @@ const SubjectMaster = () => {
     setToYear(event.target.value);
   };
 
+  
+ 
 
 
 
@@ -71,24 +76,96 @@ const SubjectMaster = () => {
   const [h2Credit, setH2Credit] = useState(0);
   const [opc, setOpc] = useState(0);
 
-  const years = ['Select year', '01/June 2011-31/May/2012', '01/June 2012-31/May/2013', '01/June 2013-31/May/2014'];
-  const patterns = ['Select pattern', 'CBGS', 'Old Pattern'];
-  const semesters = ['Select semester', 'Semester 1', 'Semester 2', 'Semester 3', 'Semester 4'];
-  const branches = ['Select branch', 'MECHANICAL ENGINEERING', 'COMPUTER ENGINEERING', 'CIVIL ENGINEERING'];
+  const years = [
+    { value: '', label: 'Select Year' ,isDisabled:true},
+
+    { value: '01/June 2011-31/May/2012', label: '01/June 2011-31/May/2012' },
+    { value: '01/June 2012-31/May/2013', label: '01/June 2012-31/May/2013' },
+    { value: '01/June 2013-31/May/2014', label: '01/June 2013-31/May/2014' }
+  ];
+  
+  
+  const patterns = [
+    { value: '', label: 'Select pattern',isDisabled:true },
+    { value: 'CBGS', label: 'CBGS' },
+    { value: 'Old Pattern', label: 'Old Pattern' }
+  ];
+  
+  const semesters = [
+    { value: '', label: 'Select a Semester' ,isDisabled:true},
+
+    { value: 'Semester 1', label: 'Semester 1' },
+    { value: 'Semester 2', label: 'Semester 2' },
+    { value: 'Semester 3', label: 'Semester 3' },
+    { value: 'Semester 4', label: 'Semester 4' },
+    { value: 'Semester 5', label: 'Semester 5' },
+    { value: 'Semester 6', label: 'Semester 6' },
+    { value: 'Semester 7', label: 'Semester 7' },
+    { value: 'Semester 8', label: 'Semester 8' },]
+
+    
+const branches = [
+  { value: '', label: 'Select a Branch' ,isDisabled:true},
+  { value: 'MECHANICAL ENGINEERING', label: 'MECHANICAL ENGINEERING' },
+  { value: 'COMPUTER ENGINEERING', label: 'COMPUTER ENGINEERING' },
+  { value: 'CIVIL ENGINEERING', label: 'CIVIL ENGINEERING' },]
+
   useEffect(() => {
     const fetchData = async () => {
-      const response = await window.api.invoke('fetch-data');
-      const filteredSubjects = response.filter(item => item.subject_name !== null && item.subject_name.trim() !== '');
-      
-      // Use a Set to filter out duplicate subject names
-      const uniqueSubjectNames = Array.from(new Set(filteredSubjects.map(item => item.subject_name)));
-      
-      setSubjects(['Select subject', ...uniqueSubjectNames]);
+      try {
+        const response = await window.api.invoke('fetch-data');
+        const filteredSubjects = response.filter(item => item.subject_name !== null && item.subject_name.trim() !== '');
+
+        // Use a Set to filter out duplicate subject names
+        const uniqueSubjectNames = Array.from(new Set(filteredSubjects.map(item => item.subject_name)));
+
+        const formattedSubjects = uniqueSubjectNames.map(subject => ({
+          value: subject,
+          label: subject
+        }));
+
+        setSubjects([{ value: '', label: 'Select subject',isDisabled:true }, ...formattedSubjects]);
+      } catch (error) {
+        console.error('Error fetching subjects:', error);
+      }
     };
-  
+
     fetchData();
   }, [newSubjectAdded]);
   
+  useEffect(() => {
+    setSubjects([{ value: '', label: 'Select subject' }, ...newSubjects]);
+  }, [newSubjects]);
+
+
+  
+  useEffect(() => {
+    if (Object.keys(data).length > 0) {
+      console.log('Data state updated:', data);
+
+      // Update the form fields based on data
+      setEseOom(data.ese_oom || 0);
+      setEsePm(data.ese_pm || 0);
+      setEseRes(data.ese_res || 0);
+      setIaOom(data.ia_oom || 0);
+      setIaPm(data.ia_pm || 0);
+      setIaRes(data.ia_res || 0);
+      setTwOom(data.tw_oom || 0);
+      setTwPm(data.tw_pm || 0);
+      setTwRes(data.tw_res || 0);
+      setPrOom(data.pr_oom || 0);
+      setPrPm(data.pr_pm || 0);
+      setPrRes(data.pr_res || 0);
+      setOrOom(data.or_oom || 0);
+      setOrPm(data.or_pm || 0);
+      setOrRes(data.or_res || 0);
+      setH1Credit(data.h1_credit || 0);
+      setH2Credit(data.h2_credit || 0);
+      setOpc(data.opc || 0);
+      setCourseCredit(data.course_credits || '0');
+    }
+  }, [data]);
+
 
 
   const resetCreditFields = () => {
@@ -111,20 +188,37 @@ const SubjectMaster = () => {
     setH2Credit(0);
     setOpc(0);
   };
+  const resetInputs=()=>{
+    setYear('');
+    setPattern('');
+    setSemester('');
+    setSubject('');
+    setBranch('');
+    setCourseCredit('0')
+  }
+
+
+
+  useEffect(() => {
+    const e = {
+      target: {
+        value: 'btn-ref-sub-mas' 
+      }
+    };
+
+handleRefreshBtn(e)  }, []);
+
 
   const [addCreditDivVisible, setAddCreditDivVisible] = useState(false);
 
 const  validataInput=()=>{
-  if(year===''||pattern===''||subject===''||branch===''||courseCredit==='0') return false
+  if(year.value===''||pattern.value===''||subject.value===''||branch===''||courseCredit==='0') return false
   return true
   }
 
   const creditsExits = async () => {
     try {
       const response = await window.api.invoke('fetch-data');
-  
-      // console.log('Checking credits for subject:', subject);
-  
       if (!response || !Array.isArray(response)) {
         console.error('Invalid response data');
         return false;
@@ -133,25 +227,20 @@ const  validataInput=()=>{
       const columnsToCheck = [
         'ese_oom', 'ese_pm', 'ese_res',
         'ia_oom', 'ia_pm', 'ia_res',
-        'tw_oom', 'tw_pm', 'tw_res',
+        'tw_com', 'tw_pm', 'tw_res',
         'pr_oom', 'pr_pm', 'pr_res',
         'or_oom', 'or_pm', 'or_res'
       ];
   
-      const subjectEntry = response.find(item => item.subject_name === subject
-        && item.year===year
-      );
-  
-      console.log('Subject entry found:', subjectEntry);
-      setData(subjectEntry) 
+      const subjectEntry = response.find(item => item.subject_name === subject.value && item.year === year.value);
       
-  
-      // Check if the subject was found
       if (!subjectEntry) {
         console.error('Subject not found');
         return false;
       }
-  
+      
+      console.log('Subject entry found:', subjectEntry);
+      setData(subjectEntry);
       for (const column of columnsToCheck) {
         const value = subjectEntry[column];
         if (value !== null && value !== undefined && value > 0) {
@@ -160,7 +249,6 @@ const  validataInput=()=>{
         }
       }
   
-      // If no columns with values greater than 0 are found, return false
       return false;
   
     } catch (error) {
@@ -168,6 +256,7 @@ const  validataInput=()=>{
       return false;
     }
   };
+  
   
   
   const handleAddCredit = async () => {
@@ -186,9 +275,10 @@ const  validataInput=()=>{
   
     if (!creditsExist) {
       seteditBtn(false)
-
+      setDisable(true)
       setAddCreditDivVisible(true);
       resetCreditFields()
+      
 
     } else {
       toast.info("Credits Already exist. Use Edit!", {
@@ -197,18 +287,26 @@ const  validataInput=()=>{
         newestOnTop: true,
         pauseOnHover: false
       });
+      setDisable(false)
     }
   };
   
   const handleExitBtn = () => {
+   
     setYear('');
     setPattern('');
-    setBranch('');
     setSemester('');
-    setSubject('')
-    setCourseCredit('0')
-    setAddCreditDivVisible(false);
-  }
+    setSubject('');
+    setBranch('');
+    setCourseCredit('0');    setAddCreditDivVisible(false);
+    setDisable(false)
+      
+      resetCreditFields()
+    // console.log("data before Reset :",data)
+
+    setData({})
+    // console.log("data After Reset :",data)
+ }
 
   const handleRefreshBtn = (e) => {
     var id = e.target.id;
@@ -219,10 +317,15 @@ const  validataInput=()=>{
       setSubject('');
       setBranch('');
       setCourseCredit('0');
+      setDisable(false)
+      setAddCreditDivVisible(false)
+      
+
       return;
     } else if (id === "btn-ref-add-sub") {
       setSubjectName('');
       setSubjectCode('');
+
       return;
     } else {
       setEseOom(0);
@@ -243,6 +346,7 @@ const  validataInput=()=>{
       setH1Credit(0);
       setH2Credit(0);
       setOpc(0);
+      setAddCreditDivVisible(false)
       return;
     }
   }
@@ -254,19 +358,8 @@ const  validataInput=()=>{
     display: 'none',
   }
   // console.log(subjects);
- const subject_exits = async (subjectName) => {
-    try {
-      const res = await window.api.invoke('check-subject', subjectName);
-      if (res === "SNF") {
-        return false; // Subject Not Found
-      } else if (res === "SF") {
-        return true; // Subject Found
-      }
-    } catch (error) {
-      console.error("Error occurred in handler for 'check-subject':", error);
-      return "DE"; // Database Error
-    }
-  };
+
+  
   
   
   const handleSubjectSave = async () => {
@@ -355,11 +448,11 @@ const data={
   h1Credit,
   h2Credit,
   opc,
-  year,
-  pattern,
-  semester,
-  subject,
-  branch,
+  year: year?.value, 
+  pattern: pattern?.value, 
+  semester:semester?.value,
+  subject:subject?.value,
+  branch:branch?.value,
   courseCredit
 }
 
@@ -374,13 +467,11 @@ if(response){
         newestOnTop: true,
   
   })
-  setYear('');
-      setPattern('');
-      setBranch('');
-      setCourseCredit('0');
-      setSemester('')
+resetInputs()
+setDisable(false)
   setAddCreditDivVisible(!addCreditDivVisible)
   const res =creditsExits()
+
 }
 else{
   toast.error("Can't Add Credits!",{
@@ -416,17 +507,18 @@ else{
       h1Credit,
       h2Credit,
       opc,
-      year,
-      pattern,
-      semester,
-      subject,
-      branch,
+      year:year?.value,
+      pattern:pattern?.value,
+      semester:semester?.value,
+      subject:subject?.value,
+      branch:branch?.value,
       courseCredit
     }
     
     console.log("Data to be sent:", data);
     const response = await window.api.invoke('update-credits',data)
     if(response){
+     
       toast.success("Credits Added SuccessFully!",{
         pauseOnHover:false,
         position:'top-right',
@@ -435,13 +527,13 @@ else{
             newestOnTop: true,
       
       })
-      setYear('');
-          setPattern('');
-          setBranch('');
-          setCourseCredit('0');
-          setSemester('')
+     
+        resetInputs()
       setAddCreditDivVisible(!addCreditDivVisible)
       const res =creditsExits(subject,year)
+      setDisable(false)
+
+      console.log(disable);
     }
     else{
       toast.error("Can't Add Credits!",{
@@ -453,109 +545,101 @@ else{
       
     })
     }
+  
     
       }
     
 
 
-const handleEdit=async()=>{
+      
 
-  if (!validataInput()) {
-    return toast.error('Please Select all the required fields!', {
-      position: 'top-right',
-      autoClose: 2500,
-      theme: 'colored',
-      newestOnTop: true,
-      pauseOnHover: false
-    });
-  }
+      const handleEdit = async () => {
+        if (year.value === '' || pattern.value === '' || subject.value === '' || branch.value === '') {
+          return toast.error('Please Select all the required fields!', {
+            position: 'top-right',
+            autoClose: 2500,
+            theme: 'colored',
+            newestOnTop: true,
+            pauseOnHover: false
+          });
+        }
 
-  const creditsExist = await creditsExits(subject,year);
+      
+        const creditsExist = await creditsExits();
+        if (!creditsExist) {
+          toast.error("No Credits were Found!", {
+            autoClose: 2000,
+            theme: 'colored',
+            newestOnTop: true,
+            pauseOnHover: false
+          });
+        } else {
+          setAddCreditDivVisible(true);
+          seteditBtn(true);
+          setDisable(true); 
+        }
+      };
+      
+      
 
-  if (!creditsExist) {
-    toast.error("No Credits were Found!", {
-      autoClose: 2000,
-      theme: 'colored',
-      newestOnTop: true,
-      pauseOnHover: false
-    });
-  } else {
-    setAddCreditDivVisible(true);
-    // setEseOom(data.ese_oom)
-    // console.log(data.ese_oom);
-    console.log(data); 
-
-    if (data) {
-      setEseOom(data.ese_oom || 0);
-      setEsePm(data.ese_pm || 0);
-      setEseRes(data.ese_res || 0);
-      setIaOom(data.ia_oom || 0);
-      setIaPm(data.ia_pm || 0);
-      setIaRes(data.ia_res || 0);
-      setTwOom(data.tw_com || 0);
-      setTwPm(data.tw_pm || 0);
-      setTwRes(data.tw_res || 0);
-      setPrOom(data.pr_oom || 0);
-      setPrPm(data.pr_pm || 0);
-      setPrRes(data.pr_res || 0);
-      setOrOom(data.or_oom || 0);
-      setOrPm(data.or_pm || 0);
-      setOrRes(data.or_res || 0);
-      setH1Credit(data.h1_credit || 0);
-      setH2Credit(data.h2_credit || 0);
-      setOpc(data.opc || 0);
-      seteditBtn(true)
-    }
-    
-  }
-};
-
-const handleSubDelete = async () => {
-  if (subject === '') {
-    return toast.error('Please select a subject!', {
-      position: 'top-right',
-      autoClose: 2500,
-      theme: 'colored',
-      newestOnTop: true,
-      pauseOnHover: false
-    });
-  }
-
-  const response = await window.api.invoke('delete-subject', subject );
-  if (response.success) {
-    if (response.changes === 0) {
-      toast.error("Subject credits found! Can't delete subject.", {
-        autoClose: 2000,
-        theme: 'colored',
-        newestOnTop: true,
-        pauseOnHover: false
-      });
-      setSubject('')
-    } else {
-      toast.success('Subject deleted successfully!', {
-        position: 'top-right',
-        autoClose: 2000,
-        theme: 'colored',
-        newestOnTop: true,
-        pauseOnHover: false
-      });
-      setNewSubjectAdded(!newSubjectAdded);
-      setSubject('');
-      setPattern('');
-      setBranch('');
-      setCourseCredit('0');
-      setSemester('');
-    }
-  } else {
-    toast.error("Can't delete subject!", {
-      position: 'top-right',
-      autoClose: 2500,
-      theme: 'colored',
-      newestOnTop: true,
-      pauseOnHover: false
-    });
-  }
-};
+      const handleSubDelete = async () => {
+        if (subject === '') {
+          return toast.error('Please select a subject!', {
+            position: 'top-right',
+            autoClose: 2500,
+            theme: 'colored',
+            newestOnTop: true,
+            pauseOnHover: false
+          });
+        }
+      
+        if (disable) {
+          return toast.error("Can't delete subject!", {
+            position: 'top-right',
+            autoClose: 2500,
+            theme: 'colored',
+            newestOnTop: true,
+            pauseOnHover: false
+          });
+        }
+      
+        const response = await window.api.invoke('delete-subject', subject);
+      
+        if (response.success) {
+          if (response.changes === 0) {
+            toast.error("Subject credits found! Can't delete subject.", {
+              autoClose: 2000,
+              theme: 'colored',
+              newestOnTop: true,
+              pauseOnHover: false
+            });
+            setSubject('');
+          } else {
+            toast.success('Subject deleted successfully!', {
+              position: 'top-right',
+              autoClose: 2000,
+              theme: 'colored',
+              newestOnTop: true,
+              pauseOnHover: false
+            });
+            setNewSubjectAdded(!newSubjectAdded);
+            setSubject('');
+            setPattern('');
+            setBranch('');
+            setCourseCredit('0');
+            setSemester({});
+          }
+        } else {
+          toast.error("Can't delete subject!", {
+            position: 'top-right',
+            autoClose: 2500,
+            theme: 'colored',
+            newestOnTop: true,
+            pauseOnHover: false
+          });
+        }
+      };
+      
 
 
 
@@ -583,21 +667,36 @@ const handleSubDelete = async () => {
             {isPreviousYearChecked && (
               <>
                 <div className="form-group">
-                  <label htmlFor="fromYear">From Year:</label>
-                  <select id="fromYear" value={fromYear} onChange={handleFromYearChange}>
-                    {years.map((year, index) => (
-                      <option key={index} value={year}>{year}</option>
-                    ))}
-                  </select>
+                  <label htmlFor="">From Year:</label>
+                  <Select 
+                    id="fromYear"
+                    value={fromYear}
+                    options={years}
+                    isDisabled={disable}
+                    maxMenuHeight={100}
+                    placeholder="Select a Year"
+                    onChange={setFromYear}
+
+                    
+                    />
                 </div>
 
                 <div className="form-group">
                   <label htmlFor="toYear">To Year:</label>
-                  <select id="toYear" value={toYear} onChange={handleToYearChange}>
-                    {years.map((year, index) => (
+                    {/* {years.map((year, index) => (
                       <option key={index} value={year}>{year}</option>
-                    ))}
-                  </select>
+                    ))} */}
+                    <Select 
+                    id="toYear"
+                    value={toYear}
+                    options={years}
+                    isDisabled={disable}
+                    maxMenuHeight={100}
+                    placeholder="Select a Year"
+                    onChange={setToYear}
+
+                    
+                    />
                 </div>
               </>
             )}
@@ -608,49 +707,94 @@ const handleSubDelete = async () => {
   className={`form-group ${isPreviousYearChecked ? 'hidden' : ''}`}
 >
   <label htmlFor="year">Year</label>
-  <select id="year" value={year} onChange={(e) => setYear(e.target.value)}>
+  {/* <select id="year" value={year} onChange={(e) => setYear(e.target.value)}  disabled={disable}  >
     <option value="">Select Year</option>
     {years.map((option, index) => (
       <option key={index} value={option}>{option}</option>
     ))}
-  </select>
+  </select> */}
+ <Select
+  id="year"
+  value={year}
+  onChange={setYear}
+  options={years}
+  isDisabled={disable}
+  placeholder="Select Year"
+  isOptionDisabled={(option) => option.isDisabled}
+/>
 </div>
+
 
             <div className="form-group">
               <label htmlFor="pattern">Pattern</label>
-              <select id="pattern" value={pattern} onChange={(e) => setPattern(e.target.value)}>
-                {patterns.map((option, index) => (
-                  <option key={index} value={option}>{option}</option>
-                ))}
-              </select>
+              <Select
+          id="pattern"
+          value={pattern}
+          onChange={setPattern}
+          options={patterns}
+          isDisabled={disable}
+          placeholder="Select Pattern"
+          isOptionDisabled={(option) => option.isDisabled}
+
+        />
             </div>
 
             <div className="form-group">
               <label htmlFor="semester">Semester</label>
-              <select id="semester" value={semester} onChange={(e) => setSemester(e.target.value)}>
+              {/* <select id="semester" value={semester} onChange={(e) => setSemester(e.target.value)}disabled={disable}>
                 {semesters.map((option, index) => (
                   <option key={index} value={option}>{option}</option>
                 ))}
-              </select>
-            </div>
+              </select> */}
+              <Select 
+              options={semesters}
+              onChange={setSemester}
+              isDisabled={disable} 
+              maxMenuHeight={100}
+              placeholder="Select Semester"
+              isOptionDisabled={(option) => option.isDisabled}
 
-            <div className="form-group">
-              <label htmlFor="subject">Subject</label>
-              <select id="subject" value={subject} onChange={(e) => setSubject(e.target.value)}>
-                {subjects.map((option, index) => (
-                  <option key={index} value={option}>{option}</option>
-                ))}
-              </select>
+              />
             </div>
+            <div className="form-group">
+  <label htmlFor="subject">Subject</label>
+  <div className="scrollable-select-wrapper">
+    <Select
+      id="subject"
+      value={subject}
+      onChange={setSubject}
+      isDisabled={disable}
+      placeholder="Select subject"
+      options={subjects}
+      maxMenuHeight={100}
+      isOptionDisabled={(option) => option.isDisabled}
 
-            <div className="form-group">
-              <label htmlFor="branch">Branch</label>
-              <select id="branch" value={branch} onChange={(e) => setBranch(e.target.value)}>
-                {branches.map((option, index) => (
-                  <option key={index} value={option}>{option}</option>
-                ))}
-              </select>
-            </div>
+/
+    >
+      {/* {subjects.map((option, index) => (
+        <option key={index} value={option}>{option}</option>
+      ))} */}
+  </div>
+</div>
+
+<div className="form-group">
+  <label htmlFor="branch">Branch</label>
+  <div className="scrollable-select-wrapper">
+    <Select
+      id="branch"
+      value={branch}
+      onChange={setBranch}
+      isDisabled={disable}
+      options={branches}
+      placeholder="Select a Branch"
+      maxMenuHeight={100}
+      isOptionDisabled={(option) => option.isDisabled}
+/      >
+      {/* {branches.map((option, index) => (
+        <option key={index} value={option}>{option}</option>
+      ))} */}
+  </div>
+</div>
 
           <div className="form-group">
             <label htmlFor="courseCredit">No. of Course Credit:</label>
@@ -946,7 +1090,7 @@ const handleSubDelete = async () => {
 
             }
               {/* <button type="button" className="btn-refresh" id='btn-ref-add-credit' onClick={handleRefreshBtn}>Refresh</button> */}
-              <button type="button" className="btn-exit" onClick={handleExitBtn}>Exit</button>
+              <button type="button" className="btn-exit" onClick={ handleExitBtn}>Exit</button>
             </div>
           </form>
       </div>

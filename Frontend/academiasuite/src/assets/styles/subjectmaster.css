@@ -2,21 +2,25 @@
   margin: 0;
   padding: 0;
 }
+
 .subject-master-container {
   display: flex;
   justify-content: space-evenly;
   gap: 1rem;
   padding: 1rem;
 }
+
 .first-div {
   width: 40%;
 }
-.sec-div{
+
+.sec-div {
   width: 50%;
   display: flex;
   flex-direction: column;
   gap: 10px;
-} 
+}
+
 .form-add-sub {
   padding-top: 1rem;
   padding-bottom: 1rem;
@@ -25,52 +29,63 @@
 .form-as {
   margin-top: 1rem;
 }
+
 .sub-div {
   display: flex;
   justify-content: space-between;
 }
- 
+
 .sub-div .form-buttons {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
+
 .form-as .form-group {
   padding: .2rem 1rem;
   margin: .4rem 2rem;
 }
+
 .first-sub-div {
   width: 100%;
 }
+
 .form-add-credit {
   padding: .4rem 3rem;
 }
+
 .form-add-credit .form-main {
-   margin-top: .5rem;
+  margin-top: .5rem;
 }
+
 .credit-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
 }
+
 .credit-row input {
   width: 100%;
-   
 }
+
 .sec-div label {
   font-size: 11px;
 }
+
 .form-add-credit .form-group {
   padding: .2rem 1rem;
 }
+
 .credit-row h3 {
   width: 3rem;
 }
+
 .last-row {
   border-top: 1px solid #334155;
   padding-top: 20px;
 }
+
 .last-row .opc {
   width: 80%;
   display: inline;
@@ -80,3 +95,4 @@
 .hidden {
   display: none;
 }
+
