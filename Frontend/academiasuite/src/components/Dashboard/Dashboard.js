@@ -15,9 +15,11 @@ const Dashboard = (props) => {
         return <Home setActiveMainComponent={setActiveMainComponent} />;
       case 'subject_master':
         return <SubjectMaster setActiveMainComponent={setActiveMainComponent} />
-      case 'group_master':
-        return <GroupMaster setActiveMainComponent={setActiveMainComponent} />
-    }
+        case 'group_master':
+          return <GroupMaster setActiveMainComponent={setActiveMainComponent} />
+        case 'Exam-code':
+          return <GroupMaster setActiveMainComponent={setActiveMainComponent} />
+      }
 
   }
   
