@@ -139,16 +139,17 @@ const Navbar = (props) => {
         </p>
         <p
           style={
-            activeSubSubMenu === "exam_group"
+            activeSubSubMenu === "student-attendence"
               ? activeSubSubMenustyle
               : disableSubsubMenustyle
           }
           className="submenu-item2"
           onClick={() => {
-            setActiveSubSubMenu("exam_group")
+            setActiveSubSubMenu("student-attendence")
+            props.setActiveMainComponent("student-attendence");
           }}
         >
-          Exam Group
+          Student Attendence
         </p>
       </div>
     </div>
