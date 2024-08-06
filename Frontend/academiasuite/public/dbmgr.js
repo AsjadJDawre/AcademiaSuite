@@ -599,6 +599,24 @@ ipcMain.handle('delete-exam-code', async (event, exam_id) => {
 
       if (this.changes > 0) {
         console.log(`Successfully deleted row with exam_id: ${exam_id}`);
+          
+        const query = 'DELETE FROM exam_res WHERE exam_id = ? ';
+
+          db.run(query, [exam_id], function (err) {
+            if (err) {
+              console.error('Error while deleting data:', err);
+              return reject(err);
+            }
+
+            if (this.changes > 0) {
+              console.log(`Successfully deleted row with exam_id: ${exam_id}`);
+              resolve(true);
+            } else {
+              console.log(`No row found with exam_id: ${exam_id}`);
+              resolve(false); // No row was deleted
+            }
+          });
+
         resolve(true);
       } else {
         console.log(`No row found with exam_id: ${exam_id}`);
@@ -684,7 +702,7 @@ ipcMain.handle('update-is-lock', async (event, data) => {
 // For Exam_Res
 // Insert in Exam-Res table
 ipcMain.handle('insert-in-exam-res', async (event, data) => {
-  const {pattern, semester, exam, subject, h1_res, h2_res} = data;
+  const {pattern, semester, exam, subject, h1_res, h2_res, exam_id} = data;
 
   return new Promise((resolve, reject) => {
     const query = 'SELECT * FROM exam_res WHERE pattern = ? AND semester = ? AND exam = ? AND subject = ?';
@@ -700,8 +718,8 @@ ipcMain.handle('insert-in-exam-res', async (event, data) => {
         return resolve('found');
       }
 
-      const insertData = 'INSERT INTO exam_res (pattern, semester, exam, subject, h1_res, h2_res) VALUES (?, ?, ?, ?, ?, ?)';
-      db.run(insertData, [pattern, semester, exam, subject, h1_res, h2_res], (err) => {
+      const insertData = 'INSERT INTO exam_res (pattern, semester, exam, subject, h1_res, h2_res, exam_id) VALUES (?, ?, ?, ?, ?, ?, ?)';
+      db.run(insertData, [pattern, semester, exam, subject, h1_res, h2_res, exam_id], (err) => {
         if (err) {
           console.error('Error creating exam:', err);
           return reject(new Error('Error inserting exam data.'));
@@ -717,7 +735,8 @@ ipcMain.handle('insert-in-exam-res', async (event, data) => {
 // check before insert
 ipcMain.handle('check-in-exam-res', async (event, data) => {
   const {pattern, semester, exam, subject, h1_res, h2_res} = data;
-
+  console.log(pattern + semester + exam + subject);
+  
   return new Promise((resolve, reject) => {
     const query = 'SELECT * FROM exam_res WHERE pattern = ? AND semester = ? AND exam = ? AND subject = ?';
 
@@ -728,14 +747,94 @@ ipcMain.handle('check-in-exam-res', async (event, data) => {
       }
 
       if (row) {
-        console.log('Record found:', row);
-        return resolve('found');
+        console.log('Record found for credits:', row);
+        resolve(row);
       } else {
         return resolve('not found')
       }
     })
   });
 });
+
+// fetch credits for add res
+ 
+ipcMain.handle('fetch-credits-for-res', async (event, data) => {
+  const { exam_id, pattern, semester, subject } = data;
+
+  return new Promise((resolve, reject) => {
+    // First, get the year from the exam_code table using the exam_id
+    const getYearQuery = 'SELECT year FROM exam_code WHERE exam_id = ?';
+
+    db.get(getYearQuery, [exam_id], (err, row) => {
+      if (err) {
+        console.error('Error while fetching year:', err);
+        return reject(err);
+      }
+
+      if (!row) {
+        console.log(`No year found for exam_id: ${exam_id}`);
+        return resolve([]);
+      }
+
+      const { year } = row;
+
+      // Now, fetch the subjects from the subject_master table
+      const getSubjectsQuery = `
+        SELECT * FROM subject_master 
+        WHERE pattern = ? AND semester = ? AND subject_name = ? AND year = ?
+      `;
+
+      db.all(getSubjectsQuery, [pattern, semester, subject, year], (err, rows) => {
+        if (err) {
+          console.error('Error while fetching subjects:', err);
+          return reject(err);
+        }
+
+        resolve(rows);
+      });
+    });
+  });
+});
+
+// fetch branch wise subjects
+ipcMain.handle('fetch-subject-branch-wise', async (event, data) => {
+  const {exam_id} = data;
+
+  return new Promise((resolve, reject) => {
+    // First, get the year from the exam_code table using the exam_id
+    const getYearQuery = 'SELECT branch FROM exam_code WHERE exam_id = ?';
+
+    db.get(getYearQuery, [exam_id], (err, row) => {
+      if (err) {
+        console.error('Error while fetching year:', err);
+        return reject(err);
+      }
+
+      if (!row) {
+        console.log(`No year found for exam_id: ${exam_id}`);
+        return resolve([]);
+      }
+
+      const { branch } = row;
+
+      // Now, fetch the subjects from the subject_master table
+      const getSubjectsQuery = `
+        SELECT subject_name FROM subject_master 
+        WHERE branch = ?
+      `;
+
+      db.all(getSubjectsQuery, [branch], (err, rows) => {
+        if (err) {
+          console.error('Error while fetching subjects:', err);
+          return reject(err);
+        }
+
+        resolve(rows);
+      });
+    });
+  });
+});
+
 
 ipcMain.handle('login-user', async (event, { username, password }) => {
   return new Promise((resolve, reject) => {

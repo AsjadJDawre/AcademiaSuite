@@ -52,7 +52,7 @@ SELECT * FROM subject_master WHERE year = '01/June 2011-31/May/2012' AND pattern
 UPDATE subject_master SET subject_name = 'Applied Chemistry-I' WHERE id = "26"
 -- UPDATE subject_master SET subject_group = null WHERE id = "32"
 
-<<<<<<< HEAD
+ 
  CREATE TABLE exam_code (
     exam_id INTEGER PRIMARY KEY AUTOINCREMENT,
     year TEXT,
@@ -64,7 +64,7 @@ UPDATE subject_master SET subject_name = 'Applied Chemistry-I' WHERE id = "26"
     is_lock BOOLEAN
 );
 
-DROP TABLE IF EXISTS exam_code;
+DROP TABLE IF EXISTS exam_res;
 
 INSERT INTO exam_code (year, branch, heldin_year, heldin_month, type, is_current, is_lock)
 VALUES ('01/June 2013-31/May/2014', 'COMPUTER ENGINEERING','2021', 'August', 'Regular Exam', 0, 0);
@@ -74,7 +74,7 @@ SELECT ec.heldin_year, ec.heldin_month, ec.type,
 FROM exam_code AS ec
 JOIN subject_master AS sm ON ec.subject_id = sm.id;
 
- UPDATE exam_code SET is_current = 1 WHERE exam_id = "35"
+ UPDATE exam_res SET exam_id = 34 WHERE exam_res_id = 1
 
  CREATE TABLE exam_res (
     exam_res_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -83,12 +83,14 @@ JOIN subject_master AS sm ON ec.subject_id = sm.id;
     exam TEXT,
     subject TEXT,
     h1_res INTEGER,
-    h2_res INTEGER
+    h2_res INTEGER,
+    exam_id INTEGER,
+    FOREIGN KEY (exam_id) REFERENCES exam_code(exam_id)
 );
 
 INSERT INTO exam_res (pattern, semester, exam, subject, h1_res, h2_res)
 VALUES ('CBGS','Semester 1', 'December 2021 (A.T.K.T)', 'Engineering Mathematics-I', 0, 0)
-=======
+ 
 -- CREATE TABLE exam_code (
 --     id INTEGER PRIMARY KEY AUTOINCREMENT,
 --     heldIn_year INTEGER,
@@ -109,4 +111,4 @@ VALUES ('CBGS','Semester 1', 'December 2021 (A.T.K.T)', 'Engineering Mathematics
 -- FROM exam_code  AS ec
 -- JOIN subject_master AS  sm ON ec.subject_id = sm.id;
 
->>>>>>> main
+ 
