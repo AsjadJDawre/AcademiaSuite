@@ -23,6 +23,10 @@ const ExamCode = () => {
 
   const [examType, setExamType] = useState('');
 
+  const [examIdForeignKey, setExamIdForeignKey] = useState('');
+
+  const [credits, setCredits] = useState([]);
+
   const [heldInYear, setHeldYear] = useState('');
   const [heldInMonth, setHeldMonth] = useState('');
   const [editHeldInYear, setEditHeldYear] = useState('');
@@ -55,29 +59,31 @@ const ExamCode = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await window.api.invoke('fetch-data');
-      const filteredSubjects = response.filter(item => item.subject_name !== null && item.subject_name.trim() !== '');
-      
-      // Use a Set to filter out duplicate subject names
-      const uniqueSubjectNames = Array.from(new Set(filteredSubjects.map(item => item.subject_name)));
-      
-      setSubjects(['Select subject', ...uniqueSubjectNames]);
-    };
-  
-    fetchData();
-  }, []);
+        setSubjects([]) 
+          const data = {
+            exam_id: examIdForeignKey
+          }
+          const response = await window.api.invoke('fetch-subject-branch-wise',data);
+          const filteredSubjects = response.filter(item => item.subject_name !== null && item.subject_name.trim() !== '');
+ 
+          // Use a Set to filter out duplicate subject names
+          const uniqueSubjectNames = Array.from(new Set(filteredSubjects.map(item => item.subject_name)));
+          
+          setSubjects(['Select subject', ...uniqueSubjectNames]);
+ 
+        }
+        fetchData();
+  }, [examIdForeignKey]);
+ 
  
 useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async () => { 
       try {
         const response = await window.api.invoke('fetch-exam-code');
-        
-        // Create a list of concatenated strings from the year, month, and type fields
-        const examCodeStrings = response.map(item => {
-          return `${item.branch.slice(0,4)}. ${item.heldin_month}-${item.heldin_year}-${item.type.split(' ')[0]}`;
-        });
-
-        setExams(['Select exam', ...examCodeStrings]);
+        console.log("resoponse :",response);
+ 
+        setExams([{ exam_id: '', year: '', branch: '', heldin_year: 'Select exam', heldin_month: '', type: '' }, ...response]);
+      
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -321,7 +327,7 @@ useEffect(() => {
   };
 
   const handleAddBtn = async () => {
-    if (pattern === '' || pattern === 'Select pattern' || semester === '' || semester === 'Select semester' || examtypeValue === '' || examtypeValue === 'Select exam' || subject === '' || subject === 'Select subject') {
+    if (pattern === '' || pattern === 'Select pattern' || semester === '' || semester === 'Select semester' || examtypeValue === '' || examtypeValue === '. -Select exam- ()' || subject === '' || subject === 'Select subject') {
         toast.info('Fill all required input fields',{
                 position:'top-right',
                 autoClose: 2500,
@@ -339,16 +345,48 @@ useEffect(() => {
     }
     try {
         const response = await window.api.invoke('check-in-exam-res', data);
+
+        setH1Res(response.h1_res)
+        setH2Res(response.h2_res)
         console.log(response);
+        console.log(h1Res);
+        console.log(h2Res);
         
-        if (response === "found") {
-            setEditableRes(true)
-            return
-        } else {
-            setResMarks(true)
-            console.log(resMarks);
+       
+        const dataForFetch = {
+            pattern: pattern,
+            semester: semester,
+            subject: subject,
+            exam_id: examIdForeignKey
+        }
+        try {
+            const response = await window.api.invoke('fetch-credits-for-res', dataForFetch);
+            if (response.length === 0) {
+                toast.info('Subjects were not Define! For this year, pattern, semester and branch.',{
+                    position:'top-right',
+                    autoClose: 2500,
+                    theme: 'colored',
+                    newestOnTop: true,
+                    pauseOnHover:false
+                  }) 
+                return
+                
+            }
+            setCredits(response);
+            console.log(response);
             
-        }      
+            
+        }catch (err) {
+            console.log(err);
+            
+        }
+       
+        if (response === 'not found') {
+            setResMarks(true)
+        } else {
+            setEditableRes(true)
+        } 
+            
         
     } catch (err) {
         console.log(err);
@@ -361,7 +399,8 @@ useEffect(() => {
         exam: examtypeValue,
         subject: subject,
         h1_res: h1Res,
-        h2_res: h2Res
+        h2_res: h2Res,
+        exam_id: examIdForeignKey
     }
     try {
         const response = await window.api.invoke('insert-in-exam-res', data);
@@ -563,23 +602,6 @@ useEffect(() => {
             <div className="form-container form-exam-code">
             <h1 className='form-title'>Examwise Resolution</h1>
             <form className='form-main'>
-                {/* <div className="form-group">
-                <label htmlFor="year">Year:</label>
-                    <select id="year" disabled={resMarks} value={year} onChange={(e) => setYear(e.target.value)}>
-                        {years.map((option, index) => (
-                        <option key={index} value={option}>{option}</option>
-                        ))}
-                    </select>
-                </div>
-
-                <div className="form-group">
-                    <label htmlFor="branch">Branch:</label>
-                    <select id="branch" disabled={resMarks} value={branch} onChange={(e) => setBranch(e.target.value)}>
-                        {branches.map((option, index) => (
-                        <option key={index} value={option}>{option}</option>
-                        ))}
-                    </select>
-                </div> */}
 
                 <div className="form-group">
                     <label htmlFor="pattern">Pattern</label>
@@ -600,18 +622,26 @@ useEffect(() => {
                 </div>
                 
                 <div className="form-group">
-                    <label htmlFor="subject">Subject</label>
-                    <select id="subject" disabled={resMarks || editableRes} value={subject} onChange={(e) => setSubject(e.target.value)}>
-                        {subjects.map((option, index) => (
-                        <option key={index} value={option}>{option}</option>
+                    <label htmlFor="exam">Exam</label>
+                    <select id="exam" disabled={resMarks || editableRes} value={examtypeValue} onChange={(e) => {
+                        setExamTypeValue(e.target.value)
+
+                        const selectedIndex = e.target.selectedIndex; 
+                        const selectedOption = e.target.options[selectedIndex]; 
+                        setExamIdForeignKey(selectedOption.id);  
+                        console.log(examIdForeignKey);
+                        
+                    }}>
+                        {exams.map((option, index) => (
+                        <option key={index} id={option.exam_id} value={`${option.branch.slice(0,4)}. ${option.heldin_month}-${option.heldin_year}- (${option.type.split(' ')[0]})`}>{`${option.branch.slice(0,4)}. ${option.heldin_month}-${option.heldin_year}- (${option.type.split(' ')[0]})`}</option>
                         ))}
                     </select>
                 </div>
-                
+
                 <div className="form-group">
-                    <label htmlFor="exam">Exam</label>
-                    <select id="exam" disabled={resMarks || editableRes} value={examtypeValue} onChange={(e) => setExamTypeValue(e.target.value)}>
-                        {exams.map((option, index) => (
+                    <label htmlFor="subject">Subject</label>
+                    <select id="subject" disabled={resMarks || editableRes} value={subject} onChange={(e) => setSubject(e.target.value)}>
+                        {subjects.map((option, index) => (
                         <option key={index} value={option}>{option}</option>
                         ))}
                     </select>
@@ -626,7 +656,10 @@ useEffect(() => {
                         setResMarks(false)
                         setAddResDiv(false)
                         setExamDefineDiv(true)
+                        setCredits('')
                         handleExamwiseRefreshBtn()
+                        setH1Res('')
+                        setH2Res('')
                         }} >Exit</button>
                 </div>
                 </form>
@@ -644,31 +677,47 @@ useEffect(() => {
                             <td>H1 Pass</td>
                             <td>H1 Res</td>
                         </tr>
-                        <tr>
-                            <td>Ese</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td><input type='number' value={h1Res} onChange={(e)=> setH1Res(e.target.value)} className='w-20 h-full bg-orange-100 text-red-400'/></td>
-                        </tr>
+                        
+                        {credits.map((credit, index) => {
+                            
+                            return (
+                            <tr key={index}>
+                                <td>Ese</td>
+                                <td>{credit.ese_oom}</td>
+                                <td>{credit.ese_pm}</td>
+                                <td><input type='number' value={h1Res} onChange={(e)=> setH1Res(e.target.value)} className='w-20 h-full bg-orange-100 text-red-400'/></td>
+                            </tr>
+                            )
+                        })}
                         <tr className='bg-indigo-100'>
                             <td>H2 Type</td>
                             <td>H2 OutOf</td>
                             <td>H2 Pass</td>
                             <td>H2 Res</td>
                         </tr>
-                        <tr>
-                            <td>IA</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td><input type='number' value={h2Res} onChange={(e)=> setH2Res(e.target.value)} className='w-20 h-full bg-orange-100 text-red-400'/></td>
-                        </tr>
+                        
+                        {credits.map((credit, index) => {
+                            return (
+                            <tr>
+                                <td>IA</td>
+                                <td>{credit.ia_oom}</td>
+                                <td>{credit.ia_pm}</td>
+                                <td><input type='number' value={h2Res} onChange={(e)=> setH2Res(e.target.value)} className='w-20 h-full bg-orange-100 text-red-400'/></td>
+                            </tr>
+                            )
+                        })}
                 
                     </tbody>
                 </table>
 
                 <div className='btn-res-marks'>
                     <button className='btn-save' onClick={handleInsertInExamRes}>Save</button>
-                    <button className='btn-exit ' onClick={() => {setResMarks(false)}}>Exit</button>
+                    <button className='btn-exit ' onClick={() => {
+                        setResMarks(false)
+                        setCredits('')
+                        setH1Res('')
+                        setH2Res('')
+                        }}>Exit</button>
                 </div>  
             </div>
         )}
