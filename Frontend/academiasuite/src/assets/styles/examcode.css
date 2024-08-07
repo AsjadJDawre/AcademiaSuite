@@ -1,0 +1,67 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.exam-code-container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 2rem;  
+    gap: 2rem;
+    justify-content: center;
+    color: #555555;
+}
+.radio-group {
+    display: flex;
+    font-weight: bold;
+    gap: 2rem;
+}
+.radio-group div {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+.heldin {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.heldin div {
+    display: flex;
+    gap: 2rem;
+}
+.heldin div select {
+    background-color: rgb(255, 255, 255);
+    padding: 1rem;
+    width: 50%;
+    border-radius: 3px;
+}
+.status-div-1{
+    background-color: white;
+    border-radius: 3px;
+    max-height: 31.5rem;
+    overflow: scroll;
+    overflow-x: hidden;
+}
+.status-div {
+    border-radius: 3px;
+    background-color: white;
+} 
+.btn-close-status {
+    width: 100%;
+    display: flex;
+    justify-content: end;
+}
+.btn-close-status button {
+    margin: 2rem;
+}
+ 
+.res-marks-div table td{
+   padding: 0, 2rem;
+}
+.btn-res-marks {
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+}
