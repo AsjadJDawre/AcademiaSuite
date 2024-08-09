@@ -545,14 +545,8 @@ else{
       
     })
     }
-  
-    
       }
-    
-
-
-      
-
+ 
       const handleEdit = async () => {
         if (year.value === '' || pattern.value === '' || subject.value === '' || branch.value === '') {
           return toast.error('Please Select all the required fields!', {
@@ -653,15 +647,15 @@ else{
           <h1 className='form-title'>Subject Master</h1>
           <form className='form-main'>
             
-          <div >
+          <div className='flex gap-4'>
               <label>
+               Use as per Previous Year
+              </label>
                 <input
                   type="checkbox"
                   checked={isPreviousYearChecked}
                   onChange={handleCheckboxChange}
                 />
-               Use as per Previous Year
-              </label>
             </div>
             {/* Conditionally rendered year selects */}
             {isPreviousYearChecked && (
