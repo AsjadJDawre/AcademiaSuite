@@ -6,6 +6,7 @@ import Home from '../Home/Home'
 import SubjectMaster from '../Subject/SubjectMaster'
 import GroupMaster from "../Subject/GroupMaster";
 import ExamCode from "../Exam/ExamCode";
+import StudentAttendence from "../Exam/StudentAttendence";
 
 const Dashboard = (props) => {
   const [activeMainComponent, setActiveMainComponent] = useState("home")
@@ -20,6 +21,8 @@ const Dashboard = (props) => {
         return <GroupMaster setActiveMainComponent={setActiveMainComponent} />
       case 'exam-code':
         return <ExamCode setActiveMainComponent={setActiveMainComponent} />
+      case 'student-attendence':
+        return <StudentAttendence setActiveMainComponent={setActiveMainComponent} />
     }
 
   }

@@ -64,7 +64,7 @@
 --     is_lock BOOLEAN
 -- );
 
-DROP TABLE  exam_code 
+-- DROP TABLE  exam_code 
 
 -- INSERT INTO exam_code (year, branch, heldin_year, heldin_month, type, is_current, is_lock)
 -- VALUES ('01/June 2013-31/May/2014', 'COMPUTER ENGINEERING','2021', 'August', 'Regular Exam', 0, 0);
