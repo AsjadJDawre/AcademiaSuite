@@ -111,4 +111,54 @@
 -- FROM exam_code  AS ec
 -- JOIN subject_master AS  sm ON ec.subject_id = sm.id;
 
- 
+-- CREATE TABLE student (
+-- student_id INTEGER,
+-- name TEXT
+-- )
+
+
+-- ALTER TABLE student ADD COLUMN status TEXT;  --To hold regular or atkt status
+
+-- ALTER TABLE student ADD COLUMN branch TEXT;
+
+-- UPDATE student
+-- SET status = 'regular'
+-- WHERE student_id = 132;
+
+
+-- ALTER TABLE exam_code ADD COLUMN pattern TEXT;
+
+
+-- ALTER TABLE exam_code ADD COLUMN subject_id INTEGER;  --'subject_id' column to link the exam with a specific subject
+
+-- CREATE TABLE subject (
+--     subject_id INTEGER PRIMARY KEY,
+--     subject_name TEXT NOT NULL,
+--     branch TEXT NOT NULL,
+--     year INTEGER NOT NULL,
+--     exam_id INTEGER,
+--     FOREIGN KEY(exam_id) REFERENCES exam_code(exam_id)
+-- );
+
+
+-- CREATE TABLE student_exams (
+--     student_id TEXT NOT NULL,
+--     exam_id TEXT NOT NULL,
+--     subject_name TEXT ,
+--     semester TEXT,
+--     PRIMARY KEY (student_id, exam_id, subject_name, semester),
+--     FOREIGN KEY (student_id) REFERENCES student(student_id),
+--     FOREIGN KEY (exam_id) REFERENCES exam_code(exam_id),
+--     FOREIGN KEY (semester) REFERENCES subject_master(semester)
+-- );
+
+-- SELECT s.*
+-- FROM student_exams se
+-- JOIN student s ON se.student_id = s.student_id
+-- WHERE se.subject_marker = 'ALL';
+
+
+
+-- ALTER TABLE student_exams ADD COLUMN subject_marker TEXT;
+
+
