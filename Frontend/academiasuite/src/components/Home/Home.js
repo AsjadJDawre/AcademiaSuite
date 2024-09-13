@@ -1,7 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import '../../assets/styles/home.css'
 
 const Home = () => {
+    const [studentsCount, setstudentsCount] = useState(0)
+
+    const getAllStudents=async()=>{
+        const count = await window.api.invoke('student-count');
+        setstudentsCount(count)
+        console.log(studentsCount);
+
+    }
+    useEffect(() => {
+        getAllStudents()
+        
+    }, [])
     return (
 
         <div className="home-container">
@@ -12,7 +24,7 @@ const Home = () => {
                     <h2 className="text-center font-extrabold text-2xl">
                         Total Number<br></br>Of Student REG.
                     </h2>
-                    <p className="text-6xl">0</p>
+                    <p className="text-6xl">{studentsCount}</p>
                 </div>
             </div>
         </div>
