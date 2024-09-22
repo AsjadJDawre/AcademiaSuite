@@ -835,6 +835,262 @@ ipcMain.handle('fetch-subject-branch-wise', async (event, data) => {
   });
 });
 
+ipcMain.handle('fetch-student-exams', async (event, { exam_id, semester }) => {
+  return new Promise((resolve, reject) => {
+    const query = `
+      SELECT s.*, se.subject_marker
+      FROM student_exams se
+      JOIN student s ON se.student_id = s.student_id
+      WHERE se.exam_id = ? 
+    `;
+    db.all(query, [exam_id], (error, rows) => {
+      if (error) {
+        console.error('Error while fetching student exams:', error);
+        return reject(error);
+      }
+
+      if (!rows || rows.length === 0) {
+        console.log('No student exams found');
+        return resolve([]);
+      }
+
+      console.log('Fetched student exams:', rows); // Log fetched data
+      return resolve(rows);
+    });
+  });
+});
+
+
+
+// fetch students 
+ipcMain.handle('fetch-student', async () => {
+  return new Promise((resolve, reject) => {
+    const query = "SELECT * FROM student";
+    db.all(query, (error, rows) => {
+      if (error) {
+        console.error('Error while fetching students:', error);
+        return reject(error);
+      }
+
+      if (!rows || rows.length === 0) {
+        console.log('No students found');
+        return resolve([]);
+      }
+
+      return resolve(rows);
+    });
+  });
+});
+
+ipcMain.handle('student-count', () => {
+  return new Promise((resolve, reject) => {
+    const query = "SELECT COUNT(*) AS count FROM student";
+    
+    db.get(query, (error, row) => {
+      if (error) {
+        console.error('Error while fetching student count:', error);
+        return reject(error);
+      }
+
+      return resolve(row.count);
+    });
+  });
+});
+
+
+ipcMain.handle('fetch-eligible-students', (event, { student_ids }) => {
+  return new Promise((resolve, reject) => {
+      console.log('Received student_ids:', student_ids);
+
+      if (!Array.isArray(student_ids) || student_ids.length === 0) {
+          console.error('Error: Invalid or empty student_ids parameter.');
+          return reject(new Error('Invalid or empty student_ids parameter.'));
+      }
+
+      const placeholders = student_ids.map(() => '?').join(',');
+      const query = `SELECT student_id, status FROM student WHERE student_id IN (${placeholders})`;
+
+      console.log('Executing query:', query);
+      console.log('Query parameters:', student_ids);
+
+      db.all(query, student_ids, (err, rows) => {
+          if (err) {
+              console.error('Database error:', err);
+              reject(err);
+          } else {
+              console.log('Query result:', rows);
+              resolve(rows);
+          }
+      });
+  });
+});
+
+
+ipcMain.handle('fetch-subjects-for-semester', (event, { semester }) => {
+  return new Promise((resolve, reject) => {
+      const query = `SELECT subject_name FROM subject WHERE semester = ?`;
+
+      db.all(query, [semester], (err, rows) => {
+          if (err) {
+              reject(err);
+          } else {
+              resolve(rows.map(row => row.subject_name));
+          }
+      });
+  });
+});
+
+
+ipcMain.handle('save-student-exams', async (event, data) => {
+  return new Promise((resolve, reject) => {
+    const { exam_id, subject, students,semester,subject_marker } = data;
+
+    db.serialize(() => {
+      db.run('BEGIN TRANSACTION');
+
+      const stmt = db.prepare('INSERT INTO student_exams (exam_id, subject_name,semester, subject_marker,student_id) VALUES (?, ?,?,?, ?)');
+
+      // Insert each student into the database
+      students.forEach(student_id => {
+        stmt.run(exam_id, subject,semester,subject_marker, student_id, (error) => {
+          if (error) {
+            console.error('Error while inserting student exam:', error);
+            db.run('ROLLBACK'); 
+            return reject(error);
+          }
+        });
+      });
+
+      stmt.finalize(err => {
+        if (err) {
+          console.error('Error finalizing statement:', err);
+          db.run('ROLLBACK'); // Rollback the transaction on error
+          return reject(err);
+        }
+
+        db.run('COMMIT', commitError => {
+          if (commitError) {
+            console.error('Error committing transaction:', commitError);
+            return reject(commitError);
+          }
+
+          resolve({ success: true, message: 'Students assigned successfully!' });
+        });
+      });
+    });
+  });
+});
+
+ipcMain.handle('check-existing-assignments', (event, data) => {
+  return new Promise((resolve, reject) => {
+      const { exam_type, subject_name } = data;
+
+      console.log("This is my ExamType:", exam_type, "Subject Name:", subject_name);
+
+      const query = `
+          SELECT COUNT(*) AS count 
+          FROM student_exams 
+          WHERE exam_id = ? AND 
+                (${subject_name === null ? 'subject_name IS NULL' : 'subject_name = ?'})
+      `;
+
+      const params = [exam_type];
+      if (subject_name !== null) {
+          params.push(subject_name); // Add subject_name only if it's not null
+      }
+
+      db.get(query, params, (error, row) => {
+          if (error) {
+              console.error('Error checking existing assignments:', error);
+              return reject(error);
+          }
+
+          resolve({ exists: row.count > 0 });
+      });
+  });
+});
+
+
+
+ipcMain.handle('delete-student-exam', async (event, data) => {
+  return new Promise((resolve, reject) => {
+    const { student_id, exam_id, subject } = data;
+
+    console.log('Received data for deletion:', { student_id, exam_id, subject });
+
+    db.serialize(() => {
+      console.log('Starting transaction...');
+      db.run('BEGIN TRANSACTION', (beginError) => {
+        if (beginError) {
+          console.error('Error starting transaction:', beginError);
+          return reject(beginError);
+        }
+
+        const query = `
+          DELETE FROM student_exams 
+          WHERE exam_id = ? AND student_id = ? 
+          AND (${subject === null ? 'subject_name IS NULL' : 'subject_name = ?'})
+        `;
+
+        const params = [exam_id, student_id];
+        if (subject !== null) {
+          params.push(subject); // Add subject parameter only if it's not null
+        }
+
+        console.log('Executing delete statement with params:', params);
+        db.run(query, params, (error) => {
+          if (error) {
+            console.error('Error while deleting student exam:', error);
+            db.run('ROLLBACK', rollbackError => {
+              if (rollbackError) {
+                console.error('Error rolling back transaction:', rollbackError);
+              }
+            });
+            return reject(error);
+          } else {
+            console.log('Delete statement executed successfully.');
+          }
+        });
+
+        db.run('COMMIT', (commitError) => {
+          if (commitError) {
+            console.error('Error committing transaction:', commitError);
+            return reject(commitError);
+          }
+
+          console.log('Transaction committed successfully.');
+          resolve({ success: true, message: 'Student exam deleted successfully!' });
+        });
+      });
+    });
+  });
+});
+
+
+
+
+// ipcMain.handle('save-student-attendance', (event, { exam_id, subject, students }) => {
+//   return new Promise((resolve, reject) => {
+//       const placeholders = students.map(() => '(?, ?, ?)').join(',');
+//       const query = `INSERT INTO student_exams (student_id, exam_id, subject_name, assigned_date) VALUES ${placeholders} 
+//                      ON CONFLICT(student_id, exam_id, subject_name) 
+//                      DO UPDATE SET assigned_date = CURRENT_DATE`;
+
+//       const values = students.flatMap(student_id => [student_id, exam_id, subject]);
+
+//       db.run(query, values, function (err) {
+//           if (err) {
+//               reject(err);
+//           } else {
+//               resolve({ success: true });
+//           }
+//       });
+//   });
+// });
+
+
+
+
 
 ipcMain.handle('login-user', async (event, { username, password }) => {
   return new Promise((resolve, reject) => {

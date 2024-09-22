@@ -1,0 +1,26 @@
+/* styles.css */
+.table-checkbox {
+    cursor: pointer;
+}
+.table-row:hover {
+    background-color: #0ac050;
+}
+.student-list {
+    max-height: 400px; /* Adjust the height as needed */
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+thead {
+    background-color: #f4f4f4;
+}
