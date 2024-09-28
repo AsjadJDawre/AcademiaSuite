@@ -10,7 +10,7 @@
     overflow-y: auto; /* Enable vertical scrolling */
 }
 
-table {
+/* table {
     width: 100%;
     border-collapse: collapse;
 }
@@ -23,4 +23,4 @@ th, td {
 
 thead {
     background-color: #f4f4f4;
-}
+} */
