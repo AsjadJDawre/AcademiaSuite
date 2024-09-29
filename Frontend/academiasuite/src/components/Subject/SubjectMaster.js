@@ -744,7 +744,7 @@ else{
               options={semesters}
               onChange={setSemester}
               isDisabled={disable} 
-              maxMenuHeight={100}
+              maxMenuHeight={150}
               placeholder="Select Semester"
               isOptionDisabled={(option) => option.isDisabled}
 
@@ -760,7 +760,7 @@ else{
       isDisabled={disable}
       placeholder="Select subject"
       options={subjects}
-      maxMenuHeight={100}
+      maxMenuHeight={150}
       isOptionDisabled={(option) => option.isDisabled}
 
 /
@@ -781,7 +781,7 @@ else{
       isDisabled={disable}
       options={branches}
       placeholder="Select a Branch"
-      maxMenuHeight={100}
+      maxMenuHeight={150}
       isOptionDisabled={(option) => option.isDisabled}
 /      >
       {/* {branches.map((option, index) => (
