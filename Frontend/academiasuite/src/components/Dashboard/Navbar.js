@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import RoofingIcon from "@mui/icons-material/Roofing";
 import SubjectIcon from "@mui/icons-material/Subject";
+import PersonIcon from "@mui/icons-material/Person"; 
+
 import "../../assets/styles/navbar.css";
 
 const Navbar = (props) => {
@@ -152,6 +154,44 @@ const Navbar = (props) => {
           Student Attendence
         </p>
       </div>
+
+
+      {/* // StudentEntry nav element */}
+<div
+  style={activeMenu === "studentEntry" ? activeMenustyle : disableMenustyle}
+  className="nav-item"
+  onClick={() => {
+    setActiveSubMenu("studentEntry");
+    setActiveMenu("studentEntry");
+  }}
+>
+  <p>
+    <PersonIcon /> Student
+  </p>
+  <p>{activeMenu === "studentEntry" ? downArrow : forwordArrow}</p>
+</div>
+<div
+  className="dropdown-studentEntry dropdown"
+  style={activeSubMenu !== "studentEntry" ? dropdownDisable : dropdownActive}
+>
+  <p
+    style={
+      activeSubSubMenu === "student_entry"
+        ? activeSubSubMenustyle
+        : disableSubsubMenustyle
+    }
+    className="submenu-item1"
+    onClick={() => {
+      setActiveSubSubMenu("student_entry");
+      props.setActiveMainComponent("student_entry");
+    }}
+  >
+    Student Entry
+  </p>
+</div>
+
+
+
     </div>
   );
 };
