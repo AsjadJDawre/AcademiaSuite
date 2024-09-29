@@ -5,9 +5,12 @@
 .table-row:hover {
     background-color: #0ac050;
 }
+
+
+/* 
 .student-list {
-    max-height: 400px; /* Adjust the height as needed */
-    overflow-y: auto; /* Enable vertical scrolling */
+    max-height: 400px; 
+    overflow-y: auto;
 }
 
 /* table {

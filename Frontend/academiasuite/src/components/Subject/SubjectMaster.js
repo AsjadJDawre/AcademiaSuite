@@ -802,48 +802,51 @@ const SubjectMaster = () => {
                   <option key={index} value={option}>{option}</option>
                 ))}
               </select> */}
-              <Select
-                options={semesters}
-                onChange={setSemester}
-                isDisabled={disable}
-                maxMenuHeight={100}
-                placeholder="Select Semester"
-                isOptionDisabled={(option) => option.isDisabled}
+              <Select 
+              options={semesters}
+              onChange={setSemester}
+              isDisabled={disable} 
+              maxMenuHeight={150}
+              placeholder="Select Semester"
+              isOptionDisabled={(option) => option.isDisabled}
+
               />
             </div>
             <div className="form-group">
-              <label htmlFor="subject">Subject</label>
-              <div className="scrollable-select-wrapper">
-                <Select
-                  id="subject"
-                  value={subject}
-                  onChange={setSubject}
-                  isDisabled={disable}
-                  placeholder="Select subject"
-                  options={subjects}
-                  maxMenuHeight={100}
-                  isOptionDisabled={(option) => option.isDisabled}
-                />
-                {/* {subjects.map((option, index) => (
+  <label htmlFor="subject">Subject</label>
+  <div className="scrollable-select-wrapper">
+    <Select
+      id="subject"
+      value={subject}
+      onChange={setSubject}
+      isDisabled={disable}
+      placeholder="Select subject"
+      options={subjects}
+      maxMenuHeight={150}
+      isOptionDisabled={(option) => option.isDisabled}
+
+/
+    >
+      {/* {subjects.map((option, index) => (
         <option key={index} value={option}>{option}</option>
       ))} */}
               </div>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="branch">Branch</label>
-              <div className="scrollable-select-wrapper">
-                <Select
-                  id="branch"
-                  value={branch}
-                  onChange={setBranch}
-                  isDisabled={disable}
-                  options={branches}
-                  placeholder="Select a Branch"
-                  maxMenuHeight={100}
-                  isOptionDisabled={(option) => option.isDisabled}
-                />
-                {/* {branches.map((option, index) => (
+<div className="form-group">
+  <label htmlFor="branch">Branch</label>
+  <div className="scrollable-select-wrapper">
+    <Select
+      id="branch"
+      value={branch}
+      onChange={setBranch}
+      isDisabled={disable}
+      options={branches}
+      placeholder="Select a Branch"
+      maxMenuHeight={150}
+      isOptionDisabled={(option) => option.isDisabled}
+/      >
+      {/* {branches.map((option, index) => (
         <option key={index} value={option}>{option}</option>
       ))} */}
               </div>

@@ -405,8 +405,8 @@ const [studentToDelete, setStudentToDelete] = useState(null);
                         </div>
                     </div>
                 
-<div className='student-list p-4'>
-            <table className='min-w-full divide-y divide-gray-200'>
+<div className='student-list max-h-96 overflow-y-auto p-4'>
+            <table className='min-w-full divide-y divide-gray-200 w-full border-collapse '>
                 <thead className='bg-gray-50'>
                     <tr>
                         <th className='px-6 py-3 text-left text-lg  uppercase tracking-wider'>
