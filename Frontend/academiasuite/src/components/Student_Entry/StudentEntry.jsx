@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { toast,ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
+import "../../assets/styles/form.css";
 
 const StudentEntry = () => {
   const [formData, setFormData] = useState({
@@ -29,19 +30,19 @@ const StudentEntry = () => {
   };
 
   const handleSearch = () => {
-    if(!formData.studentID){
-toast.error("Enter Student ID" ,{
-  position: "top-right",
-  autoClose: 3500,
-  hideProgressBar: false,
-  closeOnClick: true,
-  pauseOnHover: false,
-  draggable: false,
-  theme: "colored",
-  
-})
+    if (!formData.studentID) {
+      toast.error("Enter Student ID", {
+        position: "top-right",
+        autoClose: 3500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: false,
+        theme: "colored",
 
-}else{
+      })
+
+    } else {
       alert("Student Found")
     }
   }
@@ -50,7 +51,7 @@ toast.error("Enter Student ID" ,{
     <div className="exam-cod p-8 bg-gray-100 min-h-screen">
       {/* Main Form Container */}
       <div className="bg-white p-8 shadow-lg rounded-lg flex">
-        
+
         {/* Left Section: Form Fields */}
         <div className="w-2/3 space-y-6 pr-6 border-r">
           {/* Heading and Radio Buttons */}
@@ -115,11 +116,11 @@ toast.error("Enter Student ID" ,{
                   onChange={handleInputChange}
                   placeholder='Enter the Academic Year'
                 >
-                <option className='font-bold'  disabled value="">Select  Year</option>
-                <option className='font-bold'  value="FE">First Year</option>
-                <option className='font-bold'   value="SE">Second Year</option>
-                <option className='font-bold'  value="TE">Third Year</option>
-                <option className='font-bold'  value="BE">Fourth Year</option>
+                  <option className='font-bold' disabled value="">Select  Year</option>
+                  <option className='font-bold' value="FE">First Year</option>
+                  <option className='font-bold' value="SE">Second Year</option>
+                  <option className='font-bold' value="TE">Third Year</option>
+                  <option className='font-bold' value="BE">Fourth Year</option>
                 </select>
               </div>
 
@@ -132,9 +133,9 @@ toast.error("Enter Student ID" ,{
                   value={formData.branch}
                   onChange={handleInputChange}
                 >
-                  <option className='font-bold'  value="">Select Branch</option>
+                  <option className='font-bold' value="">Select Branch</option>
                   <option className='font-bold' value="Computer Engineering">Computer Engineering </option>
-                  <option className='font-bold'  value="Civil Engineering">Civil Engineering </option>
+                  <option className='font-bold' value="Civil Engineering">Civil Engineering </option>
                   <option className='font-bold' value="Mechanical Engineering">Mechanical Engineering</option>
                 </select>
               </div>
@@ -151,18 +152,18 @@ toast.error("Enter Student ID" ,{
                   value={formData.caste}
                   onChange={handleInputChange}
                 >
-    <option value="" disabled className='font-extrabold'>Select a Caste </option>
-    <option className='font-bold'value="Open">Open</option>
-    <option className='font-bold'value="OBC">OBC</option>
-    <option className='font-bold' value="Scheduled Castes (SC)">Scheduled Castes (SC)</option>
-    <option className='font-bold' value="Scheduled Tribe (ST)">Scheduled Tribe (ST)</option>
-    <option className='font-bold'value="Vimukta Jati (VJ) / De-Notified Tribes (DT) (NT-A)">Vimukta Jati (VJ) / De-Notified Tribes (DT) (NT-A)</option>
-    <option className='font-bold' value="Nomadic Tribes 1 (NT-B)">Nomadic Tribes 1 (NT-B)</option>
-    <option className='font-bold' value="Nomadic Tribes 2 (NT-C)">Nomadic Tribes 2 (NT-C)</option>
-    <option className='font-bold' value="Nomadic Tribes 3 (NT-D)">Nomadic Tribes 3 (NT-D)</option>
-    <option className='font-bold' value="Other Backward Classes (OBC)">Other Backward Classes (OBC)</option>
-    <option className='font-bold' value="Socially and Educationally Backward Classes (SEBC)">Socially and Educationally Backward Classes (SEBC)</option>
-</select>
+                  <option value="" disabled className='font-extrabold'>Select a Caste </option>
+                  <option className='font-bold' value="Open">Open</option>
+                  <option className='font-bold' value="OBC">OBC</option>
+                  <option className='font-bold' value="Scheduled Castes (SC)">Scheduled Castes (SC)</option>
+                  <option className='font-bold' value="Scheduled Tribe (ST)">Scheduled Tribe (ST)</option>
+                  <option className='font-bold' value="Vimukta Jati (VJ) / De-Notified Tribes (DT) (NT-A)">Vimukta Jati (VJ) / De-Notified Tribes (DT) (NT-A)</option>
+                  <option className='font-bold' value="Nomadic Tribes 1 (NT-B)">Nomadic Tribes 1 (NT-B)</option>
+                  <option className='font-bold' value="Nomadic Tribes 2 (NT-C)">Nomadic Tribes 2 (NT-C)</option>
+                  <option className='font-bold' value="Nomadic Tribes 3 (NT-D)">Nomadic Tribes 3 (NT-D)</option>
+                  <option className='font-bold' value="Other Backward Classes (OBC)">Other Backward Classes (OBC)</option>
+                  <option className='font-bold' value="Socially and Educationally Backward Classes (SEBC)">Socially and Educationally Backward Classes (SEBC)</option>
+                </select>
 
               </div>
 
@@ -177,8 +178,8 @@ toast.error("Enter Student ID" ,{
                 >
                   <option value="" className='font-extrabold'>Select Gender  </option>
                   <option value="Male" className='font-bold'>Male</option>
-                  <option value="Female"className='font-bold' >Female</option>
-                  </select>
+                  <option value="Female" className='font-bold' >Female</option>
+                </select>
               </div>
             </div>
 
@@ -196,14 +197,14 @@ toast.error("Enter Student ID" ,{
               </div>
             </div>
 
-            <div className="mt-20 flex space-x-4">
-              <button className="px-4 py-2 bg-green-600 hover:bg-green-500 rounded">SAVE</button>
-              <button className="px-4 py-2 bg-blue-500 hover:bg-blue-600 border rounded">REFRESH</button>
-              <button className="px-4 py-2 bg-red-500 hover:bg-red-600 border rounded">DELETE</button>
-              <button className="px-4 py-2 bg-blue-500 hover:bg-blue-600 border rounded">GET EXCEL</button>
-              <button className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 border rounded">EDIT</button>
-              <button className="px-4 py-2 bg-green-500 hover:bg-green-600 border rounded">IMPORT</button>
-              <button className="px-4 py-2 bg-blue-500 hover:bg-blue-600 border rounded" onClick={handleSearch}>Search</button>
+            <div className="pt-12 flex justify-between">
+              <button className=" rounded btn-save">Save</button>
+              <button className=" border rounded btn-refresh">Refresh</button>
+              <button className=" border rounded btn-edit">Edit</button>
+              <button className=" border rounded btn-exit">Delete</button>
+              <button className=" border rounded btn-excel">Get Excel</button>
+              <button className=" border rounded btn-import">Import</button>
+              <button className=" border rounded btn-search" onClick={handleSearch}>Search</button>
             </div>
           </div>
         </div>
@@ -220,14 +221,14 @@ toast.error("Enter Student ID" ,{
                 id="imageUpload"
                 name="image"
                 className="hidden"
- accept="image/jpg,image/png,image/jpeg,image"                onChange={handleImageUpload}
+                accept="image/jpg,image/png,image/jpeg,image" onChange={handleImageUpload}
               />
             </label>
           </div>
-            <p className='text-lg   font-semibold'>Student Photo</p>
+          <p className='text-lg   font-semibold'>Student Photo</p>
         </div>
       </div>
-      <ToastContainer/>
+      <ToastContainer />
     </div>
 
   );
