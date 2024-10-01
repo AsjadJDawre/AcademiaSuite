@@ -461,8 +461,8 @@ const StudentAttendence = () => {
               </div>
 
               <div className="flex justify-between gap-2 items-center">
-                <div className="form-group radio-group w-full">
-                  <div>
+                <div className="bg-[#F7F7F7] rounded-[3px] p-[.7rem_1.5rem] gap-[.4rem] border border-[#E6E6E6] radio-group w-full ">
+                  <div className="w-fit">
                     <input
                       type="radio"
                       id="allsub"
@@ -473,7 +473,7 @@ const StudentAttendence = () => {
                     ></input>
                     <label htmlFor="allsub">All Subjects</label>
                   </div>
-                  <div>
+                  <div className="w-fit">
                     <input
                       type="radio"
                       id="singlesub"
