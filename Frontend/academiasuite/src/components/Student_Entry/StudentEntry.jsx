@@ -74,54 +74,6 @@ const StudentEntry = () => {
     }
   }
 
-
-  // useEffect(() => {
-  //   console.log(activeSearch);
-
-  //   if (activeSearch) {
-  //     $('#table').DataTable({
-  //       // dom: 'Bfrtip', // Display buttons
-  //       dom: "<'row'<'col-md-8'l><'col-md-4'f>>" + // Length and search input on the same line
-  //         "<'row'<'col-md-12'<'div.spacer'>>>" +  // Spacer
-  //         "<'row'<'col-md-12't>>" +               // Table
-  //         "<'row'<'col-md-12'<'div.spacer'>>>" +  // Spacer
-  //         "<'row'<'col-md-3'i><'col-md-9'p>>" + // info and pagination
-  //         "<'row'<'col-md-12'<'div.spacer'>>>" +  // Spacer
-  //         "<'row'<'col-md-12'B>>",               // Buttons at the bottom
-
-  //       buttons: [
-  //         {
-  //           extend: 'copy',
-  //           className: 'dt-button'
-  //         },
-  //         {
-  //           extend: 'csv',
-  //           className: 'dt-button'
-  //         },
-  //         {
-  //           extend: 'excel',
-  //           className: 'dt-button'
-  //         },
-  //         {
-  //           extend: 'pdf',
-  //           className: 'dt-button'
-  //         }
-  //       ],
-  //       initComplete: function () {
-  //         // Set the width of the search input
-  //         $('.dataTables_filter input').css('width', '300px'); // Adjust the width as needed
-  //       }
-  //     });
-  //     $('.spacer').css('height', '15px'); // Adjust the height as needed
-  //   }
-
-  //   else {
-  //     console.log("not active");
-  //   }
-  // }, [activeSearch]);
-
-
-
   const onDestroyModal = () => {
     if ($.fn.DataTable.isDataTable('#table')) {
       $('#table').DataTable().destroy(true);
