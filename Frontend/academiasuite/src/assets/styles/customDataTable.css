@@ -1,0 +1,131 @@
+/* Custom styles for DataTable */
+
+/* Style the search input container */
+.dataTables_filter {
+    margin-bottom: 1rem; /* Add margin below the search bar */
+  }
+  
+  /* Style the search input field */
+  .dataTables_filter input {
+    border: 1px solid #ccc; /* Border color */
+    border-radius: 4px; /* Rounded corners */
+    padding: 8px; /* Padding inside the input */
+    width: 200px; /* Set a specific width */
+    font-size: 14px; /* Font size */
+    transition: border-color 0.3s; /* Transition effect */
+  }
+  
+  /* Style the search input on focus */
+  .dataTables_filter input:focus {
+    border-color: #007bff; /* Change border color on focus */
+    outline: none; /* Remove default outline */
+  }
+  
+  /* Style the label for the search input */
+  .dataTables_filter label {
+    margin-right: 10px; /* Space between label and input */
+    font-weight: bold; /* Make label bold */
+  }
+  
+  /* Style the DataTable buttons */
+  .dt-button {
+    background-color: #007bff; /* Button background color */
+    color: white; /* Button text color */
+    border: none; /* Remove border */
+    border-radius: 4px; /* Rounded corners */
+    padding: 8px 12px; /* Padding inside the button */
+    font-size: 14px; /* Font size */
+    margin-right: 0.5rem; /* Space between buttons */
+    transition: background-color 0.3s; /* Transition effect */
+  }
+  
+  /* Change button styles on hover */
+  .dt-button:hover {
+    width: 2rem;
+    background-color: #0056b3; /* Darker blue on hover */
+    cursor: pointer; /* Change cursor on hover */
+  }
+  
+  /* Adjust button styles when disabled */
+  .dt-button:disabled {
+    background-color: #6c757d; /* Gray background for disabled */
+    cursor: not-allowed; /* Change cursor to not-allowed */
+  }
+
+  .dataTables_wrapper .dt-button {
+    margin-top: 1rem; /* Space above buttons */
+}
+  
+  /* Additional styling for the DataTable */
+   table.dataTable {
+    border-collapse: collapse; /* Collapse borders */
+    width: 100%;  /*Full width */
+  } 
+  
+  /* Style table headers */
+  /* table.dataTable thead th {
+    background-color: #f8f9fa; /* Header background color */
+    /* color: #212529; Header text color */
+    /* padding: 10px; Padding for header cells */
+    /* font-weight: bold; Bold text for headers */
+    /* border-bottom: 2px solid #dee2e6; Bottom border for headers */
+  /* } */ 
+  
+  /* Style table body cells */
+  table.dataTable tbody td {
+    padding: 8px; /* Padding for body cells */
+    border-bottom: 1px solid #dee2e6; /*Bottom border for body cells*/
+   } 
+   
+  /* Highlight rows on hover */
+  table.dataTable tbody tr:hover {
+    background-color: #f1f1f1; /* Background color on row hover */
+  }
+   
+  /* Style for the search wrapper to align search input and length select */
+.search-wrapper {
+    display: flex;
+    align-items: center; /*Center vertically */
+}
+
+/* Style for the length select and search input */
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter {
+    margin-right: 1rem; /* Space between length and search input */
+}
+
+/* Adjust the width of search input if needed */
+.dataTables_wrapper .dataTables_filter input {
+    width: auto; /* Set to desired width, e.g., auto or a fixed value */
+}
+
+/* Adjust button spacing */
+.dataTables_wrapper .dt-button {
+    margin-top: 1rem; /* Space above buttons */
+}
+
+.top-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.top-section label {
+  margin-right: 10px; /* Adjust spacing as needed */
+}
+
+.table-section {
+  margin-top: 10px;
+}
+
+.bottom-section {
+  margin-top: 20px;
+}
+
+/* Custom styles for DataTables search input */
+.dataTables_filter input {
+  width: 300px; /* Change this value to your desired width */
+  display: inline-block; /* Ensure it stays inline with the label */
+  margin-left: 10px; /* Add margin for spacing */
+}

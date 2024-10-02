@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import RoofingIcon from "@mui/icons-material/Roofing";
 import SubjectIcon from "@mui/icons-material/Subject";
 import PersonIcon from "@mui/icons-material/Person"; 
+import DescriptionIcon from '@mui/icons-material/Description';
 
 import "../../assets/styles/navbar.css";
 
@@ -74,7 +75,7 @@ const Navbar = (props) => {
         <p>{activeMenu === "subject" ? downArrow : forwordArrow}</p>
       </div>
       <div
-        className="dropdown-subject dropdown"
+        className="dropdown-subject dropdown "
         style={activeSubMenu !== "subject" ? dropdownDisable : dropdownActive}
       >
         <p
@@ -117,7 +118,7 @@ const Navbar = (props) => {
         }}
       >
         <p>
-          <SubjectIcon /> Exam
+          <DescriptionIcon /> Exam
         </p>
         <p>{activeMenu === "exam" ? downArrow : forwordArrow}</p>
       </div>
