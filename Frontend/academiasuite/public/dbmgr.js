@@ -940,6 +940,46 @@ ipcMain.handle('fetch-subjects-for-semester', (event, { semester }) => {
   });
 });
 
+ipcMain.handle('save-student-data', async (event, data) => {
+  const { students, branch, year } = data;
+
+  return new Promise((resolve, reject) => {
+      db.serialize(() => {
+          db.run('BEGIN TRANSACTION'); // Start a transaction
+
+          const stmt = db.prepare('INSERT INTO student (student_id, name, branch, category,year, gender, studentType) VALUES (?, ?, ?,?, ?, ?, ?)');
+
+          // Insert each student into the database
+          students.forEach(student => {
+              stmt.run(student.id, student.name, branch, student.category, year, student.gender, student.studentType, (error) => {
+                  if (error) {
+                      console.error('Error while inserting student data:', error);
+                      db.run('ROLLBACK'); // Rollback the transaction on error
+                      return reject(error);
+                  }
+              });
+          });
+
+          stmt.finalize(err => {
+              if (err) {
+                  console.error('Error finalizing statement:', err);
+                  db.run('ROLLBACK'); // Rollback the transaction on error
+                  return reject(err);
+              }
+
+              db.run('COMMIT', commitError => {
+                  if (commitError) {
+                      console.error('Error committing transaction:', commitError);
+                      return reject(commitError);
+                  }
+
+                  resolve({ success: true, message: 'Students saved successfully!' });
+              });
+          });
+      });
+  });
+});
+
 
 ipcMain.handle('save-student-exams', async (event, data) => {
   return new Promise((resolve, reject) => {
