@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import { toast,ToastContainer } from 'react-toastify';
+import * as XLSX from 'xlsx';
+import { v4 as uuidv4 } from 'uuid';
+
+
 
 const StudentEntry = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +17,12 @@ const StudentEntry = () => {
     image: null,
   });
 
+  const [students,setStudents]=useState([])
+
+
+  const [excelData, setExcelData] = useState([]);
+
+
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({
@@ -20,7 +30,90 @@ const StudentEntry = () => {
       [name]: type === 'checkbox' ? checked : value,
     });
   };
+  const handleRefresh=()=>{
+    setExcelData([])
+  }
 
+  const handleImport =()=>{
+    const input=document.createElement('input');
+    input.type='file';
+    input.accept='file'
+    input.click();
+
+    input.onchange=()=>{
+      const file=input.files[0];
+      const reader=new FileReader();
+      reader.onload=(e)=>{
+        const binarystr=e.target.result;
+        const workbook=XLSX.read(binarystr,{type:'binary'});
+        const sheetName =workbook.SheetNames[0];
+        const sheet =workbook.Sheets[sheetName];
+        const jsonData=XLSX.utils.sheet_to_json(sheet);
+        setExcelData(jsonData);
+      };
+      reader.readAsBinaryString(file);
+    };
+console.log(excelData)
+        
+      }
+
+      const generateStudentId = () => {
+        return `STU-${uuidv4()}`; 
+    };
+
+      const handleSave=async()=>{
+        if (excelData.length !== 0 && formData.branch !== '' && formData.year !== '') {
+          // toast.success("Rukho Zara Sabr Karo")
+          const studentsWithIds =  excelData.map((student, index) => ({
+            id: generateStudentId(index), // Generate unique ID
+            name: student.StudentName,
+            category: student.Category,
+            gender: student.Gender,
+            studentType: student.StudentType,
+          }));
+      
+          setStudents(studentsWithIds);
+          console.log(students);
+          const {success,message} = await window.api.invoke('save-student-data', {
+              students: students,
+              branch: formData.branch,
+              year: formData.year,
+          }); 
+          if(success){
+            toast.success(message,{
+              position: "top-right",
+              autoClose: 3000,
+              pauseOnHover:false,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: false,
+              draggable: false,
+              theme: "colored",
+
+            })
+          }
+          else{
+            toast.error("Something went wrong While saving! ")
+          }
+
+
+          
+
+        }
+        else{
+          toast.info("Import students First!",{
+            position: "top-right",
+  autoClose: 3000,
+  pauseOnHover:false,
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: false,
+  draggable: false,
+  theme: "colored",
+          })
+          return
+        }
+      }
   const handleImageUpload = (e) => {
     setFormData({
       ...formData,
@@ -116,10 +209,10 @@ toast.error("Enter Student ID" ,{
                   placeholder='Enter the Academic Year'
                 >
                 <option className='font-bold'  disabled value="">Select  Year</option>
-                <option className='font-bold'  value="FE">First Year</option>
-                <option className='font-bold'   value="SE">Second Year</option>
+                <option className='font-bold'  value="5/April/2023-30/May/2024">5/April/2023-30/May/2024</option>
+                {/* <option className='font-bold'   value="SE">Second Year</option>
                 <option className='font-bold'  value="TE">Third Year</option>
-                <option className='font-bold'  value="BE">Fourth Year</option>
+                <option className='font-bold'  value="BE">Fourth Year</option> */}
                 </select>
               </div>
 
@@ -197,12 +290,12 @@ toast.error("Enter Student ID" ,{
             </div>
 
             <div className="mt-20 flex space-x-4">
-              <button className="px-4 py-2 bg-green-600 hover:bg-green-500 rounded">SAVE</button>
-              <button className="px-4 py-2 bg-blue-500 hover:bg-blue-600 border rounded">REFRESH</button>
+              <button className="px-4 py-2 bg-green-600 hover:bg-green-500 rounded" onClick={handleSave}>SAVE</button>
+              <button className="px-4 py-2 bg-blue-500 hover:bg-blue-600 border rounded" onClick={handleRefresh}>REFRESH</button>
               <button className="px-4 py-2 bg-red-500 hover:bg-red-600 border rounded">DELETE</button>
               <button className="px-4 py-2 bg-blue-500 hover:bg-blue-600 border rounded">GET EXCEL</button>
               <button className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 border rounded">EDIT</button>
-              <button className="px-4 py-2 bg-green-500 hover:bg-green-600 border rounded">IMPORT</button>
+              <button className="px-4 py-2 bg-green-500 hover:bg-green-600 border rounded" onClick={handleImport}>IMPORT</button>
               <button className="px-4 py-2 bg-blue-500 hover:bg-blue-600 border rounded" onClick={handleSearch}>Search</button>
             </div>
           </div>
@@ -227,7 +320,34 @@ toast.error("Enter Student ID" ,{
             <p className='text-lg   font-semibold'>Student Photo</p>
         </div>
       </div>
+      {excelData.length > 0 && (
+        <table className="w-full border border-gray-300 mt-4 rounded-lg">
+        <thead className="bg-gray-200">
+          <tr>
+            {Object.keys(excelData[0]).map((key) => (
+              <th key={key} className="px-4 py-2 text-left border border-gray-300">
+                {key}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {excelData.map((row, index) => (
+            <tr key={index} className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}>
+              {Object.values(row).map((value, idx) => (
+                <td key={idx} className="px-4 py-2 border border-gray-300">
+                  {value}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      
+      )}
+
       <ToastContainer/>
+      
     </div>
 
   );
