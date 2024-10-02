@@ -9,7 +9,11 @@ import 'datatables.net-buttons-dt/css/buttons.dataTables.css'; // DataTables But
 import '../../assets/styles/customDataTable.css';
 import { Modal, Button } from 'antd';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 
+import DataTable from 'datatables.net-react';
+import DT from 'datatables.net-dt';
+ 
 
 
 import 'datatables.net-buttons'; // DataTables Buttons JS
@@ -20,7 +24,10 @@ window.JSZip = JSZip; // Make JSZip available globally
 
 const StudentEntry = () => {
   const [activeSearch, setActiveSearch] = useState(false);
+  const [isDeleteModelVisible, setIsDeleteModelVisible] = useState(false);
+  const [givenExams, setGivenExams] = useState(true);
 
+  DataTable.use(DT);
 
   const [formData, setFormData] = useState({
     studentID: '',
@@ -50,7 +57,6 @@ const StudentEntry = () => {
 
   const handleSearch = () => {
     setActiveSearch(true)
-    // setTable()
     if (!formData.studentID) {
       toast.error("Enter Student ID", {
         position: "top-right",
@@ -69,50 +75,50 @@ const StudentEntry = () => {
   }
 
 
-  useEffect(() => {
-    console.log(activeSearch);
+  // useEffect(() => {
+  //   console.log(activeSearch);
 
-    if (activeSearch) {
-      $('#table').DataTable({
-        // dom: 'Bfrtip', // Display buttons
-        dom: "<'row'<'col-md-8'l><'col-md-4'f>>" + // Length and search input on the same line
-          "<'row'<'col-md-12'<'div.spacer'>>>" +  // Spacer
-          "<'row'<'col-md-12't>>" +               // Table
-          "<'row'<'col-md-12'<'div.spacer'>>>" +  // Spacer
-          "<'row'<'col-md-3'i><'col-md-9'p>>" + // info and pagination
-          "<'row'<'col-md-12'<'div.spacer'>>>" +  // Spacer
-          "<'row'<'col-md-12'B>>",               // Buttons at the bottom
+  //   if (activeSearch) {
+  //     $('#table').DataTable({
+  //       // dom: 'Bfrtip', // Display buttons
+  //       dom: "<'row'<'col-md-8'l><'col-md-4'f>>" + // Length and search input on the same line
+  //         "<'row'<'col-md-12'<'div.spacer'>>>" +  // Spacer
+  //         "<'row'<'col-md-12't>>" +               // Table
+  //         "<'row'<'col-md-12'<'div.spacer'>>>" +  // Spacer
+  //         "<'row'<'col-md-3'i><'col-md-9'p>>" + // info and pagination
+  //         "<'row'<'col-md-12'<'div.spacer'>>>" +  // Spacer
+  //         "<'row'<'col-md-12'B>>",               // Buttons at the bottom
 
-        buttons: [
-          {
-            extend: 'copy',
-            className: 'dt-button'
-          },
-          {
-            extend: 'csv',
-            className: 'dt-button'
-          },
-          {
-            extend: 'excel',
-            className: 'dt-button'
-          },
-          {
-            extend: 'pdf',
-            className: 'dt-button'
-          }
-        ],
-        initComplete: function () {
-          // Set the width of the search input
-          $('.dataTables_filter input').css('width', '300px'); // Adjust the width as needed
-        }
-      });
-      $('.spacer').css('height', '15px'); // Adjust the height as needed
-    }
+  //       buttons: [
+  //         {
+  //           extend: 'copy',
+  //           className: 'dt-button'
+  //         },
+  //         {
+  //           extend: 'csv',
+  //           className: 'dt-button'
+  //         },
+  //         {
+  //           extend: 'excel',
+  //           className: 'dt-button'
+  //         },
+  //         {
+  //           extend: 'pdf',
+  //           className: 'dt-button'
+  //         }
+  //       ],
+  //       initComplete: function () {
+  //         // Set the width of the search input
+  //         $('.dataTables_filter input').css('width', '300px'); // Adjust the width as needed
+  //       }
+  //     });
+  //     $('.spacer').css('height', '15px'); // Adjust the height as needed
+  //   }
 
-    else {
-      console.log("not active");
-    }
-  }, [activeSearch]);
+  //   else {
+  //     console.log("not active");
+  //   }
+  // }, [activeSearch]);
 
 
 
@@ -120,6 +126,10 @@ const StudentEntry = () => {
     if ($.fn.DataTable.isDataTable('#table')) {
       $('#table').DataTable().destroy(true);
     }
+  }
+
+  const handleDeleteExam = () => {
+
   }
 
 
@@ -318,7 +328,7 @@ const StudentEntry = () => {
 
         <div className='bg-white rounded '>
           <div className='p-2'>
-            <table id='table' className='student-entry-table text-[12px] ml-0'>
+            <DataTable id='table' className='student-entry-table text-[12px] ml-0'>
               <thead>
                 <tr>
                   <th className='text-center'>Subject_id</th>
@@ -342,11 +352,7 @@ const StudentEntry = () => {
                   <td className='text-left'>Rohan devlekar</td>
                   <td>Computer Engineering</td>
                 </tr>
-               
-                 
-
-
-
+                
                 {/* {exam.map((exam, index) => {
                     return (
                         <tr key={index}>
@@ -366,10 +372,82 @@ const StudentEntry = () => {
                 })} */}
 
               </tbody>
-            </table>
+            </DataTable>
           </div>
         </div>
       </Modal>
+
+      {givenExams && (
+            <div className='status-div'>
+            <div className='status-div-1'>
+                  <table>
+                    <thead>
+                        <tr>
+                            <th>Delete</th>
+                            <th>AYID</th>
+                            <th>Semester</th>
+                            <th>Branch</th>
+                        </tr>
+                    </thead>
+                    <tbody >
+                      <tr>
+                        <td><DeleteOutlineOutlinedIcon className='cursor-pointer text-rose-400' onClick={()=> setIsDeleteModelVisible(true)}/></td>
+                        <td>01/June 2011-31/May/2012</td>
+                        <td>Sem 1</td>
+                        <td>Computer Engineering</td>
+                      </tr>
+                      <tr>
+                        <td><DeleteOutlineOutlinedIcon className='cursor-pointer text-rose-400' onClick={()=> setIsDeleteModelVisible(true)}/></td>
+                        <td>01/June 2011-31/May/2012</td>
+                        <td>Sem 2</td>
+                        <td>Computer Engineering</td>
+                      </tr>
+                      <tr>
+                        <td><DeleteOutlineOutlinedIcon className='cursor-pointer text-rose-400' onClick={()=> setIsDeleteModelVisible(true)}/></td>
+                        <td>01/June 2011-31/May/2012</td>
+                        <td>Sem 3</td>
+                        <td>Computer Engineering</td>
+                      </tr> 
+                        {/* {exam.map((exam, index) => {
+                            return (
+                                <tr key={index}>
+                                    <td><EditOutlinedIcon className='cursor-pointer text-green-300' onClick={() => {
+                                         showEditModel()
+                                        setEditHeldYear(exam.heldin_year)
+                                        setEditHeldMonth(exam.heldin_month)
+                                        setEditExamId(exam.exam_id)
+                                        }}/></td>
+                                    <td><DeleteOutlineOutlinedIcon className='cursor-pointer text-rose-400' id={exam.exam_id} onClick={showDeleteModel}/></td>
+                                    <td>{`EXM${exam.exam_id}`}</td>
+                                    <td className='text-left'>{`${exam.branch.slice(0,4)}. -${exam.heldin_month} ${exam.heldin_year} (${exam.type.split(' ')[0]})`}</td>
+                                    <td><input type='checkbox' id={exam.exam_id} checked={exam.is_current === 1} onChange={handleUpdateIsCurrent}/></td>
+                                    <td><input type='checkbox' id={exam.exam_id} checked={exam.is_lock === 1} onChange={handleUpdateIsLock}/></td>
+                                </tr>
+                            )
+                        })} */}
+                         
+                     </tbody>
+                </table> 
+                  
+
+                <div>
+                    <Modal title="Are you sure? You want to Delete!" open={isDeleteModelVisible}   footer={[
+                        <Button key="cancel" onClick={()=> setIsDeleteModelVisible(false)}>
+                            Cancel
+                        </Button>,
+                        <Button key="update" type="primary" onClick={handleDeleteExam}>
+                            Delete
+                        </Button>
+                        
+                        ]} 
+                        onCancel={()=> setIsDeleteModelVisible(false)}
+                        >
+
+                        </Modal>
+                </div>
+              </div>
+              </div> )}
+                
 
     </div>
 
