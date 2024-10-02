@@ -7,6 +7,9 @@ import 'datatables.net-dt/css/dataTables.dataTables.min.css';
 import 'datatables.net-dt'; // DataTables JS
 import 'datatables.net-buttons-dt/css/buttons.dataTables.css'; // DataTables Buttons CSS
 import '../../assets/styles/customDataTable.css';
+import { Modal, Button } from 'antd';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 
 import 'datatables.net-buttons'; // DataTables Buttons JS
@@ -47,6 +50,7 @@ const StudentEntry = () => {
 
   const handleSearch = () => {
     setActiveSearch(true)
+    // setTable()
     if (!formData.studentID) {
       toast.error("Enter Student ID", {
         position: "top-right",
@@ -56,57 +60,72 @@ const StudentEntry = () => {
         pauseOnHover: false,
         draggable: false,
         theme: "colored",
-        
+
       })
-      
+
     } else {
       alert("Student Found")
     }
   }
 
-   
+
   useEffect(() => {
-     if (activeSearch) {
+    console.log(activeSearch);
+
+    if (activeSearch) {
       $('#table').DataTable({
         // dom: 'Bfrtip', // Display buttons
-        dom: "<'row'<'col-md-6'l><'col-md-6'f>>" + // Length and search input on the same line
-         "<'row'<'col-md-12't>>" +               // Table
-         "<'row'<'col-md-12'B>>",                 // Buttons at the bottom
+        dom: "<'row'<'col-md-8'l><'col-md-4'f>>" + // Length and search input on the same line
+          "<'row'<'col-md-12'<'div.spacer'>>>" +  // Spacer
+          "<'row'<'col-md-12't>>" +               // Table
+          "<'row'<'col-md-12'<'div.spacer'>>>" +  // Spacer
+          "<'row'<'col-md-3'i><'col-md-9'p>>" + // info and pagination
+          "<'row'<'col-md-12'<'div.spacer'>>>" +  // Spacer
+          "<'row'<'col-md-12'B>>",               // Buttons at the bottom
+
         buttons: [
           {
-              extend: 'copy',
-              className: 'dt-button'
+            extend: 'copy',
+            className: 'dt-button'
           },
           {
-              extend: 'csv',
-              className: 'dt-button'
+            extend: 'csv',
+            className: 'dt-button'
           },
           {
-              extend: 'excel',
-              className: 'dt-button'
+            extend: 'excel',
+            className: 'dt-button'
           },
           {
-              extend: 'pdf',
-              className: 'dt-button'
+            extend: 'pdf',
+            className: 'dt-button'
           }
-      ],
+        ],
+        initComplete: function () {
+          // Set the width of the search input
+          $('.dataTables_filter input').css('width', '300px'); // Adjust the width as needed
+        }
       });
-      }
-      else {
-        console.log("not active");
-     }
+      $('.spacer').css('height', '15px'); // Adjust the height as needed
+    }
 
-     return () => {
-      if ($.fn.DataTable.isDataTable('#search-table')) {
-        $('#search-table').DataTable().destroy(true);
-      }
-    };
+    else {
+      console.log("not active");
+    }
   }, [activeSearch]);
+
+
+
+  const onDestroyModal = () => {
+    if ($.fn.DataTable.isDataTable('#table')) {
+      $('#table').DataTable().destroy(true);
+    }
+  }
 
 
   return (
     <div className='exam-code-container flex gap-2 justify-between h-full items-center'>
-      <div className='form-container max-w-[60%] '>
+      <div className='form-container max-w-[80%] '>
         <div className=" p-2  rounded-lg flex gap-4">
           <div className='border-r pr-2'>
             {/* Heading and Radio Buttons */}
@@ -283,83 +302,51 @@ const StudentEntry = () => {
         <ToastContainer />
       </div>
 
-      {activeSearch &&
-        <div className='bg-white rounded max-w-[40%]'>
-          <div className='max-h-[90%] p-2'>
+
+
+      <Modal title="Search By Name / Id" open={activeSearch}
+        onCancel={() => {
+          setActiveSearch(false)
+          // onDestroyModal()
+        }}
+        onOk={() => {
+          setActiveSearch(false)
+          // onDestroyModal()
+        }}
+        width={900}
+      >
+
+        <div className='bg-white rounded '>
+          <div className='p-2'>
             <table id='table' className='student-entry-table text-[12px] ml-0'>
               <thead>
                 <tr>
-                  <th>Subject_id</th>
-                  <th>Name</th>
-                  <th>Branch</th>
+                  <th className='text-center'>Subject_id</th>
+                  <th className='text-center'>Name</th>
+                  <th className='text-center'>Branch</th>
                 </tr>
               </thead>
               <tbody >
                 <tr>
                   <td>std123</td>
-                  <td>RAj ramesh pakhurde</td>
+                  <td className='text-left'>RAj ramesh pakhurde</td>
                   <td>Computer Engineering</td>
                 </tr>
                 <tr>
                   <td>std123</td>
-                  <td>RAj ramesh pakhurde hello buddy roham msam amama amam amamam a</td>
+                  <td className='text-left'>Asjad dawre</td>
                   <td>Computer Engineering</td>
                 </tr>
                 <tr>
                   <td>std123</td>
-                  <td>RAj ramesh pakhurde hello buddy roham msam amama amam amamam a</td>
+                  <td className='text-left'>Rohan devlekar</td>
                   <td>Computer Engineering</td>
                 </tr>
-                <tr>
-                  <td>std123</td>
-                  <td>RAj ramesh pakhurde hello buddy roham msam amama amam amamam a</td>
-                  <td>Computer Engineering</td>
-                </tr>
-                <tr>
-                  <td>std123</td>
-                  <td>RAj ramesh pakhurde hello buddy roham msam amama amam amamam a</td>
-                  <td>Computer Engineering</td>
-                </tr>
-                <tr>
-                  <td>std123</td>
-                  <td>RAj ramesh pakhurde hello buddy roham msam amama amam amamam a</td>
-                  <td>Computer Engineering</td>
-                </tr>
-                <tr>
-                  <td>std123</td>
-                  <td>asjad dawre</td>
-                  <td>Computer Engineering</td>
-                </tr>
-                <tr>
-                  <td>std123</td>
-                  <td>asjad dawre</td>
-                  <td>Computer Engineering</td>
-                </tr>
-                <tr>
-                  <td>std123</td>
-                  <td>asjad dawre</td>
-                  <td>Computer Engineering</td>
-                </tr>
-                <tr>
-                  <td>std123</td>
-                  <td>asjad dawre</td>
-                  <td>Computer Engineering</td>
-                </tr>
-                <tr>
-                  <td>std122</td>
-                  <td>asjad dawre</td>
-                  <td>Computer Engineering</td>
-                </tr>
-                <tr>
-                  <td>std123</td>
-                  <td>asjad dawre</td>
-                  <td>Computer Engineering</td>
-                </tr>
-                <tr>
-                  <td>std123</td>
-                  <td>asjad dawre</td>
-                  <td>Computer Engineering</td>
-                </tr>
+               
+                 
+
+
+
                 {/* {exam.map((exam, index) => {
                     return (
                         <tr key={index}>
@@ -381,13 +368,9 @@ const StudentEntry = () => {
               </tbody>
             </table>
           </div>
-          <div className='flex justify-between p-5'>
-            <button className=" border rounded btn-exit" onClick={() => {
-              setActiveSearch(false)
-              // $('#table').DataTable().destroy(true);
-            }}>Exit</button>
-          </div>
-        </div>}
+        </div>
+      </Modal>
+
     </div>
 
   );

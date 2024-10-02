@@ -41,6 +41,7 @@
   
   /* Change button styles on hover */
   .dt-button:hover {
+    width: 2rem;
     background-color: #0056b3; /* Darker blue on hover */
     cursor: pointer; /* Change cursor on hover */
   }
@@ -56,10 +57,10 @@
 }
   
   /* Additional styling for the DataTable */
-  /* table.dataTable {
+   table.dataTable {
     border-collapse: collapse; /* Collapse borders */
-    /* width: 100%; Full width */
-  /* } */ 
+    width: 100%;  /*Full width */
+  } 
   
   /* Style table headers */
   /* table.dataTable thead th {
@@ -71,20 +72,20 @@
   /* } */ 
   
   /* Style table body cells */
-  /* table.dataTable tbody td {
+  table.dataTable tbody td {
     padding: 8px; /* Padding for body cells */
-    /* border-bottom: 1px solid #dee2e6; Bottom border for body cells */
-  /* } */
+    border-bottom: 1px solid #dee2e6; /*Bottom border for body cells*/
+   } 
    
   /* Highlight rows on hover */
-  /* table.dataTable tbody tr:hover {
+  table.dataTable tbody tr:hover {
     background-color: #f1f1f1; /* Background color on row hover */
-  /* } */
+  }
    
   /* Style for the search wrapper to align search input and length select */
 .search-wrapper {
     display: flex;
-    align-items: center; /* Center vertically */
+    align-items: center; /*Center vertically */
 }
 
 /* Style for the length select and search input */
@@ -101,4 +102,30 @@
 /* Adjust button spacing */
 .dataTables_wrapper .dt-button {
     margin-top: 1rem; /* Space above buttons */
+}
+
+.top-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.top-section label {
+  margin-right: 10px; /* Adjust spacing as needed */
+}
+
+.table-section {
+  margin-top: 10px;
+}
+
+.bottom-section {
+  margin-top: 20px;
+}
+
+/* Custom styles for DataTables search input */
+.dataTables_filter input {
+  width: 300px; /* Change this value to your desired width */
+  display: inline-block; /* Ensure it stays inline with the label */
+  margin-left: 10px; /* Add margin for spacing */
 }
