@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../../assets/styles/dashboard.css";
+// import "../../assets/styles/dashboard.css";
 import PersonIcon from "@mui/icons-material/Person";
 import Navbar from "./Navbar";
 import Home from "../Home/Home";
@@ -49,10 +49,10 @@ const Dashboard = (props) => {
   };
 
   return (
-    <div className="dashboard-container ">
-      <div className="top-bar">
+    <div className="dashboard-container flex flex-col h-screen">
+      <div className="top-bar flex justify-between pl-[2rem] pr-[2rem] pt-3 pb-3">
         <h2 className="text-2xl font-extrabold text-slate-800">
-          ACADEMIA<span className="logo">SUITE</span>
+          ACADEMIA<span className="logo text-[#1659D7]">SUITE</span>
         </h2>
         <h4 className="username font-bold text-slate-800">
           {props.user}{" "}
@@ -64,14 +64,16 @@ const Dashboard = (props) => {
               borderRadius: "5px",
               padding: "2px",
             }}
-          />
+            />
         </h4>
       </div>
-      <div className="side-bar two-div">
+      <div className="flex h-[100%]">
+      <div className="side-bar two-div w-[20rem] h-[100%]">
         <Navbar setActiveMainComponent={setActiveMainComponent} />
       </div>
-      <div className="main-container two-div bg-slate-200 rounded">
+      <div className="main-container two-div w-screen bg-slate-200 section-3">
         {renderMainComponent()}
+      </div>
       </div>
     </div>
   );

@@ -34,14 +34,14 @@ const ReExamEligibility = () => {
   ];
 
   return (
-    <div className="exam-code-container">
+    <div className="h-full">
       <ToastContainer />
 
       {reExamDiv && (
-        <div className="flex justify-center mt-2 gap-2">
+        <div className="flex justify-center pt-2 pb-2 h-full gap-2">
           <div className="bg-white w-[100%]  pb-2 pr-4 pl-4 mr-4 ml-4 rounded">
             <div className="flex justify-center">
-              <h1>Re-Exam Eligibility</h1>
+              <h1 className="text-[1.5rem] bold text-[#334155]">Re-Exam Eligibility</h1>
             </div>
 
             <div className="">
@@ -49,18 +49,18 @@ const ReExamEligibility = () => {
                   <fieldset className="flex gap-3">
                     <input
                       type="radio"
-                      id="regular-exam"
-                      name="examtype"
-                      value="New"
+                      id="new-radio-btn"
+                      name="radtio-btn-edit-new"
+                      value="new-radio-btn"
                       //   checked={examType === "Regular Exam"}
                       //   onChange={(e) => setExamType(e.target.value)}
                     ></input>
                     New{" "}
                     <input
                       type="radio"
-                      id="atkt"
-                      name="examtype"
-                      value="A.T.K.T"
+                      id="edit-radtio-btn"
+                      name="radtio-btn-edit-new"
+                      value="edit-radtio-btn"
                       //   checked={examType === "A.T.K.T"}
                       //   onChange={(e) => setExamType(e.target.value)}
                     ></input>
@@ -232,26 +232,26 @@ const ReExamEligibility = () => {
                       <div>
                         <input
                           type="radio"
-                          id="regular-exam"
-                          name="examtype"
-                          value="Regular Exam"
+                          id="all-radio-btn"
+                          name="criteria-re-exam"
+                          value="all-radio-btn"
                           //   checked={examType === "Regular Exam"}
                           //   onChange={(e) => setExamType(e.target.value)}
                           //   disabled={status}
                         ></input>
-                        <label htmlFor="regular-exam">All</label>
+                        <label htmlFor="all-radio-btn">All</label>
                       </div>
                       <div>
                         <input
                           type="radio"
-                          id="atkt"
-                          name="examtype"
-                          value="A.T.K.T"
+                          id="seatno-radio-btn"
+                          name="criteria-re-exam"
+                          value="seatno-radio-btn"
                           //   checked={examType === "A.T.K.T"}
                           //   onChange={(e) => setExamType(e.target.value)}
                           //   disabled={status}
                         ></input>
-                        <label htmlFor="atkt">Seat No</label>
+                        <label htmlFor="seatno-radio-btn">Seat No</label>
                       </div>
                     </div>
                   </div>
@@ -291,7 +291,7 @@ const ReExamEligibility = () => {
                   </div>
                   {/* for buttons */}
                   <div className="flex flex-col justify-evenly border-l pl-2">
-                    <button className="btn-save" onClick={()=> setIsTableVisible(true)}>Get Data</button>
+                    <button className="btn-getdata" onClick={()=> setIsTableVisible(true)}>Get Data</button>
                     <button className="btn-refresh">Refresh</button>
                     <button className="btn-edit">Update</button>
                     <button className="btn-exit">Report</button>
@@ -299,11 +299,14 @@ const ReExamEligibility = () => {
                 </div>
               
               {/* for table */}
-             {isTableVisible && ( <div className="h-[22rem] overflow-y-scroll">
+             {!isTableVisible && ( <div className="border mt-20 h-[20rem] flex justify-center align-middle">
+                <p className="text-xl text-red-600">No Results</p>
+             </div> ) }
+             {isTableVisible && ( <div className="h-[30rem] overflow-y-scroll">
                 <table>
                   <thead>
                     <tr>
-                      <th className="bg-gray-400"></th>
+                      <th className="bg-gray-400"><p className="border border-white cursor-pointer rounded-full hover:text-red-600 hover:bg-white" onClick={()=> setIsTableVisible(false)}>X</p></th>
                       <th className="bg-gray-400"></th>
                       <th className="bg-gray-400"></th>
                       <th className="bg-gray-400"></th>

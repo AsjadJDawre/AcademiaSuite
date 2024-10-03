@@ -74,11 +74,7 @@ const StudentEntry = () => {
     }
   }
 
-  const onDestroyModal = () => {
-    if ($.fn.DataTable.isDataTable('#table')) {
-      $('#table').DataTable().destroy(true);
-    }
-  }
+ 
 
   const handleDeleteExam = () => {
 
