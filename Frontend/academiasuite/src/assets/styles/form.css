@@ -71,3 +71,34 @@ button:hover {
 .btn-refresh {
     background-color: #475569;
 }
+.btn-import {
+    background-color: #fdba74;
+}
+.btn-search {
+    background-color: #60a5fa;
+}
+.btn-excel {
+    background-color: #0e7534;
+}
+
+.btn-save:hover {
+    background-color: #149e47;
+}
+.btn-edit:hover {
+    background-color: #facc15;
+}
+.btn-exit:hover {
+    background-color: #ef4444 ;
+}
+.btn-refresh:hover {
+    background-color: #64748b;
+}
+.btn-import:hover {
+    background-color: #fb923c;
+}
+.btn-search:hover {
+    background-color: #5089ce;
+}
+.btn-excel:hover {
+    background-color: #118a3db0;
+}

@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import RoofingIcon from "@mui/icons-material/Roofing";
 import SubjectIcon from "@mui/icons-material/Subject";
-import PersonIcon from "@mui/icons-material/Person"; 
+import PersonIcon from "@mui/icons-material/Person";
+import DescriptionIcon from "@mui/icons-material/Description";
+import PatternIcon from '@mui/icons-material/Pattern';
+import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
 
 import "../../assets/styles/navbar.css";
 
@@ -16,14 +19,14 @@ const Navbar = (props) => {
     display: "flex",
     flexDirection: "column",
     alignItem: "center",
-    height: 'auto',
-    opacity: '1'
+    height: "auto",
+    opacity: "1",
   };
   const dropdownDisable = {
-    maxHeight: '0',
-    opacity: '0',
-    overflow: 'hidden',
-    transition: 'max-height 0.9s ease, opacity 0.9s ease',
+    maxHeight: "0",
+    opacity: "0",
+    overflow: "hidden",
+    transition: "max-height 0.9s ease, opacity 0.9s ease",
   };
   const activeMenustyle = {
     backgroundColor: "#E9F3FD",
@@ -51,10 +54,10 @@ const Navbar = (props) => {
           setActiveMenu("home");
           setActiveSubMenu("");
           setActiveSubSubMenu("");
-          props.setActiveMainComponent("home")
+          props.setActiveMainComponent("home");
         }}
       >
-        <p>
+        <p className="mb-0 p-2">
           <RoofingIcon /> Home
         </p>
       </div>
@@ -68,13 +71,13 @@ const Navbar = (props) => {
           setActiveMenu("subject");
         }}
       >
-        <p>
+        <p className="mb-0 p-2">
           <SubjectIcon /> Subject
         </p>
-        <p>{activeMenu === "subject" ? downArrow : forwordArrow}</p>
+        <p className="mb-0 p-2">{activeMenu === "subject" ? downArrow : forwordArrow}</p>
       </div>
       <div
-        className="dropdown-subject dropdown"
+        className="dropdown-subject dropdown "
         style={activeSubMenu !== "subject" ? dropdownDisable : dropdownActive}
       >
         <p
@@ -84,7 +87,7 @@ const Navbar = (props) => {
               : disableSubsubMenustyle
           }
           className="submenu-item1 submenu-item"
-          onClick={ () => {
+          onClick={() => {
             setActiveSubSubMenu("subject_master");
             props.setActiveMainComponent("subject_master");
           }}
@@ -99,7 +102,7 @@ const Navbar = (props) => {
           }
           className="submenu-item2 submenu-item"
           onClick={() => {
-            setActiveSubSubMenu("group_master")
+            setActiveSubSubMenu("group_master");
             props.setActiveMainComponent("group_master");
           }}
         >
@@ -116,10 +119,10 @@ const Navbar = (props) => {
           setActiveMenu("exam");
         }}
       >
-        <p>
-          <SubjectIcon /> Exam
+        <p className="mb-0 p-2">
+          <DescriptionIcon /> Exam
         </p>
-        <p>{activeMenu === "exam" ? downArrow : forwordArrow}</p>
+        <p className="mb-0 p-2">{activeMenu === "exam" ? downArrow : forwordArrow}</p>
       </div>
       <div
         className="dropdown-subject dropdown"
@@ -132,10 +135,10 @@ const Navbar = (props) => {
               : disableSubsubMenustyle
           }
           className="submenu-item1"
-          onClick={ () => {
-            setActiveSubSubMenu("exam-code")
+          onClick={() => {
+            setActiveSubSubMenu("exam-code");
             props.setActiveMainComponent("exam-code");
-          } }
+          }}
         >
           Exam Code
         </p>
@@ -147,50 +150,169 @@ const Navbar = (props) => {
           }
           className="submenu-item2"
           onClick={() => {
-            setActiveSubSubMenu("student-attendence")
+            setActiveSubSubMenu("student-attendence");
             props.setActiveMainComponent("student-attendence");
           }}
         >
           Student Attendence
         </p>
+        <p
+          style={
+            activeSubSubMenu === "re-exam-eligibility"
+              ? activeSubSubMenustyle
+              : disableSubsubMenustyle
+          }
+          className="submenu-item2"
+          onClick={() => {
+            setActiveSubSubMenu("re-exam-eligibility");
+            props.setActiveMainComponent("re-exam-eligibility");
+          }}
+        >
+          Re-Exam Eligibility
+        </p>
       </div>
 
-
       {/* // StudentEntry nav element */}
-<div
-  style={activeMenu === "studentEntry" ? activeMenustyle : disableMenustyle}
-  className="nav-item"
-  onClick={() => {
-    setActiveSubMenu("studentEntry");
-    setActiveMenu("studentEntry");
-  }}
->
-  <p>
-    <PersonIcon /> Student
-  </p>
-  <p>{activeMenu === "studentEntry" ? downArrow : forwordArrow}</p>
-</div>
-<div
-  className="dropdown-studentEntry dropdown"
-  style={activeSubMenu !== "studentEntry" ? dropdownDisable : dropdownActive}
->
-  <p
-    style={
-      activeSubSubMenu === "student_entry"
-        ? activeSubSubMenustyle
-        : disableSubsubMenustyle
-    }
-    className="submenu-item1"
-    onClick={() => {
-      setActiveSubSubMenu("student_entry");
-      props.setActiveMainComponent("student_entry");
-    }}
-  >
-    Student Entry
-  </p>
-</div>
+      <div
+        style={
+          activeMenu === "studentEntry" ? activeMenustyle : disableMenustyle
+        }
+        className="nav-item"
+        onClick={() => {
+          setActiveSubMenu("studentEntry");
+          setActiveMenu("studentEntry");
+        }}
+      >
+        <p className="mb-0 p-2">
+          <PersonIcon /> Student
+        </p>
+        <p className="mb-0 p-2">{activeMenu === "studentEntry" ? downArrow : forwordArrow}</p>
+      </div>
+      <div
+        className="dropdown-studentEntry dropdown"
+        style={
+          activeSubMenu !== "studentEntry" ? dropdownDisable : dropdownActive
+        }
+      >
+        <p
+          style={
+            activeSubSubMenu === "student_entry"
+              ? activeSubSubMenustyle
+              : disableSubsubMenustyle
+          }
+          className="submenu-item1"
+          onClick={() => {
+            setActiveSubSubMenu("student_entry");
+            props.setActiveMainComponent("student_entry");
+          }}
+        >
+          Student Entry
+        </p>
+      </div>
 
+      {/* // Pattern nav element */}
+      <div
+        style={
+          activeMenu === "pattern" ? activeMenustyle : disableMenustyle
+        }
+        className="nav-item"
+        onClick={() => {
+          setActiveSubMenu("pattern");
+          setActiveMenu("pattern");
+        }}
+      >
+        <p className="mb-0 p-2">
+          <PatternIcon /> Pattern
+        </p>
+        <p className="mb-0 p-2">{activeMenu === "pattern" ? downArrow : forwordArrow}</p>
+      </div>
+      <div
+        className="dropdown-pattern dropdown"
+        style={
+          activeSubMenu !== "pattern" ? dropdownDisable : dropdownActive
+        }
+      >
+        <p
+          style={
+            activeSubSubMenu === "pattern_transfer"
+              ? activeSubSubMenustyle
+              : disableSubsubMenustyle
+          }
+          className="submenu-item1"
+          onClick={() => {
+            setActiveSubSubMenu("pattern_transfer");
+            props.setActiveMainComponent("pattern_transfer");
+          }}
+        >
+          Pattern Transfer
+        </p>
+      </div>
 
+      {/* // Entry nav element */}
+      <div
+        style={
+          activeMenu === "entry" ? activeMenustyle : disableMenustyle
+        }
+        className="nav-item"
+        onClick={() => {
+          setActiveSubMenu("entry");
+          setActiveMenu("entry");
+        }}
+      >
+        <p className="mb-0 p-2">
+          <AppRegistrationIcon /> Entry
+        </p>
+        <p className="mb-0 p-2">{activeMenu === "entry" ? downArrow : forwordArrow}</p>
+      </div>
+      <div
+        className="dropdown-entry dropdown"
+        style={
+          activeSubMenu !== "entry" ? dropdownDisable : dropdownActive
+        }
+      >
+        <p
+          style={
+            activeSubSubMenu === "marks_entry"
+              ? activeSubSubMenustyle
+              : disableSubsubMenustyle
+          }
+          className="submenu-item1"
+          onClick={() => {
+            setActiveSubSubMenu("marks_entry");
+            props.setActiveMainComponent("marks_entry");
+          }}
+        >
+          Marks Entry
+        </p>
+        <p
+          style={
+            activeSubSubMenu === "overall_marks"
+              ? activeSubSubMenustyle
+              : disableSubsubMenustyle
+          }
+          className="submenu-item1"
+          onClick={() => {
+            setActiveSubSubMenu("overall_marks");
+            props.setActiveMainComponent("overall_marks");
+          }}
+        >
+          Overall Marks
+        </p>
+        <p
+          style={
+            activeSubSubMenu === "overall_eligibility"
+              ? activeSubSubMenustyle
+              : disableSubsubMenustyle
+          }
+          className="submenu-item1"
+          onClick={() => {
+            setActiveSubSubMenu("overall_eligibility");
+            props.setActiveMainComponent("overall_eligibility");
+          }}
+        >
+          Overall Eligibility
+        </p>
+      </div>
 
     </div>
   );

@@ -160,5 +160,5 @@
 
 
 -- ALTER TABLE student ADD COLUMN year TEXT;
-DELETE FROM student WHERE category IN ('Open', 'OBC');
+-- DELETE FROM student WHERE category IN ('Open', 'OBC');
 

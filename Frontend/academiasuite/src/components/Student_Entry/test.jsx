@@ -13,16 +13,13 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 
 import * as XLSX from 'xlsx';
 import { v4 as uuidv4 } from 'uuid';
-// import DataTable from 'datatables.net-react';
-// import DT from 'datatables.net-dt';
-
-//react-datatable-component
-
-import DataTable, { SortOrder } from 'react-data-table-component'
+import DataTable from 'datatables.net-react';
+import DT from 'datatables.net-dt';
+ 
 
 
-// import 'datatables.net-buttons'; // DataTables Buttons JS
-// import 'datatables.net-buttons/js/buttons.html5.js'; // Export functionality
+import 'datatables.net-buttons'; // DataTables Buttons JS
+import 'datatables.net-buttons/js/buttons.html5.js'; // Export functionality
 import JSZip from 'jszip'; // Required for Excel export
 window.JSZip = JSZip; // Make JSZip available globally
 
@@ -32,7 +29,8 @@ const StudentEntry = () => {
   const [showExcelView, setshowExcelView] = useState(false);
   const [isDeleteModelVisible, setIsDeleteModelVisible] = useState(false);
   const [givenExams, setGivenExams] = useState(true);
-  // DataTable.use(DT);
+
+  DataTable.use(DT);
 
   const [formData, setFormData] = useState({
     studentID: '',
@@ -47,82 +45,8 @@ const StudentEntry = () => {
 
   const [students,setStudents]=useState([])
   const [fetchstudents,setfetchstudents]=useState([])
-  const [selectedStudent, setSelectedStudent] = useState(null);
+
   const [excelData, setExcelData] = useState([]);
-  const [studentsData, setStudentsData] = useState([]);
-const [isdisable,setIsdisable]=useState(false)
-const [updatebtn,setUpdatebtn]=useState(false)
-  const columns=[
-    {
-      name:"Student ID",
-      selector:row=> row.student_id
-    },
-    {
-      name :"Student Name",
-      selector:row=> row.name,
-      sortable:true
-
-
-    },
-    {
-      name :"Branch",
-      selector:row=> row.branch
-
-    }
-  ]
-
-  const [records, setRecords] = useState([]);
-  console.log("the records are : ",records);
-  console.log("the fetched Student are : ",fetchstudents);
-  
-  const handlefilter=(ev)=>{
-    const newrecords = fetchstudents.filter((item) => {return item.name.toLowerCase().includes(ev.target.value.toLowerCase()) })
-    setRecords(newrecords)
-  }
-  const handleSelectedRowsChange = async ({ selectedRows }) => {
-    let student = null; 
-  
-    if (selectedRows.length > 0) {
-      student = selectedRows[0]; // Get the first selected student
-      setSelectedStudent(student); // Update selected student state
-    } else {
-      setSelectedStudent(null); 
-    }
-  
-    console.log("This is the Selected student: ", student);
-  
-    setFormData(prevFormData => ({
-      ...prevFormData, 
-      studentID: student?.student_id || '',
-      firstName: student?.name || '',
-      year: student?.year || '',
-      branch: student?.branch || '',
-      caste: prevFormData.caste,
-      gender: prevFormData.gender,
-      isDyslexic: prevFormData.isDyslexic,
-      image: prevFormData.image,
-    }));
-  
-    if (student) {
-      try {
-        const data = await window.api.invoke('fetch-student-year-semester', student.student_id);
-        setStudentsData(data);
-        console.log("Fetched student data:", data); 
-
-        setIsdisable(true)
-      } catch (error) {
-        toast.error(error.message, { position: "top-right" });
-      }
-    }
-
-    
-    console.log("this is the selected students data : ",studentsData);
-    // setActiveSearch(false);
-  };
-  
-
-  
-  console.log("this is the Selected student : ",selectedStudent);
 
 
   const handleInputChange = (e) => {
@@ -137,24 +61,7 @@ const [updatebtn,setUpdatebtn]=useState(false)
     setshowExcelView(false)
     setGivenExams(true)
     setfetchstudents([])
-    setStudentsData([])
-    setFormData({
-      studentID: '',
-      firstName: '',
-      year: '',
-      branch: '',
-      caste: '',
-      gender: '',
-      isDyslexic: false,
-      image: null,
-    })
-    setUpdatebtn(false)
-  }
-
-  const handleEdit=()=>{
-    setIsdisable(false)
-    setUpdatebtn(true)
-
+    
   }
 
   const handleImport =()=>{
@@ -190,7 +97,7 @@ console.log(excelData)
         if (excelData.length !== 0 && formData.branch !== '' && formData.year !== '') {
           // toast.success("Rukho Zara Sabr Karo")
           const studentsWithIds =  excelData.map((student, index) => ({
-            id: generateStudentId(index), 
+            id: generateStudentId(index), // Generate unique ID
             name: student.StudentName,
             category: student.Category,
             gender: student.Gender,
@@ -239,33 +146,13 @@ console.log(excelData)
           return
         }
       }
-      const handleImageUpload = async (e) => {
-        const file = e.target.files[0];
-    
-        if (file) {
-          try {
-            const response = await window.api.invoke('upload-image', {
-              student_id: formData.studentID, 
-              file: {
-                name: file.name,
-                path: file.path, 
-              },
-            });
-    
-            if (response.success) {
-              toast.success(response.message);
-              setFormData((prevData) => ({
-                ...prevData,
-                image: response.image_path, 
-              }));
-            } else {
-              toast.error(response.message);
-            }
-          } catch (error) {
-            toast.error('Error uploading image: ' + error.message);
-          }
-        }
-      }
+  const handleImageUpload = (e) => {
+    setFormData({
+      ...formData,
+      image: e.target.files[0],
+    });
+  };
+ 
 
   const handleSearch = async () => {
     setActiveSearch(true)
@@ -275,8 +162,6 @@ console.log(excelData)
     
     setfetchstudents(respo)
     console.log(fetchstudents);
-      setRecords(fetchstudents)
-
     
 
 
@@ -295,7 +180,7 @@ console.log(excelData)
       })
 
     } else {
-      // alert("Student Found")
+      alert("Student Found")
     }
   }
 
@@ -305,69 +190,8 @@ console.log(excelData)
     }
   }
 
-console.log(isdisable);
+  const handleDeleteExam = () => {
 
-  const [deletionParams, setDeletionParams] = useState({});
-  const handleDeleteExam = async () => {
-
-const response = await window.api.invoke('delete-student-exam-entry',deletionParams)
-if (response.success) {
-
-
-
-  setIsDeleteModelVisible(false)
-
-
-  if (selectedStudent) {
-
-
-    try{
-      const data = await window.api.invoke('fetch-student-year-semester', selectedStudent.student_id);
-      if (data) {
-        setStudentsData(data); 
-        console.log("Fetched student data:", data);  
-      }
-
-    }
-    catch(error){
-      toast.error(error.message, { position: "top-right" });
-
-  }
-toast.success("Successfully deleted!")
-}
-
-
-else{
-  toast.error("Something went wrong!")
-}
-
-
-console.log("this is the deletion params : ",deletionParams);
-
-  }
-
-  }
-
-
-  const handleUpdate =async ()=>{
-    const updatedData = {
-      student_id: formData.studentID, 
-      first_name: formData.firstName,  
-    };
-  
-    try {
-      const response = await window.api.invoke('update-student', updatedData);
-  
-      if (response.success) {
-        toast.success(response.message); 
-        setIsdisable(false)
-        handleRefresh()
-      } else {
-        toast.error(response.message); 
-      }
-    } catch (error) {
-      toast.error('Error updating student: ' + error.message); 
-    }
   }
 
 
@@ -406,11 +230,10 @@ console.log("this is the deletion params : ",deletionParams);
                     type="text"
                     id="studentID"
                     name="studentID"
-                    className={`w-full p-3 border rounded-lg ${isdisable ? 'cursor-not-allowed opacity-50' : ''}`}
+                    className="w-full p-3 border rounded-lg"
                     value={formData.studentID}
                     onChange={handleInputChange}
                     placeholder='123466'
-                    disabled={isdisable}
                   />
                 </div>
 
@@ -420,8 +243,7 @@ console.log("this is the deletion params : ",deletionParams);
                     type="text"
                     id="firstName"
                     name="firstName"
-                    disabled={isdisable}
-                    className={`w-full p-3 border rounded-lg ${isdisable ? 'cursor-not-allowed opacity-50' : ''}`}
+                    className="w-full p-3 border rounded-lg"
                     value={formData.firstName}
                     onChange={handleInputChange}
                     placeholder='Enter Student Name'
@@ -460,9 +282,9 @@ console.log("this is the deletion params : ",deletionParams);
                     onChange={handleInputChange}
                   >
                     <option className='font-bold' value="">Select Branch</option>
-                    <option className='font-bold' value="COMPUTER">Computer Engineering </option>
-                    <option className='font-bold' value="CIVIL">Civil Engineering </option>
-                    <option className='font-bold' value="MECHANICAL">Mechanical Engineering</option>
+                    <option className='font-bold' value="Computer Engineering">Computer Engineering </option>
+                    <option className='font-bold' value="Civil Engineering">Civil Engineering </option>
+                    <option className='font-bold' value="Mechanical Engineering">Mechanical Engineering</option>
                   </select>
                 </div>
               </div>
@@ -544,38 +366,14 @@ console.log("this is the deletion params : ",deletionParams);
             <p className='text-lg   font-semibold'>Student Photo</p>
           </div>
         </div>
-        <div>
-
-
-  {!updatebtn && (
-    <button className="rounded btn-save" onClick={handleSave}>
-      Save
-    </button>
-  )}
-
-
-{updatebtn && (
-    <button className="border rounded btn-edit" onClick={handleUpdate}>
-      Update
-    </button>
-  )}
-  <button className="border rounded btn-refresh" onClick={handleRefresh}>
-    Refresh
-  </button>
-  <button className="border rounded btn-edit" onClick={handleEdit}>
-    Edit
-  </button>
-  
- 
-
-  <button className="border rounded btn-exit">Delete</button>
-  <button className="border rounded btn-import" onClick={handleImport}>
-    Import
-  </button>
-  <button className="border rounded btn-search" onClick={handleSearch}>
-    Search
-  </button>
-</div>
+        <div className='flex justify-between mt-10'>
+          <button className=" rounded btn-save" onClick={handleSave}>Save</button>
+          <button className=" border rounded btn-refresh" onClick={handleRefresh}>Refresh</button>
+          <button className=" border rounded btn-edit">Edit</button>
+          <button className=" border rounded btn-exit">Delete</button>
+          <button className=" border rounded btn-import" onClick={handleImport}>Import</button>
+          <button className=" border rounded btn-search" onClick={handleSearch}>Search</button>
+        </div>
         <ToastContainer />
       </div>
 
@@ -595,25 +393,8 @@ console.log("this is the deletion params : ",deletionParams);
 
         <div className='bg-white rounded '>
           <div className='p-2'>
-
-            <div className="search"><input type="text" className=' border border-black rounded' onChange={handlefilter} /></div>
-            <DataTable id='table' className='student-entry-table text-[12px] ml-0'
-            
-            columns={columns}
-            data={records}
-            pagination
-            selectableRows
-            fixedHeader
-          onSelectedRowsChange={handleSelectedRowsChange}
-            
-            
-            >
-
-    
-
-
-
-              {/* { <thead>
+            <DataTable id='table' className='student-entry-table text-[12px] ml-0'>
+              <thead>
                 <tr>
                   <th className='text-center'>Student_ID</th>
                   <th className='text-center'>Name</th>
@@ -644,7 +425,6 @@ console.log("this is the deletion params : ",deletionParams);
                   <td className='text-left'>Asjad dawre</td>
                   <td>Computer Engineering</td>
                 </tr>
-              } */}
                 {/* <tr>
                   <td>std123</td>
                   <td className='text-left'>Rohan devlekar</td>
@@ -669,7 +449,7 @@ console.log("this is the deletion params : ",deletionParams);
                     )
                 })} */}
 
-              {/* </tbody> */}
+              </tbody>
             </DataTable>
           </div>
         </div>
@@ -687,29 +467,7 @@ console.log("this is the deletion params : ",deletionParams);
                         </tr>
                     </thead>
                     <tbody >
-
-                    {studentsData.map((student, index) => (
-      <tr key={index}>
-        <td>
-          <DeleteOutlineOutlinedIcon
-            className='cursor-pointer text-rose-400'
-            onClick={() => {
-              setDeletionParams({
-                student_id: selectedStudent.student_id,
-                year: student.year,
-                semester: student.semester,
-              });
-          
-              setIsDeleteModelVisible(true);
-            }}
-          />
-        </td>
-        <td>{student.year || 'N/A'}</td> 
-        <td>{student.semester || 'N/A'}</td> 
-        <td>{selectedStudent.branch || 'N/A'}</td> 
-        </tr>
-    ))}
-                      {/* <tr>
+                      <tr>
                         <td><DeleteOutlineOutlinedIcon className='cursor-pointer text-rose-400' onClick={()=> setIsDeleteModelVisible(true)}/></td>
                         <td>01/June 2011-31/May/2012</td>
                         <td>Sem 1</td>
@@ -726,7 +484,7 @@ console.log("this is the deletion params : ",deletionParams);
                         <td>01/June 2011-31/May/2012</td>
                         <td>Sem 3</td>
                         <td>Computer Engineering</td>
-                      </tr>  */}
+                      </tr> 
                         {/* {exam.map((exam, index) => {
                             return (
                                 <tr key={index}>
