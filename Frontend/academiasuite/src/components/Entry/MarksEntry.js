@@ -371,6 +371,7 @@ const MarksEntry = () => {
               </div>
             </div>
           )}
+          {editCriteria === "single-radio" && (
           <div className="">
             <table className="w-full ml-0">
               <thead>
@@ -397,6 +398,7 @@ const MarksEntry = () => {
               </tbody>
             </table>
           </div>
+          )}
           {/* for single */}
           {editCriteria === "muliple-radio" && (
             <div>
