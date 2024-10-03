@@ -102,3 +102,14 @@ button:hover {
 .btn-excel:hover {
     background-color: #118a3db0;
 }
+fieldset {
+    border: 2px solid #000;
+    padding: 20px;
+    position: relative;
+}
+
+legend {
+    padding: 0 10px;
+    font-weight: bold;
+    color: #000;
+}
