@@ -514,8 +514,9 @@ const StudentAttendence = () => {
           </div>
         </div>
 
-        <div className="student-list max-h-96 overflow-y-auto p-4">
-          <table className="min-w-full divide-y divide-gray-200 w-full border-collapse ">
+        <div className=' w-[40%] max-h-[90%] bg-white overflow-y-scroll'>
+            <div className=' p-4 '>
+          <table className="min-w-full  divide-y divide-gray-200 w-full border-collapse ml-0 mt-0">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-lg  uppercase tracking-wider">
@@ -590,6 +591,7 @@ const StudentAttendence = () => {
 
           {/* Toast notifications */}
           <ToastContainer />
+        </div>
         </div>
 
         <Modal

@@ -45,54 +45,54 @@ const StudentEntry = () => {
     image: null,
   });
 
-  const [students,setStudents]=useState([])
-  const [fetchstudents,setfetchstudents]=useState([])
+  const [students, setStudents] = useState([])
+  const [fetchstudents, setfetchstudents] = useState([])
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [excelData, setExcelData] = useState([]);
   const [studentsData, setStudentsData] = useState([]);
-const [isdisable,setIsdisable]=useState(false)
-const [updatebtn,setUpdatebtn]=useState(false)
-  const columns=[
+  const [isdisable, setIsdisable] = useState(false)
+  const [updatebtn, setUpdatebtn] = useState(false)
+  const columns = [
     {
-      name:"Student ID",
-      selector:row=> row.student_id
+      name: "Student ID",
+      selector: row => row.student_id
     },
     {
-      name :"Student Name",
-      selector:row=> row.name,
-      sortable:true
+      name: "Student Name",
+      selector: row => row.name,
+      sortable: true
 
 
     },
     {
-      name :"Branch",
-      selector:row=> row.branch
+      name: "Branch",
+      selector: row => row.branch
 
     }
   ]
 
   const [records, setRecords] = useState([]);
-  console.log("the records are : ",records);
-  console.log("the fetched Student are : ",fetchstudents);
-  
-  const handlefilter=(ev)=>{
-    const newrecords = fetchstudents.filter((item) => {return item.name.toLowerCase().includes(ev.target.value.toLowerCase()) })
+  console.log("the records are : ", records);
+  console.log("the fetched Student are : ", fetchstudents);
+
+  const handlefilter = (ev) => {
+    const newrecords = fetchstudents.filter((item) => { return item.name.toLowerCase().includes(ev.target.value.toLowerCase()) })
     setRecords(newrecords)
   }
   const handleSelectedRowsChange = async ({ selectedRows }) => {
-    let student = null; 
-  
+    let student = null;
+
     if (selectedRows.length > 0) {
       student = selectedRows[0]; // Get the first selected student
       setSelectedStudent(student); // Update selected student state
     } else {
-      setSelectedStudent(null); 
+      setSelectedStudent(null);
     }
-  
+
     console.log("This is the Selected student: ", student);
-  
+
     setFormData(prevFormData => ({
-      ...prevFormData, 
+      ...prevFormData,
       studentID: student?.student_id || '',
       firstName: student?.name || '',
       year: student?.year || '',
@@ -102,12 +102,12 @@ const [updatebtn,setUpdatebtn]=useState(false)
       isDyslexic: prevFormData.isDyslexic,
       image: prevFormData.image,
     }));
-  
+
     if (student) {
       try {
         const data = await window.api.invoke('fetch-student-year-semester', student.student_id);
         setStudentsData(data);
-        console.log("Fetched student data:", data); 
+        console.log("Fetched student data:", data);
 
         setIsdisable(true)
       } catch (error) {
@@ -115,14 +115,14 @@ const [updatebtn,setUpdatebtn]=useState(false)
       }
     }
 
-    
-    console.log("this is the selected students data : ",studentsData);
+
+    console.log("this is the selected students data : ", studentsData);
     // setActiveSearch(false);
   };
-  
 
-  
-  console.log("this is the Selected student : ",selectedStudent);
+
+
+  console.log("this is the Selected student : ", selectedStudent);
 
 
   const handleInputChange = (e) => {
@@ -132,7 +132,7 @@ const [updatebtn,setUpdatebtn]=useState(false)
       [name]: type === 'checkbox' ? checked : value,
     });
   };
-  const handleRefresh=()=>{
+  const handleRefresh = () => {
     setExcelData([])
     setshowExcelView(false)
     setGivenExams(true)
@@ -151,133 +151,133 @@ const [updatebtn,setUpdatebtn]=useState(false)
     setUpdatebtn(false)
   }
 
-  const handleEdit=()=>{
+  const handleEdit = () => {
     setIsdisable(false)
     setUpdatebtn(true)
 
   }
 
-  const handleImport =()=>{
-    const input=document.createElement('input');
-    input.type='file';
+  const handleImport = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
     input.accept = '.xls, .xlsx';
     input.click();
 
-    input.onchange=()=>{
-      const file=input.files[0];
-      const reader=new FileReader();
-      reader.onload=(e)=>{
-        const binarystr=e.target.result;
-        const workbook=XLSX.read(binarystr,{type:'binary'});
-        const sheetName =workbook.SheetNames[0];
-        const sheet =workbook.Sheets[sheetName];
-        const jsonData=XLSX.utils.sheet_to_json(sheet);
+    input.onchange = () => {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const binarystr = e.target.result;
+        const workbook = XLSX.read(binarystr, { type: 'binary' });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(sheet);
         setExcelData(jsonData);
         setshowExcelView(true)
         setGivenExams(false)
       };
       reader.readAsBinaryString(file);
     };
-console.log(excelData)
-        
+    console.log(excelData)
+
+  }
+
+  const generateStudentId = () => {
+    return `STU-${uuidv4()}`;
+  };
+
+  const handleSave = async () => {
+    if (excelData.length !== 0 && formData.branch !== '' && formData.year !== '') {
+      // toast.success("Rukho Zara Sabr Karo")
+      const studentsWithIds = excelData.map((student, index) => ({
+        id: generateStudentId(index),
+        name: student.StudentName,
+        category: student.Category,
+        gender: student.Gender,
+        studentType: student.StudentType,
+      }));
+
+      setStudents(studentsWithIds);
+      console.log(students);
+      const { success, message } = await window.api.invoke('save-student-data', {
+        students: students,
+        branch: formData.branch,
+        year: formData.year,
+      });
+      if (success) {
+        toast.success(message, {
+          position: "top-right",
+          autoClose: 3000,
+          pauseOnHover: false,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: false,
+          theme: "colored",
+
+        })
+      }
+      else {
+        toast.error("Something went wrong While saving! ")
       }
 
-      const generateStudentId = () => {
-        return `STU-${uuidv4()}`; 
-    };
 
-      const handleSave=async()=>{
-        if (excelData.length !== 0 && formData.branch !== '' && formData.year !== '') {
-          // toast.success("Rukho Zara Sabr Karo")
-          const studentsWithIds =  excelData.map((student, index) => ({
-            id: generateStudentId(index), 
-            name: student.StudentName,
-            category: student.Category,
-            gender: student.Gender,
-            studentType: student.StudentType,
+
+
+    }
+    else {
+      toast.info("Import students First! \n  Also Select the Branch  & Year ", {
+        position: "top-right",
+        autoClose: 3000,
+        pauseOnHover: false,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: false,
+        theme: "colored",
+      })
+      return
+    }
+  }
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      try {
+        const response = await window.api.invoke('upload-image', {
+          student_id: formData.studentID,
+          file: {
+            name: file.name,
+            path: file.path,
+          },
+        });
+
+        if (response.success) {
+          toast.success(response.message);
+          setFormData((prevData) => ({
+            ...prevData,
+            image: response.image_path,
           }));
-      
-          setStudents(studentsWithIds);
-          console.log(students);
-          const {success,message} = await window.api.invoke('save-student-data', {
-              students: students,
-              branch: formData.branch,
-              year: formData.year,
-          }); 
-          if(success){
-            toast.success(message,{
-              position: "top-right",
-              autoClose: 3000,
-              pauseOnHover:false,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: false,
-              draggable: false,
-              theme: "colored",
-
-            })
-          }
-          else{
-            toast.error("Something went wrong While saving! ")
-          }
-
-
-          
-
+        } else {
+          toast.error(response.message);
         }
-        else{
-          toast.info("Import students First! \n  Also Select the Branch  & Year ",{
-            position: "top-right",
-  autoClose: 3000,
-  pauseOnHover:false,
-  hideProgressBar: false,
-  closeOnClick: true,
-  pauseOnHover: false,
-  draggable: false,
-  theme: "colored",
-          })
-          return
-        }
+      } catch (error) {
+        toast.error('Error uploading image: ' + error.message);
       }
-      const handleImageUpload = async (e) => {
-        const file = e.target.files[0];
-    
-        if (file) {
-          try {
-            const response = await window.api.invoke('upload-image', {
-              student_id: formData.studentID, 
-              file: {
-                name: file.name,
-                path: file.path, 
-              },
-            });
-    
-            if (response.success) {
-              toast.success(response.message);
-              setFormData((prevData) => ({
-                ...prevData,
-                image: response.image_path, 
-              }));
-            } else {
-              toast.error(response.message);
-            }
-          } catch (error) {
-            toast.error('Error uploading image: ' + error.message);
-          }
-        }
-      }
+    }
+  }
 
   const handleSearch = async () => {
     setActiveSearch(true)
 
     const respo = await window.api.invoke('fetch-student')
     // console.log(respo);
-    
+
     setfetchstudents(respo)
     console.log(fetchstudents);
-      setRecords(fetchstudents)
+    setRecords(fetchstudents)
 
-    
+
 
 
 
@@ -299,317 +299,317 @@ console.log(excelData)
     }
   }
 
- 
 
-console.log(isdisable);
+
+  console.log(isdisable);
 
   const [deletionParams, setDeletionParams] = useState({});
   const handleDeleteExam = async () => {
 
-const response = await window.api.invoke('delete-student-exam-entry',deletionParams)
-if (response.success) {
+    const response = await window.api.invoke('delete-student-exam-entry', deletionParams)
+    if (response.success) {
 
 
 
-  setIsDeleteModelVisible(false)
+      setIsDeleteModelVisible(false)
 
 
-  if (selectedStudent) {
+      if (selectedStudent) {
 
 
-    try{
-      const data = await window.api.invoke('fetch-student-year-semester', selectedStudent.student_id);
-      if (data) {
-        setStudentsData(data); 
-        console.log("Fetched student data:", data);  
+        try {
+          const data = await window.api.invoke('fetch-student-year-semester', selectedStudent.student_id);
+          if (data) {
+            setStudentsData(data);
+            console.log("Fetched student data:", data);
+          }
+
+        }
+        catch (error) {
+          toast.error(error.message, { position: "top-right" });
+
+        }
+        toast.success("Successfully deleted!")
       }
 
+
+      else {
+        toast.error("Something went wrong!")
+      }
+
+
+      console.log("this is the deletion params : ", deletionParams);
+
     }
-    catch(error){
-      toast.error(error.message, { position: "top-right" });
-
-  }
-toast.success("Successfully deleted!")
-}
-
-
-else{
-  toast.error("Something went wrong!")
-}
-
-
-console.log("this is the deletion params : ",deletionParams);
-
-  }
 
   }
 
 
-  const handleUpdate =async ()=>{
+  const handleUpdate = async () => {
     const updatedData = {
-      student_id: formData.studentID, 
-      first_name: formData.firstName,  
+      student_id: formData.studentID,
+      first_name: formData.firstName,
     };
-  
+
     try {
       const response = await window.api.invoke('update-student', updatedData);
-  
+
       if (response.success) {
-        toast.success(response.message); 
+        toast.success(response.message);
         setIsdisable(false)
         handleRefresh()
       } else {
-        toast.error(response.message); 
+        toast.error(response.message);
       }
     } catch (error) {
-      toast.error('Error updating student: ' + error.message); 
+      toast.error('Error updating student: ' + error.message);
     }
   }
 
 
   return (
     <>
-    <div className='exam-code-container flex gap-2 justify-between h-full items-center'>
-      <div className='form-container max-w-[80%] '>
-        <div className=" p-2  rounded-lg flex gap-4">
-          <div className='border-r pr-2'>
-            {/* Heading and Radio Buttons */}
-            <div className="mb-6">
-              <h2 className="text-3xl flex justify-center font-serif font-semibold mb-4">Student Entry</h2>
-              <div className="flex space-x-4 bg-white p-4 rounded-lg shadow-sm">
-                {['Engineering', 'Diploma', 'Old', 'Provisional'].map((type) => (
-                  <label key={type} className="flex items-center font-extrabold">
+      <div className='exam-code-container flex gap-2 justify-between h-full items-center'>
+        <div className='form-container max-w-[80%] '>
+          <div className=" p-2  rounded-lg flex gap-4">
+            <div className='border-r pr-2'>
+              {/* Heading and Radio Buttons */}
+              <div className="mb-6">
+                <h2 className="text-3xl flex justify-center font-serif font-semibold mb-4">Student Entry</h2>
+                <div className="flex space-x-4 bg-white p-4 rounded-lg shadow-sm">
+                  {['Engineering', 'Diploma', 'Old', 'Provisional'].map((type) => (
+                    <label key={type} className="flex items-center font-extrabold">
+                      <input
+                        type="radio"
+                        name="educationType"
+                        value={type}
+                        onChange={handleInputChange}
+                        className="mr-2"
+                      />
+                      {type}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Form Inputs */}
+              <div className="space-y-4">
+                {/* Row 1: Student ID and First Name */}
+                <div className="flex space-x-6">
+                  <div className="form-group w-1/2">
+                    <label htmlFor="studentID" className="block font-extrabold mb-2">Student ID:</label>
                     <input
-                      type="radio"
-                      name="educationType"
-                      value={type}
+                      type="text"
+                      id="studentID"
+                      name="studentID"
+                      className={`w-full p-3 border rounded-lg ${isdisable ? 'cursor-not-allowed opacity-50' : ''}`}
+                      value={formData.studentID}
                       onChange={handleInputChange}
-                      className="mr-2"
+                      placeholder='123466'
+                      disabled={isdisable}
                     />
-                    {type}
-                  </label>
-                ))}
+                  </div>
+
+                  <div className="form-group w-1/2">
+                    <label htmlFor="firstName" className="block font-extrabold mb-2">First Name:</label>
+                    <input
+                      type="text"
+                      id="firstName"
+                      name="firstName"
+                      disabled={isdisable}
+                      className={`w-full p-3 border rounded-lg ${isdisable ? 'cursor-not-allowed opacity-50' : ''}`}
+                      value={formData.firstName}
+                      onChange={handleInputChange}
+                      placeholder='Enter Student Name'
+                    />
+                  </div>
+                </div>
+
+                {/* Row 2: Year and Branch */}
+                <div className="flex space-x-6">
+                  <div className="form-group w-1/2">
+                    <label htmlFor="year" className="block font-extrabold mb-2">Year:</label>
+                    <select
+                      id="year"
+                      name="year"
+                      className="w-full p-3 border rounded-lg"
+                      value={formData.year}
+                      onChange={handleInputChange}
+                      placeholder='Enter the Academic Year'
+                    >
+                      <option className='font-bold' disabled value="">Select  Year</option>
+                      <option className='font-bold' value="05/June/2023-05/May/2024">05/June/2023-05/May/2024</option>
+                      {/* <option className='font-bold' value="FE">First Year</option> */}
+                      <option className='font-bold' value="SE">Second Year</option>
+                      <option className='font-bold' value="TE">Third Year</option>
+                      <option className='font-bold' value="BE">Fourth Year</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group w-1/2">
+                    <label htmlFor="branch" className="block font-extrabold mb-2">Branch:</label>
+                    <select
+                      id="branch"
+                      name="branch"
+                      className="w-full p-3 border rounded-lg"
+                      value={formData.branch}
+                      onChange={handleInputChange}
+                    >
+                      <option className='font-bold' value="">Select Branch</option>
+                      <option className='font-bold' value="COMPUTER">Computer Engineering </option>
+                      <option className='font-bold' value="CIVIL">Civil Engineering </option>
+                      <option className='font-bold' value="MECHANICAL">Mechanical Engineering</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Row 3: Caste and Gender */}
+                <div className="flex space-x-6">
+                  <div className="form-group w-1/2">
+                    <label htmlFor="caste" className="block font-extrabold mb-2">Caste:</label>
+                    <select
+                      id="caste"
+                      name="caste"
+                      className="w-full p-3 border rounded-lg"
+                      value={formData.caste}
+                      onChange={handleInputChange}
+                    >
+                      <option value="" disabled className='font-extrabold'>Select a Caste </option>
+                      <option className='font-bold' value="Open">Open</option>
+                      <option className='font-bold' value="OBC">OBC</option>
+                      <option className='font-bold' value="SC">Scheduled Castes (SC)</option>
+                      <option className='font-bold' value="ST">Scheduled Tribe (ST)</option>
+
+                      <option className='font-bold' value="Vimukta Jati (VJ) / De-Notified Tribes (DT) (NT-A)">Vimukta Jati (VJ) / De-Notified Tribes (DT) (NT-A)</option>
+                      <option className='font-bold' value=" NT-B">Nomadic Tribes 1 (NT-B)</option>
+                      <option className='font-bold' value=" NT-C">Nomadic Tribes 2 (NT-C)</option>
+                      <option className='font-bold' value="NT-D">Nomadic Tribes 3 (NT-D)</option>
+                      <option className='font-bold' value="OBC">Other Backward Classes (OBC)</option>
+                      <option className='font-bold' value="SEBC">Socially and Educationally Backward Classes (SEBC)</option>
+                    </select>
+
+                  </div>
+
+                  <div className="form-group w-1/2">
+                    <label htmlFor="gender" className="block font-extrabold mb-2">Gender:</label>
+                    <select
+                      id="gender"
+                      name="gender"
+                      className="w-full p-3 border rounded-lg"
+                      value={formData.gender}
+                      onChange={handleInputChange}
+                    >
+                      <option value="" className='font-extrabold'>Select Gender  </option>
+                      <option value="Male" className='font-bold'>Male</option>
+                      <option value="Female" className='font-bold' >Female</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="isDyslexic"
+                      name="isDyslexic"
+                      checked={formData.isDyslexic}
+                      onChange={handleInputChange}
+                      className="form-control-checkbox"
+                    />
+                    <label htmlFor="isDyslexic" className="ml-2 font-extrabold">For Dyslexia students</label>
+                  </div>
+                </div>
               </div>
             </div>
-
-            {/* Form Inputs */}
-            <div className="space-y-4">
-              {/* Row 1: Student ID and First Name */}
-              <div className="flex space-x-6">
-                <div className="form-group w-1/2">
-                  <label htmlFor="studentID" className="block font-extrabold mb-2">Student ID:</label>
+            <div className='pt-10'>
+              <div className="w-36 h-44 border-2 border-dashed border-black bg-white flex items-center justify-center relative">
+                <label
+                  htmlFor="imageUpload"
+                  className="cursor-pointer text-center text-gray-500"
+                >
+                  115x130 <br /> Upload Image
                   <input
-                    type="text"
-                    id="studentID"
-                    name="studentID"
-                    className={`w-full p-3 border rounded-lg ${isdisable ? 'cursor-not-allowed opacity-50' : ''}`}
-                    value={formData.studentID}
-                    onChange={handleInputChange}
-                    placeholder='123466'
-                    disabled={isdisable}
+                    type="file"
+                    id="imageUpload"
+                    name="image"
+                    className="hidden"
+                    accept="image/jpg,image/png,image/jpeg,image" onChange={handleImageUpload}
                   />
-                </div>
-
-                <div className="form-group w-1/2">
-                  <label htmlFor="firstName" className="block font-extrabold mb-2">First Name:</label>
-                  <input
-                    type="text"
-                    id="firstName"
-                    name="firstName"
-                    disabled={isdisable}
-                    className={`w-full p-3 border rounded-lg ${isdisable ? 'cursor-not-allowed opacity-50' : ''}`}
-                    value={formData.firstName}
-                    onChange={handleInputChange}
-                    placeholder='Enter Student Name'
-                  />
-                </div>
+                </label>
               </div>
-
-              {/* Row 2: Year and Branch */}
-              <div className="flex space-x-6">
-                <div className="form-group w-1/2">
-                  <label htmlFor="year" className="block font-extrabold mb-2">Year:</label>
-                  <select
-                    id="year"
-                    name="year"
-                    className="w-full p-3 border rounded-lg"
-                    value={formData.year}
-                    onChange={handleInputChange}
-                    placeholder='Enter the Academic Year'
-                  >
-                    <option className='font-bold' disabled value="">Select  Year</option>
-                    <option className='font-bold' value="05/June/2023-05/May/2024">05/June/2023-05/May/2024</option>
-                    {/* <option className='font-bold' value="FE">First Year</option> */}
-                    <option className='font-bold' value="SE">Second Year</option>
-                    <option className='font-bold' value="TE">Third Year</option>
-                    <option className='font-bold' value="BE">Fourth Year</option>
-                  </select>
-                </div>
-
-                <div className="form-group w-1/2">
-                  <label htmlFor="branch" className="block font-extrabold mb-2">Branch:</label>
-                  <select
-                    id="branch"
-                    name="branch"
-                    className="w-full p-3 border rounded-lg"
-                    value={formData.branch}
-                    onChange={handleInputChange}
-                  >
-                    <option className='font-bold' value="">Select Branch</option>
-                    <option className='font-bold' value="COMPUTER">Computer Engineering </option>
-                    <option className='font-bold' value="CIVIL">Civil Engineering </option>
-                    <option className='font-bold' value="MECHANICAL">Mechanical Engineering</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Row 3: Caste and Gender */}
-              <div className="flex space-x-6">
-                <div className="form-group w-1/2">
-                  <label htmlFor="caste" className="block font-extrabold mb-2">Caste:</label>
-                  <select
-                    id="caste"
-                    name="caste"
-                    className="w-full p-3 border rounded-lg"
-                    value={formData.caste}
-                    onChange={handleInputChange}
-                  >
-                    <option value="" disabled className='font-extrabold'>Select a Caste </option>
-                    <option className='font-bold' value="Open">Open</option>
-                    <option className='font-bold' value="OBC">OBC</option>
-                    <option className='font-bold' value="SC">Scheduled Castes (SC)</option>
-                    <option className='font-bold' value="ST">Scheduled Tribe (ST)</option>
-
-                    <option className='font-bold' value="Vimukta Jati (VJ) / De-Notified Tribes (DT) (NT-A)">Vimukta Jati (VJ) / De-Notified Tribes (DT) (NT-A)</option>
-                    <option className='font-bold' value=" NT-B">Nomadic Tribes 1 (NT-B)</option>
-                    <option className='font-bold' value=" NT-C">Nomadic Tribes 2 (NT-C)</option>
-                    <option className='font-bold' value="NT-D">Nomadic Tribes 3 (NT-D)</option>
-                    <option className='font-bold' value="OBC">Other Backward Classes (OBC)</option>
-                    <option className='font-bold' value="SEBC">Socially and Educationally Backward Classes (SEBC)</option>
-                  </select>
-
-                </div>
-
-                <div className="form-group w-1/2">
-                  <label htmlFor="gender" className="block font-extrabold mb-2">Gender:</label>
-                  <select
-                    id="gender"
-                    name="gender"
-                    className="w-full p-3 border rounded-lg"
-                    value={formData.gender}
-                    onChange={handleInputChange}
-                  >
-                    <option value="" className='font-extrabold'>Select Gender  </option>
-                    <option value="Male" className='font-bold'>Male</option>
-                    <option value="Female" className='font-bold' >Female</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="form-group">
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="isDyslexic"
-                    name="isDyslexic"
-                    checked={formData.isDyslexic}
-                    onChange={handleInputChange}
-                    className="form-control-checkbox"
-                  />
-                  <label htmlFor="isDyslexic" className="ml-2 font-extrabold">For Dyslexia students</label>
-                </div>
-              </div>
+              <p className='text-lg   font-semibold'>Student Photo</p>
             </div>
           </div>
-          <div className='pt-10'>
-            <div className="w-36 h-44 border-2 border-dashed border-black bg-white flex items-center justify-center relative">
-              <label
-                htmlFor="imageUpload"
-                className="cursor-pointer text-center text-gray-500"
-              >
-                115x130 <br /> Upload Image
-                <input
-                  type="file"
-                  id="imageUpload"
-                  name="image"
-                  className="hidden"
-                  accept="image/jpg,image/png,image/jpeg,image" onChange={handleImageUpload}
-                />
-              </label>
-            </div>
-            <p className='text-lg   font-semibold'>Student Photo</p>
+          <div className='form-buttons'>
+
+
+            {!updatebtn && (
+              <button className="btn-save" onClick={handleSave}>
+                Save
+              </button>
+            )}
+
+
+            {updatebtn && (
+              <button className="btn-edit" onClick={handleUpdate}>
+                Update
+              </button>
+            )}
+            <button className="btn-refresh" onClick={handleRefresh}>
+              Refresh
+            </button>
+            <button className="btn-edit" onClick={handleEdit}>
+              Edit
+            </button>
+
+
+
+            <button className="btn-exit">Delete</button>
+            <button className="btn-import" onClick={handleImport}>
+              Import
+            </button>
+            <button className="btn-search" onClick={handleSearch}>
+              Search
+            </button>
           </div>
+          <ToastContainer />
         </div>
-        <div>
-
-
-  {!updatebtn && (
-    <button className="rounded btn-save" onClick={handleSave}>
-      Save
-    </button>
-  )}
-
-
-{updatebtn && (
-    <button className="border rounded btn-edit" onClick={handleUpdate}>
-      Update
-    </button>
-  )}
-  <button className="border rounded btn-refresh" onClick={handleRefresh}>
-    Refresh
-  </button>
-  <button className="border rounded btn-edit" onClick={handleEdit}>
-    Edit
-  </button>
-  
- 
-
-  <button className="border rounded btn-exit">Delete</button>
-  <button className="border rounded btn-import" onClick={handleImport}>
-    Import
-  </button>
-  <button className="border rounded btn-search" onClick={handleSearch}>
-    Search
-  </button>
-</div>
-        <ToastContainer />
-      </div>
 
 
 
-      <Modal title="Search By Name / Id" open={activeSearch}
-        onCancel={() => {
-          setActiveSearch(false)
-          // onDestroyModal()
-        }}
-        onOk={() => {
-          setActiveSearch(false)
-          // onDestroyModal()
-        }}
-        width={900}
-      >
+        <Modal title="Search By Name / Id" open={activeSearch}
+          onCancel={() => {
+            setActiveSearch(false)
+            // onDestroyModal()
+          }}
+          onOk={() => {
+            setActiveSearch(false)
+            // onDestroyModal()
+          }}
+          width={900}
+        >
 
-        <div className='bg-white rounded '>
-          <div className='p-2'>
+          <div className='bg-white rounded '>
+            <div className='p-2'>
 
-            <div className="search"><input type="text" className=' border border-black rounded' onChange={handlefilter} /></div>
-            <DataTable id='table' className='student-entry-table text-[12px] ml-0'
-            
-            columns={columns}
-            data={records}
-            pagination
-            selectableRows
-            fixedHeader
-          onSelectedRowsChange={handleSelectedRowsChange}
-            
-            
-            >
+              <div className="search"><input type="text" className=' border border-black rounded' onChange={handlefilter} /></div>
+              <DataTable id='table' className='student-entry-table text-[12px] ml-0'
 
-    
+                columns={columns}
+                data={records}
+                pagination
+                selectableRows
+                fixedHeader
+                onSelectedRowsChange={handleSelectedRowsChange}
+
+
+              >
 
 
 
-              {/* { <thead>
+
+
+                {/* { <thead>
                 <tr>
                   <th className='text-center'>Student_ID</th>
                   <th className='text-center'>Name</th>
@@ -646,7 +646,7 @@ console.log("this is the deletion params : ",deletionParams);
                   <td className='text-left'>Rohan devlekar</td>
                   <td>Computer Engineering</td>
                 </tr> */}
-                
+
                 {/* {exam.map((exam, index) => {
                     return (
                         <tr key={index}>
@@ -665,47 +665,47 @@ console.log("this is the deletion params : ",deletionParams);
                     )
                 })} */}
 
-              {/* </tbody> */}
-            </DataTable>
+                {/* </tbody> */}
+              </DataTable>
+            </div>
           </div>
-        </div>
-      </Modal>
-      {givenExams && (
-            <div className='status-div'>
+        </Modal>
+        {givenExams && (
+          <div className='status-div'>
             <div className='status-div-1'>
-                  <table>
-                    <thead>
-                        <tr>
-                            <th>Delete</th>
-                            <th>AYID</th>
-                            <th>Semester</th>
-                            <th>Branch</th>
-                        </tr>
-                    </thead>
-                    <tbody >
+              <table>
+                <thead>
+                  <tr>
+                    <th>Delete</th>
+                    <th>AYID</th>
+                    <th>Semester</th>
+                    <th>Branch</th>
+                  </tr>
+                </thead>
+                <tbody >
 
-                    {studentsData.map((student, index) => (
-      <tr key={index}>
-        <td>
-          <DeleteOutlineOutlinedIcon
-            className='cursor-pointer text-rose-400'
-            onClick={() => {
-              setDeletionParams({
-                student_id: selectedStudent.student_id,
-                year: student.year,
-                semester: student.semester,
-              });
-          
-              setIsDeleteModelVisible(true);
-            }}
-          />
-        </td>
-        <td>{student.year || 'N/A'}</td> 
-        <td>{student.semester || 'N/A'}</td> 
-        <td>{selectedStudent.branch || 'N/A'}</td> 
-        </tr>
-    ))}
-                      {/* <tr>
+                  {studentsData.map((student, index) => (
+                    <tr key={index}>
+                      <td>
+                        <DeleteOutlineOutlinedIcon
+                          className='cursor-pointer text-rose-400'
+                          onClick={() => {
+                            setDeletionParams({
+                              student_id: selectedStudent.student_id,
+                              year: student.year,
+                              semester: student.semester,
+                            });
+
+                            setIsDeleteModelVisible(true);
+                          }}
+                        />
+                      </td>
+                      <td>{student.year || 'N/A'}</td>
+                      <td>{student.semester || 'N/A'}</td>
+                      <td>{selectedStudent.branch || 'N/A'}</td>
+                    </tr>
+                  ))}
+                  {/* <tr>
                         <td><DeleteOutlineOutlinedIcon className='cursor-pointer text-rose-400' onClick={()=> setIsDeleteModelVisible(true)}/></td>
                         <td>01/June 2011-31/May/2012</td>
                         <td>Sem 1</td>
@@ -723,7 +723,7 @@ console.log("this is the deletion params : ",deletionParams);
                         <td>Sem 3</td>
                         <td>Computer Engineering</td>
                       </tr>  */}
-                        {/* {exam.map((exam, index) => {
+                  {/* {exam.map((exam, index) => {
                             return (
                                 <tr key={index}>
                                     <td><EditOutlinedIcon className='cursor-pointer text-green-300' onClick={() => {
@@ -740,66 +740,60 @@ console.log("this is the deletion params : ",deletionParams);
                                 </tr>
                             )
                         })} */}
-                         
-                     </tbody>
-                </table> 
-                  
 
-                <div>
-                    <Modal title="Are you sure? You want to Delete!" open={isDeleteModelVisible}   footer={[
-                        <Button key="cancel" onClick={()=> setIsDeleteModelVisible(false)}>
-                            Cancel
-                        </Button>,
-                        <Button key="update" type="primary" onClick={handleDeleteExam}>
-                            Delete
-                        </Button>
-                        
-                        ]} 
-                        onCancel={()=> setIsDeleteModelVisible(false)}
-                        >
+                </tbody>
+              </table>
 
-                        </Modal>
-                </div>
+
+              <div>
+                <Modal title="Are you sure? You want to Delete!" open={isDeleteModelVisible} footer={[
+                  <Button key="cancel" onClick={() => setIsDeleteModelVisible(false)}>
+                    Cancel
+                  </Button>,
+                  <Button key="update" type="primary" onClick={handleDeleteExam}>
+                    Delete
+                  </Button>
+
+                ]}
+                  onCancel={() => setIsDeleteModelVisible(false)}
+                >
+
+                </Modal>
               </div>
-              </div> )}
- 
-              {showExcelView && (
-            <div className='status-div'>
+            </div>
+          </div>)}
+
+        {showExcelView && (
+          <div className='status-div'>
             <div className='status-div-1'>
-                  <table>
-                    <thead>
-                        <tr>
-                            <th>Student Name</th>
-                            <th>Gender</th>
-                            <th>Category</th>
-                            <th>Branch</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            {excelData.map((row, index) => (
-              <tr key={index} className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}>
-                {Object.values(row).map((value, idx) => (
-                  <td key={idx} className="px-4 py-2 border border-gray-300">
-                    {value}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-                </table> 
-</div>
-              </div> )}
+              <table>
+                <thead>
+                  <tr>
+                    <th>Student Name</th>
+                    <th>Gender</th>
+                    <th>Category</th>
+                    <th>Branch</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {excelData.map((row, index) => (
+                    <tr key={index} className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}>
+                      {Object.values(row).map((value, idx) => (
+                        <td key={idx} className="px-4 py-2 border border-gray-300">
+                          {value}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>)} 
+      </div>
 
+    </>
 
+  )
+}
 
-
-
-
-
-    </div>
-
-</>
-
-                   )}   
-                      
 export default StudentEntry;
