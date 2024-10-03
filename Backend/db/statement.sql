@@ -159,6 +159,6 @@
 
 
 
--- ALTER TABLE student_exams ADD COLUMN subject_marker TEXT;
-
+-- ALTER TABLE student ADD COLUMN year TEXT;
+-- DELETE FROM student WHERE category IN ('Open', 'OBC');
 

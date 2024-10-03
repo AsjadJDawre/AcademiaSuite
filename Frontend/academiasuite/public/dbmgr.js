@@ -3,6 +3,9 @@ const bcrypt = require("bcrypt");
 const sqlite3 = require("sqlite3").verbose();
 const { v4: uuidv4 } = require("uuid");
 const { promises } = require("original-fs");
+const { event, data } = require("jquery");
+const fs = require('fs');
+const path = require('path');
 
 let db = new sqlite3.Database("../../Backend/db/database.sqlite", (err) => {
   if (err) {
@@ -1122,6 +1125,277 @@ ipcMain.handle("fetch-subjects-for-semester", (event, { semester }) => {
   });
 });
 
+ipcMain.handle('save-student-data', async (event, data) => {
+  const { students, branch, year } = data;
+
+  return new Promise((resolve, reject) => {
+      db.serialize(() => {
+          db.run('BEGIN TRANSACTION'); // Start a transaction
+
+          const stmt = db.prepare('INSERT INTO student (student_id, name, branch, category,year, gender, studentType) VALUES (?, ?, ?,?, ?, ?, ?)');
+
+          students.forEach(student => {
+              stmt.run(student.id, student.name, branch, student.category, year, student.gender, student.studentType, (error) => {
+                  if (error) {
+                      console.error('Error while inserting student data:', error);
+                      db.run('ROLLBACK'); // Rollback the transaction on error
+                      return reject(error);
+                  }
+              });
+          });
+
+          stmt.finalize(err => {
+              if (err) {
+                  console.error('Error finalizing statement:', err);
+                  db.run('ROLLBACK'); // Rollback the transaction on error
+                  return reject(err);
+              }
+
+              db.run('COMMIT', commitError => {
+                  if (commitError) {
+                      console.error('Error committing transaction:', commitError);
+                      return reject(commitError);
+                  }
+
+                  resolve({ success: true, message: 'Students saved successfully!' });
+              });
+          });
+      });
+  });
+});
+
+
+ipcMain.handle('update-student', async (event, data) => {
+  const { student_id, first_name } = data; // Destructure data to get student ID and new first name
+
+  return new Promise((resolve, reject) => {
+    db.serialize(() => {
+      db.run('BEGIN TRANSACTION', (beginError) => {
+        if (beginError) {
+          console.error('Error starting transaction:', beginError);
+          return reject({ success: false, message: 'Error starting transaction' });
+        }
+
+        // Prepare the SQL statement to update the student's first name
+        const stmt = db.prepare('UPDATE student SET name = ? WHERE student_id = ?');
+
+        stmt.run(first_name, student_id, function (error) {
+          if (error) {
+            console.error('Error while updating student data:', error);
+            db.run('ROLLBACK'); // Rollback the transaction on error
+            return reject({ success: false, message: 'Error updating student data' });
+          }
+        });
+
+        stmt.finalize((err) => {
+          if (err) {
+            console.error('Error finalizing statement:', err);
+            db.run('ROLLBACK');
+            return reject({ success: false, message: 'Error finalizing statement' });
+          }
+
+          db.run('COMMIT', (commitError) => {
+            if (commitError) {
+              console.error('Error committing transaction:', commitError);
+              return reject({ success: false, message: 'Error committing transaction' });
+            }
+
+            resolve({ success: true, message: 'Student updated successfully!' });
+          });
+        });
+      });
+    });
+  });
+});
+
+
+ipcMain.handle('fetch-student-year-semester', async (event, studentId) => {
+  return new Promise((resolve, reject) => {
+      db.serialize(() => {
+          db.run('BEGIN TRANSACTION');
+
+          const stmt = db.prepare('SELECT year, semester FROM student_exams WHERE student_id = ?');
+
+          stmt.all(studentId, (error, rows) => {
+            if (error) {
+                console.error('Error while fetching student year and semester:', error);
+                db.run('ROLLBACK'); 
+                return reject(error);
+            }
+
+            if (rows.length === 0) {
+                db.run('ROLLBACK');
+                return reject(new Error('No records found for the given student ID.'));
+            }
+              stmt.finalize(err => {
+                  if (err) {
+                      console.error('Error finalizing statement:', err);
+                      db.run('ROLLBACK');
+                      return reject(err);
+                  }
+
+                  db.run('COMMIT', commitError => {
+                      if (commitError) {
+                          console.error('Error committing transaction:', commitError);
+                          return reject(commitError);
+                      }
+                      console.log("Student Data : ",rows)
+                      resolve(rows);
+                  });
+              });
+          });
+      });
+  });
+});
+// Handle the image upload
+ipcMain.handle('upload-image', async (event, { student_id, file }) => {
+  const imagesFolder = path.join(__dirname, 'assets', 'images'); 
+  const imagePath = path.join(imagesFolder, file.name); 
+
+  if (!fs.existsSync(imagesFolder)) {
+    fs.mkdirSync(imagesFolder, { recursive: true }); 
+  }
+
+  try {
+    await fs.promises.copyFile(file.path, imagePath);
+
+    const saveResponse = await saveImagePath(student_id, imagePath);
+
+    return { success: true, message: 'Image uploaded successfully!', image_path: imagePath };
+  } catch (error) {
+    console.error('Error saving image:', error);
+    return { success: false, message: 'Error saving image: ' + error.message };
+  }
+});
+
+// Function to save image path in the database
+async function saveImagePath(student_id, image_path) {
+  return new Promise((resolve, reject) => {
+    db.serialize(() => {
+      db.run('BEGIN TRANSACTION', (beginError) => {
+        if (beginError) {
+          console.error('Error starting transaction:', beginError);
+          return reject({ success: false, message: 'Error starting transaction' });
+        }
+
+        db.run('UPDATE student SET image = ? WHERE student_id = ?', [image_path, student_id], function (error) {
+          if (error) {
+            console.error('Error while saving image path:', error);
+            db.run('ROLLBACK'); 
+            return reject({ success: false, message: 'Error saving image path' });
+          }
+
+          if (this.changes === 0) {
+            console.error('No rows updated for student_id:', student_id);
+            db.run('ROLLBACK');
+            return reject({ success: false, message: 'No student found with the provided ID.' });
+          }
+
+          db.run('COMMIT', (commitError) => {
+            if (commitError) {
+              console.error('Error committing transaction:', commitError);
+              return reject({ success: false, message: 'Error committing transaction' });
+            }
+
+            resolve({ success: true, message: 'Image path saved successfully!' });
+          });
+        });
+      });
+    });
+  });
+}
+
+
+
+
+
+
+
+
+ipcMain.handle('delete-student-exam-entry', (event, data) => {
+  return new Promise((resolve, reject) => {
+    const { student_id, year, semester } = data;
+
+    db.serialize(() => {
+      db.run('BEGIN TRANSACTION', (beginError) => {
+        if (beginError) {
+          console.error('Error starting transaction:', beginError);
+          return reject(beginError);
+        }
+
+        const stmt = db.prepare('DELETE FROM student_exams WHERE student_id = ? AND year = ? AND semester = ?');
+        stmt.run([student_id, year, semester], (error) => {
+          if (error) {
+            console.error('Error while deleting student data:', error);
+            db.run('ROLLBACK', () => {
+              console.log('Transaction rolled back.');
+            });
+            return reject({ success: false, message: 'Error deleting student data' });
+          }
+
+          db.run('COMMIT', (commitError) => {
+            if (commitError) {
+              console.error('Error committing transaction:', commitError);
+              db.run('ROLLBACK', () => {
+                console.log('Transaction rolled back.');
+              });
+              return reject({ success: false, message: 'Error committing transaction' });
+            }
+
+            resolve({ success: true, message: 'Student exam entry deleted successfully!' });
+          });
+        });
+
+        stmt.finalize(); 
+      });
+    });
+  });
+});
+
+
+
+// ipcMain.handle('save-student-data', async (event, data) => {
+//   const { students, branch, year } = data;
+
+//   return new Promise((resolve, reject) => {
+//     const { exam_id, subject, students,semester,subject_marker } = data;
+
+//     db.serialize(() => {
+//       db.run('BEGIN TRANSACTION');
+
+//           const stmt = db.prepare('INSERT INTO student (student_id, name, branch, category,year, gender, studentType) VALUES (?, ?, ?,?, ?, ?, ?)');
+
+//           // Insert each student into the database
+//           students.forEach(student => {
+//               stmt.run(student.id, student.name, branch, student.category, year, student.gender, student.studentType, (error) => {
+//                   if (error) {
+//                       console.error('Error while inserting student data:', error);
+//                       db.run('ROLLBACK'); // Rollback the transaction on error
+//                       return reject(error);
+//                   }
+//               });
+//           });
+
+//           stmt.finalize(err => {
+//               if (err) {
+//                   console.error('Error finalizing statement:', err);
+//                   db.run('ROLLBACK'); // Rollback the transaction on error
+//                   return reject(err);
+//               }
+
+//               db.run('COMMIT', commitError => {
+//                   if (commitError) {
+//                       console.error('Error committing transaction:', commitError);
+//                       return reject(commitError);
+//                   }
+
+//                   resolve({ success: true, message: 'Students saved successfully!' });
+//               });
+//           });
+//       });
+//   });
+// });
+
 ipcMain.handle("save-student-exams", async (event, data) => {
   return new Promise((resolve, reject) => {
     const { exam_id, subject, students, semester, subject_marker } = data;
@@ -1133,7 +1407,6 @@ ipcMain.handle("save-student-exams", async (event, data) => {
         "INSERT INTO student_exams (exam_id, subject_name,semester, subject_marker,student_id) VALUES (?, ?,?,?, ?)"
       );
 
-      // Insert each student into the database
       students.forEach((student_id) => {
         stmt.run(
           exam_id,
@@ -1154,7 +1427,7 @@ ipcMain.handle("save-student-exams", async (event, data) => {
       stmt.finalize((err) => {
         if (err) {
           console.error("Error finalizing statement:", err);
-          db.run("ROLLBACK"); // Rollback the transaction on error
+          db.run("ROLLBACK");
           return reject(err);
         }
 
