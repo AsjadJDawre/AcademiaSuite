@@ -258,7 +258,7 @@ const ReExamEligibility = () => {
                   {/* for info */}
                   <div>
                     <fieldset>
-                      <legend className="text-xl">Colour Indications</legend>
+                      <legend className="text-xl text-gray-400">Colour Indications</legend>
                       <p className="align-middle">
                         <span className="bg-orange-100 h-5 w-5 border"></span>{" "}
                         -NO MARKS ENTRY{" "}
