@@ -54,8 +54,8 @@ const Dashboard = (props) => {
         <h2 className="text-2xl font-extrabold text-slate-800">
           ACADEMIA<span className="logo text-[#1659D7]">SUITE</span>
         </h2>
-        <h4 className="username font-bold text-slate-800">
-          {props.user}{" "}
+        <h4 className="username text-xl text-slate-800">
+          {" "}{props.user}{" "}
           <PersonIcon
             style={{
               color: "2B5ED6",
