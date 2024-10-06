@@ -80,6 +80,9 @@ button:hover {
 .btn-excel {
     background-color: #0e7534;
 }
+.btn-getdata {
+    background-color: #77ddc7;
+}
 
 .btn-save:hover {
     background-color: #149e47;

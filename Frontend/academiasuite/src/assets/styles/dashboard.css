@@ -1,21 +1,17 @@
 .dashboard-container {
     height: 90vh;
     display: grid;
-    grid-template-rows: .7fr 5fr;
-    grid-template-columns: .8fr 3fr;
-    gap: 10px;
-    padding-right: 4rem;
-
+    grid-template-rows: .3fr 5fr;
+    grid-template-columns: .6fr 3fr;
 }
 
 .top-bar {
     grid-column: 1 / span 2;
     height: fit-content;
-    margin-top: 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 0rem 2rem 4rem;
+    padding: 1rem 3rem;
     color: #262739;
     font-family: 'Roboto', sans-serif;
 }
@@ -32,3 +28,6 @@
     gap: 1rem;
 }
  
+.section-3 {
+    height: 100%;
+}

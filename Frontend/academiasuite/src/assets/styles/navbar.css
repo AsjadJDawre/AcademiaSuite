@@ -1,12 +1,12 @@
 .nav-container {
-    margin: 0rem 2rem;
-    padding: 2rem 1rem;
+    padding: 2rem 2rem;
     color: #8B8A8E;
     font-family: 'Roboto', sans-serif;
     display: flex;
     flex-direction: column;
     gap: .5rem;
-    height: 85vh;
+    height: 100%;
+    /* position: fixed; */
 }
 .nav-item {
     padding: 10px 10px;
@@ -28,7 +28,7 @@ p {
     flex-direction: column;
     align-items: start;
     cursor: pointer;
-    padding-left: 4rem;
+    padding-left: 2rem;
     height: 0;
     opacity: 0;
     overflow: hidden;
