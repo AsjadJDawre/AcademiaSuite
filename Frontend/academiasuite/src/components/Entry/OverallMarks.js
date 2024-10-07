@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 
 const OverallMarks = () => {
-  const [reExamDiv, setReExamDiv] = useState(true);
+  const [overallMarksDiv, setOverallMarksDiv] = useState(true);
   const [isTableVisible, setIsTableVisible] = useState(false);
 
   const [year, setYear] = useState("Select year");
@@ -61,7 +61,7 @@ const OverallMarks = () => {
     <div className="h-full">
       <ToastContainer />
 
-      {reExamDiv && (
+      {overallMarksDiv && (
         <div className="flex justify-center pt-2 pb-2 h-full gap-2">
           <div className="bg-white w-[100%]  pb-2 pr-4 pl-4 mr-4 ml-2 rounded">
             <div className="flex justify-center">
