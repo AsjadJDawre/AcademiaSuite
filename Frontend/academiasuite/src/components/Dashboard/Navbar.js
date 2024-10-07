@@ -313,7 +313,43 @@ const Navbar = (props) => {
           Overall Eligibility
         </p>
       </div>
-
+           {/* // Pattern nav element */}
+      <div
+        style={
+          activeMenu === "academic" ? activeMenustyle : disableMenustyle
+        }
+        className="nav-item"
+        onClick={() => {
+          setActiveSubMenu("academic");
+          setActiveMenu("academic");
+        }}
+      >
+        <p className="mb-0 p-2">
+          <PatternIcon /> Academic
+        </p>
+        <p className="mb-0 p-2">{activeMenu === "academic" ? downArrow : forwordArrow}</p>
+      </div>
+      <div
+        className="dropdown-pattern dropdown"
+        style={
+          activeSubMenu !== "academic" ? dropdownDisable : dropdownActive
+        }
+      >
+        <p
+          style={
+            activeSubSubMenu === "academic_eligibility"
+              ? activeSubSubMenustyle
+              : disableSubsubMenustyle
+          }
+          className="submenu-item1"
+          onClick={() => {
+            setActiveSubSubMenu("academic_eligibility");
+            props.setActiveMainComponent("academic_eligibility");
+          }}
+        >
+          Academic Eligibility
+        </p>
+      </div>
     </div>
   );
 };

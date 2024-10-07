@@ -13,6 +13,7 @@ import MarksEntry from "../Entry/MarksEntry";
 import PatternTransfer from "../Pattern/PatternTransfer";
 import OverallMarks from "../Entry/OverallMarks";
 import OverallEligibility from "../Entry/OverallEligibility";
+import AcademicEligibility from "../Academic/AcademicEligibility";
 
 const Dashboard = (props) => {
   const [activeMainComponent, setActiveMainComponent] = useState("home");
@@ -41,8 +42,8 @@ const Dashboard = (props) => {
         return <OverallMarks setActiveMainComponent={setActiveMainComponent} />
       case "overall_eligibility":
         return <OverallEligibility setActiveMainComponent={setActiveMainComponent} />
-        
-
+      case "academic_eligibility":
+        return <AcademicEligibility setActiveMainComponent={setActiveMainComponent} />
       case "student_entry":
         return <StudentEntry setActiveMainComponent={setActiveMainComponent} />;
     }
