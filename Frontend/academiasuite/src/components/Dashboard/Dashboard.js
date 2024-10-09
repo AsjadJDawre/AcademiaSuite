@@ -15,7 +15,7 @@ import OverallMarks from "../Entry/OverallMarks";
 import OverallEligibility from "../Entry/OverallEligibility";
 import AcademicEligibility from "../Academic/AcademicEligibility";
 
-const Dashboard = (props) => {
+const Dashboard = ({user, setDashboardActiveComp}) => {
   const [activeMainComponent, setActiveMainComponent] = useState("home");
 
   const renderMainComponent = () => {
@@ -56,7 +56,7 @@ const Dashboard = (props) => {
           ACADEMIA<span className="logo text-[#1659D7]">SUITE</span>
         </h2>
         <h4 className="username text-xl text-slate-800">
-          {" "}{props.user}{" "}
+          {" "}{user}{" "}
           <PersonIcon
             style={{
               color: "2B5ED6",
@@ -70,7 +70,7 @@ const Dashboard = (props) => {
       </div>
       <div className="flex h-[100%]">
       <div className="side-bar two-div w-[20rem] h-[100%]">
-        <Navbar setActiveMainComponent={setActiveMainComponent} />
+        <Navbar setActiveMainComponent={setActiveMainComponent} setDashboardActiveComp={setDashboardActiveComp}/>
       </div>
       <div className="main-container two-div w-screen bg-slate-200 section-3">
         {renderMainComponent()}

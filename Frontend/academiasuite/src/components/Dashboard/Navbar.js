@@ -5,6 +5,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import DescriptionIcon from "@mui/icons-material/Description";
 import PatternIcon from '@mui/icons-material/Pattern';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 import "../../assets/styles/navbar.css";
 
@@ -45,7 +46,8 @@ const Navbar = (props) => {
   };
 
   return (
-    <div className="nav-container">
+    <div className="nav-container flex flex-col justify-between">
+      <div className="flex flex-col gap-1">
       {/* // home nav element */}
       <div
         style={activeMenu === "home" ? activeMenustyle : disableMenustyle}
@@ -92,7 +94,7 @@ const Navbar = (props) => {
             props.setActiveMainComponent("subject_master");
           }}
         >
-          Subject Master
+        {activeSubSubMenu === "subject_master" && "-"}  Subject Master
         </p>
         <p
           style={
@@ -106,7 +108,7 @@ const Navbar = (props) => {
             props.setActiveMainComponent("group_master");
           }}
         >
-          Subject Group
+        {activeSubSubMenu === "group_master" && "-"}  Subject Group
         </p>
       </div>
 
@@ -140,7 +142,7 @@ const Navbar = (props) => {
             props.setActiveMainComponent("exam-code");
           }}
         >
-          Exam Code
+        {activeSubSubMenu === "exam-code" && "-"}  Exam Code
         </p>
         <p
           style={
@@ -154,7 +156,7 @@ const Navbar = (props) => {
             props.setActiveMainComponent("student-attendence");
           }}
         >
-          Student Attendence
+        {activeSubSubMenu === "student-attendence" && "-"}  Student Attendence
         </p>
         <p
           style={
@@ -168,7 +170,7 @@ const Navbar = (props) => {
             props.setActiveMainComponent("re-exam-eligibility");
           }}
         >
-          Re-Exam Eligibility
+        {activeSubSubMenu === "re-exam-eligibility" && "-"}  Re-Exam Eligibility
         </p>
       </div>
 
@@ -206,7 +208,7 @@ const Navbar = (props) => {
             props.setActiveMainComponent("student_entry");
           }}
         >
-          Student Entry
+        {activeSubSubMenu === "student_entry" && "-"}  Student Entry
         </p>
       </div>
 
@@ -244,7 +246,7 @@ const Navbar = (props) => {
             props.setActiveMainComponent("pattern_transfer");
           }}
         >
-          Pattern Transfer
+        {activeSubSubMenu === "pattern_transfer" && "-"}  Pattern Transfer
         </p>
       </div>
 
@@ -282,7 +284,7 @@ const Navbar = (props) => {
             props.setActiveMainComponent("marks_entry");
           }}
         >
-          Marks Entry
+        {activeSubSubMenu === "marks_entry" && "-"}  Marks Entry
         </p>
         <p
           style={
@@ -296,7 +298,7 @@ const Navbar = (props) => {
             props.setActiveMainComponent("overall_marks");
           }}
         >
-          Overall Marks
+        {activeSubSubMenu === "overall_marks" && "-"}  Overall Marks
         </p>
         <p
           style={
@@ -310,7 +312,7 @@ const Navbar = (props) => {
             props.setActiveMainComponent("overall_eligibility");
           }}
         >
-          Overall Eligibility
+        {activeSubSubMenu === "overall_eligibility" && "-"}  Overall Eligibility
         </p>
       </div>
            {/* // Pattern nav element */}
@@ -347,8 +349,27 @@ const Navbar = (props) => {
             props.setActiveMainComponent("academic_eligibility");
           }}
         >
-          Academic Eligibility
+        {activeSubSubMenu === "academic_eligibility" && "-"}  Academic Eligibility
         </p>
+      </div>
+      </div>
+      <div>
+        {/* // Logout nav element */}
+      <div
+        style={activeMenu === "logout" ? activeMenustyle : disableMenustyle}
+        className="nav-item hover:text-yellow-200"
+        onClick={() => {
+          setActiveMenu("logout");
+          setActiveSubMenu("");
+          setActiveSubSubMenu("");
+          // props.setActiveMainComponent("logout");
+          props.setDashboardActiveComp();
+        }}
+      >
+        <p className="mb-0 p-2">
+          <LogoutIcon /> Log out
+        </p>
+      </div>
       </div>
     </div>
   );
