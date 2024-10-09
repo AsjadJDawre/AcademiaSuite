@@ -11,14 +11,20 @@ function App() {
       case 'login':
         return <Login setActiveComponent={setActiveComponent} setUser={setUser} />;
       case 'dashboard':
-        return <Dashboard user={user}/>;
+        return <Dashboard user={user} setDashboardActiveComp={logoutApp}/>;
     }
+  }
+
+  const logoutApp = () => {
+    console.log('logoutapp');
+    
+    setActiveComponent('login');
   }
 
   return (
     <div className="App">
-      {/* {renderComponent()} */}
-      <Dashboard />
+      {renderComponent()}
+      {/* <Dashboard setDashboardActiveComp={logoutApp}/> */}
     </div>
   );
 }
